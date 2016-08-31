@@ -34,7 +34,7 @@ titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
 render_drafts: false
-post_asset_folder: true
+post_asset_folder: true # 开启这个功能，创建新的文章时，同时创建一个对应的文件夹存放图片
 relative_link: false
 future: true
 highlight:

@@ -50,7 +50,7 @@ $ hexo s
 ## 关联Github
 ### 创建仓库
 在前言的[GitHub Pages](https://pages.github.com/)中介绍了Pages仓库，所以要创建一个名为`用户名.github.io`固定写法的参考，例如`piglikeyoung.github.io`，如下图所示
-{% asset_img Snip20160831_2.png hexo first image %}
+{% asset_img Snip20160831_2.png github Pages image %}
 
 本地的blog目录结构
 

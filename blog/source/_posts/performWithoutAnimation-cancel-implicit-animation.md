@@ -1,7 +1,8 @@
 ---
 title: 取消UIKit中某些控件的隐式动画
 date: 2016-09-06 22:56:03
-tags: 拿来主义
+tags: 动画
+category: Tips
 ---
 
 本篇文章是参考[南峰子_老驴#iOS知识小集](http://huati.weibo.com/k/iOS%E7%9F%A5%E8%AF%86%E5%B0%8F%E9%9B%86?from=501)并结合自己实践所做。

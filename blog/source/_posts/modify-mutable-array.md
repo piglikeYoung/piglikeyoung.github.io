@@ -1,7 +1,8 @@
 ---
 title: 遍历中修改可变数组
 date: 2016-09-04 16:25:26
-tags: 拿来主义
+tags: 数组
+category: Tips
 ---
 
 ## 前言

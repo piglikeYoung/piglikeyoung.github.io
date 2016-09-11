@@ -1,7 +1,8 @@
 ---
 title: GitHub Pages + Hexo搭建博客
 date: 2016-08-31 22:24:25
-tags: 能工巧匠
+tags: Hexo
+category: 能工巧匠
 ---
 
 这篇博客是使用**Github Pages + Hexo** 搭建本博客的总结。

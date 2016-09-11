@@ -46,4 +46,106 @@ NSLog(@"%@", array);// b, d
 
 **如果非要顺序删除也有方法，你删完立刻break。**
 
+## Update 2016-9-11
+之前的文章说到遍历中修改可变数组可能会造成Crash，但是亲身尝试了发现在一些情况下并不会有什么问题。
+
+我们常用的遍历数组的方式大概有三种：`for`，`for in`，`enumerateObjectsUsingBlock`。
+
+### for 和 enumerateObjectsUsingBlock
+在这三种方法中，使用`for`和`enumerateObjectsUsingBlock`遍历时，可以修改数组，不会有Crash等问题。
+
+```objc
+NSMutableArray *array = [NSMutableArray arrayWithCapacity:8];
+[array addObject:@"1"];
+[array addObject:@"2"];
+[array addObject:@"3"];
+[array addObject:@"4"];
+[array addObject:@"5"];
+    
+[array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+   if ([obj isEqualToString:@"3"]) {
+       [array removeObject:obj];
+   }
+}];
+    
+NSLog(@"%@", array);// 1,2,4,5
+    
+for (NSInteger i = 0; i<array.count; i++) {
+   NSString *temp = array[i];
+   if ([temp isEqualToString:@"2"]) {
+       [array removeObject:temp];
+       [array addObject:@"8"];
+   }
+}
+    
+NSLog(@"%@", array);// 1,4,5,8
+```
+
+**上述代码虽然没有造成Crash，但是有个潜在的问题，如果遍历时删除元素，可能导致后面的元素不会被遍历到**。
+
+```objc
+NSMutableArray *array = [NSMutableArray arrayWithCapacity:8];
+[array addObject:@"1"];
+[array addObject:@"2"];
+[array addObject:@"3"];
+[array addObject:@"4"];
+[array addObject:@"5"];
+    
+[array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+   if ([obj isEqualToString:@"3"]) {
+       [array removeObject:obj];
+   }
+   
+   if ([obj isEqualToString:@"4"]) { // 无效
+       [array removeObject:obj];
+   }
+}];
+    
+NSLog(@"%@", array);// 1,2,4,5
+    
+for (NSInteger i = 0; i<array.count; i++) {
+   NSString *temp = array[i];
+   if ([temp isEqualToString:@"2"]) {
+       [array removeObject:temp];
+   }
+   
+   if ([temp isEqualToString:@"4"]) { // 无效
+       [array addObject:@"8"];
+   }
+}
+    
+NSLog(@"%@", array);// 1,4,5
+```
+
+虽然遍历时修改数组不会造成Crash，但是**我们还是不建议在遍历可变数组时修改数组**。
+
+### for in
+当使用`for in`来遍历时，修改元素会抛出NSGenericException异常。
+
+```objc
+for (NSString *str in array) { // Crash 
+   if ([str isEqualToString:@"2"]) {
+       [array addObject:@"8"];
+   }
+}
+```
+{% asset_img Snip20160911_1.png for in crash %}
+
+一个通用的做法是：`从原数组copy一个数组出来，然后遍历copy数组，过滤出自己需要的元素，最后再对原数组进行操作`。
+
+```objc
+NSArray *temp = [array copy]; // 拷贝一份
+for (NSString *str in temp) { // 遍历拷贝
+   if ([str isEqualToString:@"2"]) {
+       [array addObject:@"8"]; // 操作原数组
+       [array removeObject:str];
+   }
+}
+    
+NSLog(@"%@", array); // 1,3,4,5,8
+```
+
+## 参考链接
+[iOS : Modifying NSFastEnumerationState to hide mutation while enumerating](http://stackoverflow.com/questions/20069825/ios-modifying-nsfastenumerationstate-to-hide-mutation-while-enumerating)
+
 

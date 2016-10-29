@@ -147,4 +147,154 @@ GCD中还有保证在应用程序中只执行一次指定处理的API。
 ```
 通常通过这种方式生成单例对象。
 
+## dispatch_groups
+
+在追加到 Dispatch Queue 中的多个处理全部结束后想执行结束处理，这种情况会经常出现。如果使用一个 Serial Dispatch Queue  时，只要将想执行的处理全部追加到该 Serial Dispatch Queue 中并在最后追加结束处理，即可实现。但是在使用 Concurrent Dispatch Queue 时或同时使用多个Dispatch Queue 时，代码将会变得复杂。
+
+这是 Dispatch Group 将派上用场了。
+
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
+dispatch_group_t group = dispatch_group_create();
+    
+dispatch_group_async(group, queue, ^{
+   NSLog(@"1");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"2");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"3");
+});
+    
+dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+   NSLog(@"done");
+});
+```
+例子中追加了3个 Block 到 Global Dispatch Queue，这些 Block 执行完成完毕后，执行 Main Dispatch Queue 中的结束处理。
+
+在监听多个异步任务的时候，用到了`dispatch_group_notify`函数，它是异步执行，不会阻塞线程，第一个参数指定为要监视的 Dispatch Group。在追加到该 Dispatch Group 的全部处理执行结束时，将第三个参数的 Block 追加到的第二个参数的 Dispatch Queue 中。在 dispatch_group_notify 函数中不管指定什么样的 Dispatch Queue，属于 Dispatch Group 的全部处理在追加指定的 Block 时都已执行结束。
+
+在 GCD API 中还有一个监听多个异步任务的函数 `dispatch_group_wait` 会阻塞当前线程，等待所有任务都完成或等待超时。这里的等待是指一旦调用 dispatch_group_wait 函数，该函数就处于调用状态而不返回。即执行 dispatch_group_wait 函数的当前线程停止。在经过 dispatch_group_wait 函数中指定的时间或属于指定 Dispatch Group 的处理全部执行结束之前，执行该函数的线程停止。
+
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
+dispatch_group_t group = dispatch_group_create();
+    
+dispatch_group_async(group, queue, ^{
+   NSLog(@"1");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"2");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"3");
+});
+    
+dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+```
+
+dispatch_group_wait 函数的第二个参数指定为等待的时间（超时）。它是 dispatch_time_t 类型的值。例子中用了 **DISPATCH_TIME_FOREVER** ，意思是永久等待。只要属于 Dispatch Group 的处理 尚未执行结束，就会一直等待，中途不能取消。
+
+如果指定等待间隔为1秒是应做如下处理：
+
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
+dispatch_group_t group = dispatch_group_create();
+    
+dispatch_group_async(group, queue, ^{
+   NSLog(@"1");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"2");
+});
+dispatch_group_async(group, queue, ^{
+   NSLog(@"3");
+});
+    
+dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC);
+NSInteger result = dispatch_group_wait(group, time);
+if (result == 0) {
+   // 属于 Dispatch Group 的全部处理执行结束
+} else {
+   // 属于 Dispatch Group 的某个处理还在执行中
+}
+```
+如果 dispatch_group_wait 函数的返回值不为 0 ，就意味着虽然经过了指定的时间，但属于 Dispatch Group 的某个处理还在执行中。如果返回值为 0 ，那么全部处理执行结束。如果使用 **DISPATCH_TIME_FOREVER** ，属于 Dispatch Group 的全部处理必定全部执行结束，因此返回值恒为 0 。
+
+如果使用 **DISPATCH_TIME_NOW** ，则不用任何等待即可判定属于 Dispatch Group 的处理是否执行结束。
+
+## dispatch_barrier_async
+在访问数据库或文件时，如果使用 Serial Dispatch Queue 可以避免数据竞争的问题。
+写入操作不能和其他的写入操作以及包含读取处理的其他某些处理并行执行。如果只是读取操作和读取操作并行执行，那么多个并行执行不会发生问题。
+
+GCD 为我们提供非常简便的解决方法 `dispatch_barrier_async` 函数。
+
+首先 dispatch_queue_create 函数生成 Concurrent Dispatch Queue，在 dispatch_async 中追加读取操作：
+
+```objc
+dispatch_queue_t queue = dispatch_queue_create("com.piglikeyoung.gcd.concurrentqueue", DISPATCH_QUEUE_CONCURRENT);
+
+dispatch_async(queue, blk0_for_reading);
+dispatch_async(queue, blk1_for_reading);
+dispatch_async(queue, blk2_for_reading);
+dispatch_async(queue, blk3_for_reading);
+dispatch_async(queue, blk4_for_reading);
+dispatch_async(queue, blk5_for_reading);
+dispatch_async(queue, blk6_for_reading);
+```
+在 blk3_for_reading 处理和 blk4_for_reading 处理之间执行写入操作，并将写入的内容在 blk4_for_reading 处理以及之后的处理中获取。
+
+```objc
+dispatch_async(queue, blk0_for_reading);
+dispatch_async(queue, blk1_for_reading);
+dispatch_async(queue, blk2_for_reading);
+dispatch_async(queue, blk3_for_reading);
+dispatch_async(queue, blk_for_writing);
+dispatch_async(queue, blk4_for_reading);
+dispatch_async(queue, blk5_for_reading);
+dispatch_async(queue, blk6_for_reading);
+```
+如果是简单把写入操作加入 Concurrent Dispatch Queue，那么读取到的数据有可能和预期不符，如果是多个读取和多个写入混合并发，有可能引起数据竞争的问题。
+
+这时候使用 `dispatch_barrier_async` 函数，**dispatch_barrier_async** 函数会等待追加到 Concurrent Dispatch Queue 上的并行执行的处理全部结束后，再将指定的处理追加到该 Concurrent Dispatch Queue 中。然后在由 dispatch_barrier_async 函数追加的处理执行完毕后，Concurrent Dispatch Queue 才恢复一般的动作，追加到该 Concurrent Dispatch Queue 的处理又开始并行执行。
+
+```objc
+dispatch_async(queue, blk0_for_reading);
+dispatch_async(queue, blk1_for_reading);
+dispatch_async(queue, blk2_for_reading);
+dispatch_async(queue, blk3_for_reading);
+dispatch_barrier_async(queue, blk_for_writing);
+dispatch_async(queue, blk4_for_reading);
+dispatch_async(queue, blk5_for_reading);
+dispatch_async(queue, blk6_for_reading);
+```
+dispatch_barrier_async 处理流程图如下：
+{% asset_img Snip20161005_1.png DNS %}
+
+
+> 注意：dispatch_barrier_async 只在自己创建的队列上有这种作用，在全局并发队列和串行队列上，效果和 dispatch_sync 一样
+
+
+## dispatch_apply
+dispatch_apply 函数是 dispatch_sync 函数和 Dispatch Group 的关联 API。该函数按指定的次数将指定的 Block 追加到指定的 Dispatch Queue 中，并等待全部处理执行结束。
+
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
+dispatch_apply(10, queue, ^(size_t index) {
+   NSLog(@"%zd", index);
+});
+NSLog(@"done");
+```
+
+因为是在全局并发队列中执行处理，所以打印的顺序不定。但输出结果中最后的 done 肯定是在最后。因为 dispatch_apply 函数会等待全部处理执行结束。
+
+第一个参数是重复次数，第二个参数是追加对象的 Dispatch Queue ，第三个参数是追加的处理。不同的是第三个参数是带参数的block，这是为了按第一个参数重复追加 Block 并区分各个 Block 而使用。
+
+由于 dispatch_apply 函数也和 dispatch_sync 函数相同，会等待处理执行结束，**因此推荐在 dispatch_async 函数中非同步地执行  dispatch_apply 函数**，而且能够避免线程爆炸，因为GCD会管理并发。
+
+## 参考资料
+* [官方文档](https://developer.apple.com/reference/dispatch)
+* Objective-C 高级编程 iOS与OS X多线程和内存管理
+
 

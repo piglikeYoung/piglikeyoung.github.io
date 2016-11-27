@@ -1,8 +1,8 @@
 ---
 title: NSTimer（一）
 date: 2016-11-19 12:42:49
-tags: 能工巧匠
-category: Tips
+tags: NSTimer
+category: 能工巧匠
 ---
 
 ## 前言

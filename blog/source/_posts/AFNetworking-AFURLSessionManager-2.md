@@ -661,6 +661,10 @@ AFURLSessionManager 里面的内容大致讲完了，具体实现细节还是需
 3. 通过一个字典 mutableTaskDelegatesKeyedByTaskIdentifier 来管理 dataTask 对象
 4. AFURLSessionManager 是通过 AFURLSessionManagerTaskDelegate 来对传入的 **uploadProgressBlock**， **downloadProgressBlock**， **completionHandler** 在合适的时间进行调用
 
+## 参考链接
+* [AFNetworking](https://github.com/AFNetworking/AFNetworking)
+* [AFNetworking源码阅读（四）](http://www.cnblogs.com/polobymulberry/p/5160946.html)
+
 
 
 

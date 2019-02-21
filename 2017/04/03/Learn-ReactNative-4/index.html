@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习ReactNative基础（四） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言本章，我们学习新的组件 Text 、 Touchable 、 TextInput 和 Image。 Text组件Text组件是 ReactNative 中显示文本的组件，详细的内容可以参考官方文档，这里只讲几个常用的属性。Text组件需要导入组件： 123456789101112// onPress   手指触摸事件// numberOfLines 显示多少行// 可以设置字体颜色、大小、对齐">
+<meta name="keywords" content="RN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ReactNative基础（四）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/04/03/Learn-ReactNative-4/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言本章，我们学习新的组件 Text 、 Touchable 、 TextInput 和 Image。 Text组件Text组件是 ReactNative 中显示文本的组件，详细的内容可以参考官方文档，这里只讲几个常用的属性。Text组件需要导入组件： 123456789101112// onPress   手指触摸事件// numberOfLines 显示多少行// 可以设置字体颜色、大小、对齐">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2017/04/03/Learn-ReactNative-4/WX20170501-114928@2x.png">
+<meta property="og:updated_time" content="2017-05-01T04:42:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习ReactNative基础（四）">
+<meta name="twitter:description" content="前言本章，我们学习新的组件 Text 、 Touchable 、 TextInput 和 Image。 Text组件Text组件是 ReactNative 中显示文本的组件，详细的内容可以参考官方文档，这里只讲几个常用的属性。Text组件需要导入组件： 123456789101112// onPress   手指触摸事件// numberOfLines 显示多少行// 可以设置字体颜色、大小、对齐">
+<meta name="twitter:image" content="http://piglikeyoung.com/2017/04/03/Learn-ReactNative-4/WX20170501-114928@2x.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/Learn-ReactNative-4/" title="学习ReactNative基础（四）" itemprop="url">学习ReactNative基础（四）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-04-03T03:33:54.000Z" itemprop="datePublished"> 发表于 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Text组件"><span class="toc-number">2.</span> <span class="toc-text">Text组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Touchable"><span class="toc-number">3.</span> <span class="toc-text">Touchable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TextInput"><span class="toc-number">4.</span> <span class="toc-text">TextInput</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Image"><span class="toc-number">5.</span> <span class="toc-text">Image</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本章，我们学习新的组件 Text 、 Touchable 、 TextInput 和 Image。</p>
+<h2 id="Text组件"><a href="#Text组件" class="headerlink" title="Text组件"></a>Text组件</h2><p>Text组件是 ReactNative 中显示文本的组件，详细的内容可以参考<a href="https://facebook.github.io/react-native/docs/text.html" target="_blank" rel="noopener">官方文档</a>，这里只讲几个常用的属性。Text组件需要导入组件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// onPress   手指触摸事件</span><br><span class="line">// numberOfLines 显示多少行</span><br><span class="line"></span><br><span class="line">// 可以设置字体颜色、大小、对齐方式等等</span><br><span class="line"></span><br><span class="line">import &#123;</span><br><span class="line">  AppRegistry,</span><br><span class="line">  StyleSheet,</span><br><span class="line">  Text,</span><br><span class="line">  View,</span><br><span class="line">  Text,</span><br><span class="line">&#125; from &apos;react-native&apos;;</span><br></pre></td></tr></table></figure>
+<p>例子：做一个简单版的网易新闻web单页</p>
+<img src="/2017/04/03/Learn-ReactNative-4/WX20170501-114928@2x.png" title="neatnew-1">
+<p>界面分析可以分成两部分：Header和新闻内容，整个界面是一个组件，由两个子组件组成。如果都写在index.ios.js文件中，代码比较乱，在单独一个文件中定义子组件，使用Module.exports将组件导出为独立的模块，可以在其他文件中引用。</p>
+<p>header.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 组件</span></span><br><span class="line"><span class="keyword">var</span> Header = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.flex&#125;&gt;</span><br><span class="line">        &lt;Text style=&#123;styles.font&#125;&gt;</span><br><span class="line">          &lt;Text style=&#123;styles.font_1&#125;&gt;网易&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Text style=&#123;styles.font_2&#125;&gt;新闻&lt;/</span>Text&gt;</span><br><span class="line">          &lt;Text&gt;有态度&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>Text&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 样式</span></span><br><span class="line"><span class="regexp">var styles = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp">  flex: &#123;</span></span><br><span class="line"><span class="regexp">    marginTop: 25,</span></span><br><span class="line"><span class="regexp">    height: 40,</span></span><br><span class="line"><span class="regexp">    borderBottomWidth: 1,</span></span><br><span class="line"><span class="regexp">    borderBottomColor: '#EF2D26',</span></span><br><span class="line"><span class="regexp">    alignItems: 'center',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 字体公共部分</span></span><br><span class="line"><span class="regexp">  font: &#123;</span></span><br><span class="line"><span class="regexp">    fontSize: 25,</span></span><br><span class="line"><span class="regexp">    fontWeight: 'bold',</span></span><br><span class="line"><span class="regexp">    textAlign: 'center',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  font_1: &#123;</span></span><br><span class="line"><span class="regexp">    color: '#CD1D1C',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  font_2: &#123;</span></span><br><span class="line"><span class="regexp">    color: '#FFF',</span></span><br><span class="line"><span class="regexp">    backgroundColor: '#CD1D1C',</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 导出模块</span></span><br><span class="line"><span class="regexp">module.exports = Header;</span></span><br></pre></td></tr></table></figure>
+<p>news.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 组件</span></span><br><span class="line"><span class="keyword">var</span> News = React.createClass(&#123;</span><br><span class="line">  show: <span class="function"><span class="keyword">function</span>(<span class="params">title</span>) </span>&#123;</span><br><span class="line">    alert(title);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 定义数组，用于存储设置好的Text组件</span></span><br><span class="line">    <span class="keyword">var</span> newsComponents = [];</span><br><span class="line">    <span class="comment">// 遍历存储信息的数组，从外部传入的</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> <span class="keyword">this</span>.props.news) &#123;</span><br><span class="line">      <span class="keyword">var</span> text = (</span><br><span class="line">        &lt;Text</span><br><span class="line">          onPress=&#123;<span class="keyword">this</span>.show.bind(<span class="keyword">this</span>, <span class="keyword">this</span>.props.news[i])&#125;</span><br><span class="line">          style=&#123;styles.news_item&#125;</span><br><span class="line">          numberOfLines=&#123;<span class="number">2</span>&#125;</span><br><span class="line">          key=&#123;i&#125;&gt;</span><br><span class="line">          &#123;<span class="keyword">this</span>.props.news[i]&#125;</span><br><span class="line">        &lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">      );</span></span><br><span class="line"><span class="regexp">      /</span><span class="regexp">/ 将设置好的Text存入数组</span></span><br><span class="line"><span class="regexp">      newsComponents.push(text);</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;View style=&#123;styles.flex&#125;&gt;</span></span><br><span class="line"><span class="regexp">        &lt;Text style=&#123;styles.news_title&#125;&gt;今日要闻&lt;/</span>Text&gt;</span><br><span class="line">        &#123;newsComponents&#125;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 样式</span></span><br><span class="line"><span class="regexp">var styles = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp">  flex: &#123;</span></span><br><span class="line"><span class="regexp">    flex: 1,</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ ‘今日要闻’标题</span></span><br><span class="line"><span class="regexp">  news_title: &#123;</span></span><br><span class="line"><span class="regexp">    fontSize: 20,</span></span><br><span class="line"><span class="regexp">    fontWeight: 'bold',</span></span><br><span class="line"><span class="regexp">    color: '#CD1D1C',</span></span><br><span class="line"><span class="regexp">    marginLeft: 10,</span></span><br><span class="line"><span class="regexp">    marginTop: 15,</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 每条新闻</span></span><br><span class="line"><span class="regexp">  news_item: &#123;</span></span><br><span class="line"><span class="regexp">    marginTop: 10,</span></span><br><span class="line"><span class="regexp">    marginLeft: 10,</span></span><br><span class="line"><span class="regexp">    marginRight: 10,</span></span><br><span class="line"><span class="regexp">    fontSize: 15,</span></span><br><span class="line"><span class="regexp">    lineHeight: 30,</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 导出模块</span></span><br><span class="line"><span class="regexp">module.exports = News;</span></span><br></pre></td></tr></table></figure>
+<p>index.ios.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入</span></span><br><span class="line"><span class="keyword">var</span> Header = <span class="built_in">require</span>(<span class="string">'./header'</span>);</span><br><span class="line"><span class="keyword">var</span> News = <span class="built_in">require</span>(<span class="string">'./news'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">LessonText</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">  render() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义数组存储新闻内容</span></span><br><span class="line">    <span class="keyword">var</span> news = [</span><br><span class="line">      <span class="string">'1.回复看到撒后方可'</span>,</span><br><span class="line">      <span class="string">'2.发生的路口附近'</span>,</span><br><span class="line">      <span class="string">'3.附件是到付'</span>,</span><br><span class="line">      <span class="string">'4.房间号大搜罗咖啡就撒打开开发和四大，发神经的后来开飞机上大力开发接收到放假撒的路口附近'</span>,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.flex&#125;&gt;</span><br><span class="line">        &#123;<span class="comment">/* Header */</span>&#125;</span><br><span class="line">        &lt;Header&gt;&lt;/Header&gt;</span><br><span class="line">        &#123;<span class="comment">/* News */</span>&#125;</span><br><span class="line">        &lt;News news=&#123;news&#125;&gt;&lt;/News&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">const styles = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp">  flex: &#123;</span></span><br><span class="line"><span class="regexp">    flex: 1,</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
+<p>上面的代码通过 <code>module.exports</code> 导出模块，主入口通过 <code>require(&#39;./header&#39;);</code> 引入模块，达到了模块分离，精简了代码。</p>
+<h2 id="Touchable"><a href="#Touchable" class="headerlink" title="Touchable"></a>Touchable</h2><p>ReactNative 中提供3个组件用于给其他没有触摸事件的组件绑定触摸事件（都需要导入组件），<a href="https://facebook.github.io/react-native/docs/touchableopacity.html" target="_blank" rel="noopener">官方文档</a>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import &#123;</span><br><span class="line">  AppRegistry,</span><br><span class="line">  StyleSheet,</span><br><span class="line">  Text,</span><br><span class="line">  View,</span><br><span class="line">  TouchableOpacity,</span><br><span class="line">  TouchableHighlight,</span><br><span class="line">  TouchableWithoutFeedback,</span><br><span class="line">&#125; from &apos;react-native&apos;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>TouchableOpacity 透明触摸，点击时，组件会出现透明过度效果</li>
+<li>TouchableHighlight 高亮触摸，点击时，组件会出现高亮效果</li>
+<li>TouchableWithoutFeedback 无反馈性触摸，点击时，组件无视觉变化</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LessonTouchable = React.createClass(&#123;</span><br><span class="line">  clickBtn: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'按钮被点击'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;View style=&#123;styles.flex&#125;&gt;</span><br><span class="line">          &lt;View style=&#123;styles.input&#125;&gt;&lt;/View&gt;</span><br><span class="line">        &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TouchableHighlight style=&#123;styles.btn&#125; onPress=&#123;this.clickBtn&#125;&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Text style=&#123;styles.search&#125;&gt;搜索&lt;/</span>Text&gt;</span><br><span class="line">        &lt;<span class="regexp">/TouchableHighlight&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flexDirection: <span class="string">'row'</span>,</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  flex: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  input: &#123;</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    borderWidth: <span class="number">1</span>,</span><br><span class="line">    marginLeft: <span class="number">5</span>,</span><br><span class="line">    paddingLeft: <span class="number">5</span>,</span><br><span class="line">    borderColor: <span class="string">'#CCC'</span>,</span><br><span class="line">    borderRadius: <span class="number">4</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  btn: &#123;</span><br><span class="line">    width: <span class="number">55</span>,</span><br><span class="line">    marginLeft: <span class="number">5</span>,</span><br><span class="line">    marginRight: <span class="number">5</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#23BEFF'</span>,</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  search: &#123;</span><br><span class="line">    color: <span class="string">'#FFF'</span>,</span><br><span class="line">    fontSize: <span class="number">15</span>,</span><br><span class="line">    fontWeight: <span class="string">'bold'</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>上面只提供了 <code>TouchableHighlight</code> 的示例，另外2个自己尝试效果。</p>
+<h2 id="TextInput"><a href="#TextInput" class="headerlink" title="TextInput"></a>TextInput</h2><p>TextInput是一个允许用户在应用中通过键盘输入文本的基本组件，本组件的属性提供了多种特性的配置，譬如自动完成、自动大小写、占位文字，以及多种不同的键盘类型（如纯数字键盘）等等，<a href="https://facebook.github.io/react-native/docs/textinput.html" target="_blank" rel="noopener">官方文档</a>，常用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">placeholder 占位符</span><br><span class="line">value 输入框的值</span><br><span class="line">password 是否密文输入</span><br><span class="line">editable 输入框是否可编辑</span><br><span class="line">returnKeyType 键盘return键类型</span><br><span class="line">onChange 当文本变化时调用</span><br><span class="line">onEndEditing 当结束编辑时调用</span><br><span class="line">onSubmitEditing 当结束编辑，点击提交按钮时调用</span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LessonTextInput = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      inputText: <span class="string">''</span>,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 输入框的onChange实现</span></span><br><span class="line">  getContent: <span class="function"><span class="keyword">function</span>(<span class="params">text</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">      inputText: text</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  clickBtn: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="keyword">this</span>.state.inputText);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;View style=&#123;styles.flex&#125;&gt;</span><br><span class="line">          &lt;TextInput</span><br><span class="line">            style=&#123;styles.input&#125;</span><br><span class="line">            returnKeyType=<span class="string">'search'</span></span><br><span class="line">            placeholder=<span class="string">'请输入内容'</span></span><br><span class="line">            onChangeText=&#123;<span class="keyword">this</span>.getContent&#125;</span><br><span class="line">          /&gt;</span><br><span class="line">        &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TouchableOpacity style=&#123;styles.btn&#125; onPress=&#123;this.clickBtn&#125;&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Text style=&#123;styles.search&#125;&gt;搜索&lt;/</span>Text&gt;</span><br><span class="line">        &lt;<span class="regexp">/TouchableOpacity&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line"></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flexDirection: <span class="string">'row'</span>,</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  flex: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  input: &#123;</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    borderWidth: <span class="number">1</span>,</span><br><span class="line">    marginLeft: <span class="number">5</span>,</span><br><span class="line">    paddingLeft: <span class="number">5</span>,</span><br><span class="line">    borderColor: <span class="string">'#CCC'</span>,</span><br><span class="line">    borderRadius: <span class="number">4</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  btn: &#123;</span><br><span class="line">    width: <span class="number">55</span>,</span><br><span class="line">    marginLeft: <span class="number">5</span>,</span><br><span class="line">    marginRight: <span class="number">5</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#23BEFF'</span>,</span><br><span class="line">    height: <span class="number">45</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  search: &#123;</span><br><span class="line">    color: <span class="string">'#FFF'</span>,</span><br><span class="line">    fontSize: <span class="number">15</span>,</span><br><span class="line">    fontWeight: <span class="string">'bold'</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="Image"><a href="#Image" class="headerlink" title="Image"></a>Image</h2><p>Image 用于显示图片的组件，包括网络图片、静态资源等等，<a href="https://facebook.github.io/react-native/docs/image.html" target="_blank" rel="noopener">官方文档</a>，常用属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">resizeMode  图片适应模式cover、contain、stretch</span><br><span class="line">source 图片引用地址</span><br><span class="line">iOS 支持的属性：onLoad、onLoadEnd、onLoadStart、onProgress</span><br></pre></td></tr></table></figure>
+<p>获取图片主要有两种方式：本地图片和网络图片，<code>Image</code> 都提供了获取的方式。</p>
+<ul>
+<li>获取本地图片，现在工程目录下创建图片文件夹，和 <code>index.ios.js</code> 同一级目录，然后通过 <strong>source={require}</strong> 属性获取</li>
+<li>获取网络图片，通过 <strong>source={uri}</strong> 获取</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">LessonImage</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;View style=&#123;styles.net&#125;&gt;</span><br><span class="line">          &lt;Image</span><br><span class="line">            style=&#123;styles.netImage&#125;</span><br><span class="line">            source=&#123;&#123;<span class="attr">uri</span>:<span class="string">'http://reactnative.cn/static/docs/0.41/img/react-native-congratulations.png'</span>&#125;&#125;</span><br><span class="line">            /&gt;</span><br><span class="line">        &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">        &lt;View style=&#123;styles.local&#125;&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Image</span></span><br><span class="line"><span class="regexp">            style=&#123;styles.localImage&#125;</span></span><br><span class="line"><span class="regexp">            source=&#123;require('./img</span><span class="regexp">/react-native-congratulations.png')&#125;</span></span><br><span class="line"><span class="regexp">            /</span>&gt;</span><br><span class="line">        &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    margin: <span class="number">25</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  net: &#123;</span><br><span class="line">    marginTop: <span class="number">38</span>,</span><br><span class="line">    width: <span class="number">300</span>,</span><br><span class="line">    height: <span class="number">240</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">    backgroundColor: <span class="string">'cyan'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  netImage: &#123;</span><br><span class="line">    width: <span class="number">280</span>,</span><br><span class="line">    height: <span class="number">200</span>,</span><br><span class="line">    backgroundColor: <span class="string">'gray'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  local: &#123;</span><br><span class="line">    marginTop: <span class="number">30</span>,</span><br><span class="line">    width: <span class="number">300</span>,</span><br><span class="line">    height: <span class="number">200</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">    backgroundColor: <span class="string">'cyan'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  localImage: &#123;</span><br><span class="line">    width: <span class="number">180</span>,</span><br><span class="line">    height: <span class="number">180</span>,</span><br><span class="line">    backgroundColor: <span class="string">'gray'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本篇文章非常简单的介绍了 ReactNative 的几个组件，并给出了示例，更加详细的用法请参考官方文档。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ReactNative/">ReactNative</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RN/">RN</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/04/03/Learn-ReactNative-4/" data-title="学习ReactNative基础（四） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/04/22/Learn-ReactNative-5/" title="学习ReactNative基础（五）">
+  <strong>上一篇：</strong><br>
+  <span>
+  学习ReactNative基础（五）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/26/Learn-ReactNative-3/" title="学习ReactNative基础（三）">
+ <strong>下一篇：</strong><br> 
+ <span>学习ReactNative基础（三）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

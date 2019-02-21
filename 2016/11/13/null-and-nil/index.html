@@ -1,0 +1,598 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>nil / Nil / NULL / NSNull | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言每种开发语言都有判断对象不存在的时候，最基础的C语言是通过“0”来判断“不存在”，而用 NULL 作为指针空值。在 OC 中有nil / Nil / NULL / NSNull。下面我们分别来看看这几种空值的区别。 nilObjective-C在C的表达不存在的基础上增加了nil。nil是一个指向不存在的对象指针。 在 objc.h 中的定义： 1234567#ifndef nil# if _">
+<meta name="keywords" content="nil">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nil &#x2F; Nil &#x2F; NULL &#x2F; NSNull">
+<meta property="og:url" content="http://piglikeyoung.com/2016/11/13/null-and-nil/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言每种开发语言都有判断对象不存在的时候，最基础的C语言是通过“0”来判断“不存在”，而用 NULL 作为指针空值。在 OC 中有nil / Nil / NULL / NSNull。下面我们分别来看看这几种空值的区别。 nilObjective-C在C的表达不存在的基础上增加了nil。nil是一个指向不存在的对象指针。 在 objc.h 中的定义： 1234567#ifndef nil# if _">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-03-05T07:32:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nil &#x2F; Nil &#x2F; NULL &#x2F; NSNull">
+<meta name="twitter:description" content="前言每种开发语言都有判断对象不存在的时候，最基础的C语言是通过“0”来判断“不存在”，而用 NULL 作为指针空值。在 OC 中有nil / Nil / NULL / NSNull。下面我们分别来看看这几种空值的区别。 nilObjective-C在C的表达不存在的基础上增加了nil。nil是一个指向不存在的对象指针。 在 objc.h 中的定义： 1234567#ifndef nil# if _">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/13/null-and-nil/" title="nil / Nil / NULL / NSNull" itemprop="url">nil / Nil / NULL / NSNull</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-11-13T05:30:01.000Z" itemprop="datePublished"> 发表于 2016-11-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nil"><span class="toc-number">2.</span> <span class="toc-text">nil</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景"><span class="toc-number">2.1.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nil"><span class="toc-number">3.</span> <span class="toc-text">Nil</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景-1"><span class="toc-number">3.1.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NULL"><span class="toc-number">4.</span> <span class="toc-text">NULL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景-2"><span class="toc-number">4.1.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSNull"><span class="toc-number">5.</span> <span class="toc-text">NSNull</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景-3"><span class="toc-number">5.1.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NIL-或-NSNil"><span class="toc-number">6.</span> <span class="toc-text">NIL 或 NSNil</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>每种开发语言都有判断对象不存在的时候，最基础的C语言是通过“0”来判断“不存在”，而用 <strong>NULL</strong> 作为指针空值。在 OC 中有<code>nil</code> / <code>Nil</code> / <code>NULL</code> / <code>NSNull</code>。下面我们分别来看看这几种空值的区别。</p>
+<h2 id="nil"><a href="#nil" class="headerlink" title="nil"></a>nil</h2><p>Objective-C在C的表达不存在的基础上增加了nil。nil是一个指向不存在的对象指针。</p>
+<p>在 objc.h 中的定义：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef nil</span></span><br><span class="line"><span class="meta"># if __has_feature(cxx_nullptr)</span></span><br><span class="line"><span class="meta">#   define nil nullptr</span></span><br><span class="line"><span class="meta"># else</span></span><br><span class="line"><span class="meta">#   define nil __DARWIN_NULL</span></span><br><span class="line"><span class="meta"># endif</span></span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
+<p>判断是否有 <strong>cxx_nullptr</strong> 特性，如果有， nil 定义为 <strong>nullptr</strong>，否则定义为 <strong>__DARWIN_NULL</strong>。</p>
+<p>在 _types.h 中的定义：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#define __DARWIN_NULL ((void *)0)</span></span><br></pre></td></tr></table></figure>
+<p>本质上 nil 是 <strong>(void *)0</strong>。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>nil 一般用于指向Objective-C对象，表示对象为空，例如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSObject</span> *obj = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">id</span> onObj = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">if</span> (obj2)&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<p>nil 最显著的行为是，它虽然为零，仍然可以有消息发送给它。在别的语言里，比如Java，调用空对象的方法会崩溃，但是在Objective-C中，即使nil为“零”，你也可以调用它的方法，这样可以简化非空判断：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 举个例子，这个表达...</span></span><br><span class="line"><span class="keyword">if</span> (name != <span class="literal">nil</span> &amp;&amp; [name isEqualToString:<span class="string">@"Steve"</span>]) &#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...可以被简化为：</span></span><br><span class="line"><span class="keyword">if</span> ([name isEqualToString:<span class="string">@"steve"</span>]) &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Nil"><a href="#Nil" class="headerlink" title="Nil"></a>Nil</h2><p>在 objc.h 中定义：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef Nil</span></span><br><span class="line"><span class="meta"># if __has_feature(cxx_nullptr)</span></span><br><span class="line"><span class="meta">#   define Nil nullptr</span></span><br><span class="line"><span class="meta"># else</span></span><br><span class="line"><span class="meta">#   define Nil __DARWIN_NULL</span></span><br><span class="line"><span class="meta"># endif</span></span><br><span class="line"><span class="meta">#endif</span></span><br></pre></td></tr></table></figure>
+<p>与 <code>nil</code> 基本一致，本质上也是 <strong>(void *)0</strong>。</p>
+<h3 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h3><p>Nil 是 Objective-C 类类型的书面空值，对应 Class 类型对象。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class someClass = Nil;</span><br><span class="line">Class anotherClass = [<span class="built_in">NSString</span> <span class="keyword">class</span>];</span><br></pre></td></tr></table></figure>
+<h2 id="NULL"><a href="#NULL" class="headerlink" title="NULL"></a>NULL</h2><p>在 _null.h 中的定义：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#ifndef NULL </span></span><br><span class="line"><span class="meta">#define NULL  __DARWIN_NULL</span></span><br><span class="line"><span class="meta">#endif  /* NULL */</span></span><br></pre></td></tr></table></figure>
+<p>那么本质上 NULL 也是 <strong>(void *)0</strong>。</p>
+<h3 id="使用场景-2"><a href="#使用场景-2" class="headerlink" title="使用场景"></a>使用场景</h3><p>NULL 一般用于表示 C 指针空值，例如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *pointerToInt = <span class="literal">NULL</span>;</span><br><span class="line"><span class="keyword">char</span> *pointerToChar = <span class="literal">NULL</span>;</span><br><span class="line"><span class="keyword">struct</span> TreeNode *rootNode = <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="NSNull"><a href="#NSNull" class="headerlink" title="NSNull"></a>NSNull</h2><p>看到 <strong>NS</strong> 就可以判断它是  Objective-C 的一个类，代表空值的类。它定义在 NSNull.h 文件里：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/NSObject.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NS_ASSUME_NONNULL_BEGIN</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSNull</span> : <span class="title">NSObject</span> &lt;<span class="title">NSCopying</span>, <span class="title">NSSecureCoding</span>&gt;</span></span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">NSNull</span> *)null;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NS_ASSUME_NONNULL_END</span></span><br></pre></td></tr></table></figure>
+<p>NSNull 只有一个单例方法 +[NSnull null]，一般用于在集合对象中保存一个空的占位对象。</p>
+<h3 id="使用场景-3"><a href="#使用场景-3" class="headerlink" title="使用场景"></a>使用场景</h3><p>在 Foundation 集合对象（NSArray、NSDictionary、NSSet 等）中， nil 通常被用于表示集合对象结束的标志，因此无法用 nil 来存储一个空值，所以一般用 [NSNull null] 空对象来存储。另外，在 NSDictionary 的 -objectForKey: 方法中，如果当前字典中 key 对应的值不存在时，该方法会返回 nil，表明当前 key 在字典中未添加，但是如果我们想明确表示某一 key 已经在字典中添加，但是它没有值，这时候就可以用 [NSNull null] 来赋值表示。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 当 NSArray 里遇到 nil 时，就说明这个数组对象的元素截止了，即 NSArray 只关注 nil 之前的对象，nil 之后的对象会被抛弃。</span></span><br><span class="line"><span class="built_in">NSArray</span> *array = [<span class="built_in">NSArray</span> arrayWithObjects:<span class="string">@"one"</span>, <span class="string">@"two"</span>, <span class="literal">nil</span>];</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 错误的使用</span></span><br><span class="line"><span class="built_in">NSMutableDictionary</span> *dict = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line">[dict setObject:<span class="literal">nil</span> forKey:<span class="string">@"someKey"</span>];</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 正确的使用</span></span><br><span class="line"><span class="built_in">NSMutableDictionary</span> *dict = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line">[dict setObject:[<span class="built_in">NSNull</span> null] forKey:<span class="string">@"someKey"</span>];</span><br></pre></td></tr></table></figure>
+<h2 id="NIL-或-NSNil"><a href="#NIL-或-NSNil" class="headerlink" title="NIL 或 NSNil"></a>NIL 或 NSNil</h2><p><strong>Objective-C 中不存在这两个符号！！！</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上述分析我们可知，不管是 NULL、nil 还是 Nil，它们本质上是一样的，都是 (void *)0，只是写法不同。这样做的意义是为了区分不同的数据类型，虽然它们值相同，但我们需要理解它们之间的字面意义并用于不同场景，让代码更加明确，增加可读性。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">标志</th>
+<th style="text-align:left">值</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">NULL</td>
+<td style="text-align:left">(void *)0</td>
+<td style="text-align:left">C指针的字面零值</td>
+</tr>
+<tr>
+<td style="text-align:left">nil</td>
+<td style="text-align:left">(id)0</td>
+<td style="text-align:left">Objective-C对象的字面零值</td>
+</tr>
+<tr>
+<td style="text-align:left">Nil</td>
+<td style="text-align:left">(Class)0</td>
+<td style="text-align:left">Objective-C类的字面零值</td>
+</tr>
+<tr>
+<td style="text-align:left">NSNull</td>
+<td style="text-align:left">[NSNull null]</td>
+<td style="text-align:left">用来表示零值的单独的对象</td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://nshipster.cn/nil/" target="_blank" rel="noopener">nil / Nil / NULL / NSNull</a></li>
+<li><a href="http://magicalboy.com/null-value-in-objective-c/" target="_blank" rel="noopener">Objective C 中的nil，Nil，NULL和NSNull理解</a></li>
+<li><a href="http://blog.csdn.net/wzzvictory/article/details/18413519" target="_blank" rel="noopener">nil/Nil/NULL/NSNull的区别</a></li>
+<li><a href="https://kangzubin.cn/null-and-nil-in-objective-c/#more" target="_blank" rel="noopener">Objective-C 中 NULL、nil、Nil、NSNull 的定义及不同</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/拿来主义/">拿来主义</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/nil/">nil</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/11/13/null-and-nil/" data-title="nil / Nil / NULL / NSNull | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/11/19/NSTimer-1/" title="NSTimer（一）">
+  <strong>上一篇：</strong><br>
+  <span>
+  NSTimer（一）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/05/Block-Chain-Syntax/" title="Objective-C 链式语法的实现">
+ <strong>下一篇：</strong><br> 
+ <span>Objective-C 链式语法的实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

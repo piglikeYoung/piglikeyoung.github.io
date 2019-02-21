@@ -1,0 +1,595 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Moya 源码分析（二） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言上一篇文章《Moya 源码分析（一）》分析了 TargetType，本文将分析 Moya 的核心 Provider MoyaProviderMoyaProvider是Moya的基础，它是你API的端点的管理者。Moya的所有功能都是通过MoyaProvider来使用。 定义MoyaProvider 的定义： 1open class MoyaProvider&amp;lt;Target: TargetT">
+<meta name="keywords" content="Moya">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Moya 源码分析（二）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/09/09/moya-analysis-2/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言上一篇文章《Moya 源码分析（一）》分析了 TargetType，本文将分析 Moya 的核心 Provider MoyaProviderMoyaProvider是Moya的基础，它是你API的端点的管理者。Moya的所有功能都是通过MoyaProvider来使用。 定义MoyaProvider 的定义： 1open class MoyaProvider&amp;lt;Target: TargetT">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-01-20T14:17:11.390Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Moya 源码分析（二）">
+<meta name="twitter:description" content="前言上一篇文章《Moya 源码分析（一）》分析了 TargetType，本文将分析 Moya 的核心 Provider MoyaProviderMoyaProvider是Moya的基础，它是你API的端点的管理者。Moya的所有功能都是通过MoyaProvider来使用。 定义MoyaProvider 的定义： 1open class MoyaProvider&amp;lt;Target: TargetT">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/09/09/moya-analysis-2/" title="Moya 源码分析（二）" itemprop="url">Moya 源码分析（二）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-09-09T09:46:51.000Z" itemprop="datePublished"> 发表于 2017-09-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MoyaProvider"><span class="toc-number">2.</span> <span class="toc-text">MoyaProvider</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义"><span class="toc-number">2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性"><span class="toc-number">2.2.</span> <span class="toc-text">属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EndpointClosure"><span class="toc-number">2.2.1.</span> <span class="toc-text">EndpointClosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RequestClosure"><span class="toc-number">2.2.2.</span> <span class="toc-text">RequestClosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RequestResultClosure"><span class="toc-number">2.2.3.</span> <span class="toc-text">RequestResultClosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StubClosure"><span class="toc-number">2.2.4.</span> <span class="toc-text">StubClosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Manager"><span class="toc-number">2.2.5.</span> <span class="toc-text">Manager</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#requestNormal"><span class="toc-number">2.3.</span> <span class="toc-text">requestNormal</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Endpoint（端点）"><span class="toc-number">3.</span> <span class="toc-text">Endpoint（端点）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Endpoint-urlRequest"><span class="toc-number">3.1.</span> <span class="toc-text">Endpoint.urlRequest</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Endpoint-比较"><span class="toc-number">3.2.</span> <span class="toc-text">Endpoint 比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SampleResponseClosure"><span class="toc-number">3.3.</span> <span class="toc-text">SampleResponseClosure</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇文章<a href="http://piglikeyoung.com/2017/08/27/moya-analysis-1/">《Moya 源码分析（一）》</a>分析了 <strong>TargetType</strong>，本文将分析 Moya 的核心 <strong>Provider</strong></p>
+<h2 id="MoyaProvider"><a href="#MoyaProvider" class="headerlink" title="MoyaProvider"></a>MoyaProvider</h2><p>MoyaProvider是Moya的基础，它是你API的端点的管理者。Moya的所有功能都是通过MoyaProvider来使用。</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>MoyaProvider 的定义：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">MoyaProvider</span>&lt;<span class="title">Target</span>: <span class="title">TargetType</span>&gt;: <span class="title">MoyaProviderType</span></span></span><br></pre></td></tr></table></figure>
+<p>它使用了泛型，接收一个遵守 <strong>TargetType</strong> 的类型，自己遵守了 <strong>MoyaProviderType</strong>协议。</p>
+<p><code>Provider真正做的事情可以用一个流来表示：Target -&gt; Endpoint -&gt; Request</code></p>
+<p>使用Demo的例子来说就是，它将 <strong>GitHubAPI</strong> 转换成 <strong>Endpoint</strong>，再将其转换成 <strong>NSRURLRequest</strong>，最后将这个 <strong>NSRURLRequest</strong> 交给 <strong>Alamofire</strong> 去网络请求。</p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><h4 id="EndpointClosure"><a href="#EndpointClosure" class="headerlink" title="EndpointClosure"></a>EndpointClosure</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Closure that defines the endpoints for the provider.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">EndpointClosure</span> = (<span class="type">Target</span>) -&gt; <span class="type">Endpoint</span>&lt;<span class="type">Target</span>&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>EndpointClosure</strong> 属性是一个闭包，用于让我们对 <strong>Moya</strong> 生成的 <strong>Endpoint</strong> 进行一些我们自己的定制然后返回一个 <strong>Endpoint</strong> 类，例如：我们想增加一个新的HttpHeader：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> endpointClosure = &#123; (target: <span class="type">MyTarget</span>) -&gt; <span class="type">Endpoint</span>&lt;<span class="type">MyTarget</span>&gt; <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">let</span> defaultEndpoint = <span class="type">MoyaProvider</span>.defaultEndpointMapping(<span class="keyword">for</span>: target)</span><br><span class="line">    <span class="keyword">return</span> defaultEndpoint.adding(newHTTPHeaderFields: [<span class="string">"APP_NAME"</span>: <span class="string">"MY_APP"</span>])</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> provider = <span class="type">MoyaProvider</span>&lt;<span class="type">GitHub</span>&gt;(endpointClosure: endpointClosure)</span><br></pre></td></tr></table></figure>
+<p>这个闭包输入一个 <strong>target</strong>，返回 <strong>Endpoint</strong>。就是前面说的 <code>Target -&gt; Endpoint的转换</code></p>
+<blockquote>
+<p>Endpoint 稍后就分析!</p>
+</blockquote>
+<h4 id="RequestClosure"><a href="#RequestClosure" class="headerlink" title="RequestClosure"></a>RequestClosure</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Closure that resolves an `Endpoint` into a `RequestResult`.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">RequestClosure</span> = (<span class="type">Endpoint</span>&lt;<span class="type">Target</span>&gt;, @escaping <span class="type">RequestResultClosure</span>) -&gt; <span class="type">Void</span></span><br></pre></td></tr></table></figure>
+<p>这个闭包就是实现将<code>Endpoint -&gt; NSURLRequest</code>，Moya也提供了一个默认实现：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// MoyaProvider+Defaults.swift</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">defaultRequestMapping</span>(<span class="title">for</span> <span class="title">endpoint</span>: <span class="title">Endpoint</span>&lt;<span class="title">Target</span>&gt;, <span class="title">closure</span>: <span class="title">RequestResultClosure</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> urlRequest = <span class="keyword">try</span> endpoint.urlRequest()</span><br><span class="line">        closure(.success(urlRequest))</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="type">MoyaError</span>.requestMapping(<span class="keyword">let</span> url) &#123;</span><br><span class="line">        closure(.failure(<span class="type">MoyaError</span>.requestMapping(url)))</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="type">MoyaError</span>.parameterEncoding(<span class="keyword">let</span> error) &#123;</span><br><span class="line">        closure(.failure(<span class="type">MoyaError</span>.parameterEncoding(error)))</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        closure(.failure(<span class="type">MoyaError</span>.underlying(error, <span class="literal">nil</span>)))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认实现也只是简单地调用endpoint.urlRequest取得一个NSURLRequest实例。然后调用了closure。然而，你可以在这里修改这个请求Request, 事实上这也是Moya给你的最后的机会。举个例子, 你想禁用所有的cookie，并且设置超时时间等。那么你可以实现这样的闭包：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> requestClosure = &#123; (endpoint: <span class="type">Endpoint</span>&lt;<span class="type">GitHub</span>&gt;, done: <span class="type">MoyaProvider</span>.<span class="type">RequestResultClosure</span>) <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// 可以在这里修改request</span></span><br><span class="line">    <span class="keyword">var</span> request: <span class="type">URLRequest</span> = endpoint.urlRequest</span><br><span class="line">    request.httpShouldHandleCookies = <span class="literal">false</span></span><br><span class="line">    request.timeoutInterval = <span class="number">20</span> </span><br><span class="line"></span><br><span class="line">    done(.success(request))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider = <span class="type">MoyaProvider</span>(requestClosure: requestClosure)</span><br></pre></td></tr></table></figure>
+<h4 id="RequestResultClosure"><a href="#RequestResultClosure" class="headerlink" title="RequestResultClosure"></a>RequestResultClosure</h4><p>创建 requestClosure 时，用到了闭包 RequestResultClosure，它的参数类型是 <code>Result</code>，这是使用了 <strong><a href="https://github.com/antitypical/Result" target="_blank" rel="noopener">Result框架</a></strong>，<strong>用来将throw的方式换成Result&lt;data,error&gt;的方式返回</strong>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Closure that decides if and what request should be performed.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">RequestResultClosure</span> = (<span class="type">Result</span>&lt;<span class="type">URLRequest</span>, <span class="type">MoyaError</span>&gt;) -&gt; <span class="type">Void</span></span><br></pre></td></tr></table></figure>
+<p>从上面可以看出，<strong>EndpointClosure</strong> 和 <strong>RequestClosure</strong> 实现了 Target -&gt; Endpoint -&gt; NSRequest的转换流。</p>
+<h4 id="StubClosure"><a href="#StubClosure" class="headerlink" title="StubClosure"></a>StubClosure</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Closure that decides if/how a request should be stubbed.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">StubClosure</span> = (<span class="type">Target</span>) -&gt; <span class="type">Moya</span>.<span class="type">StubBehavior</span></span><br></pre></td></tr></table></figure>
+<p>这个闭包比较简单，返回一个 <strong>Moya.StubBehavior</strong> 的枚举值。它就是让你告诉Moya你是否使用Stub返回数据或者怎样使用Stub返回数据</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">StubBehavior</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 不使用Stub返回数据</span></span><br><span class="line">    <span class="keyword">case</span> never</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 立即使用Stub返回数据</span></span><br><span class="line">    <span class="keyword">case</span> immediate</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 一段时间间隔后使用Stub返回的数据</span></span><br><span class="line">    <span class="keyword">case</span> delayed(seconds: <span class="type">TimeInterval</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Never  表明不使用Stub来返回模拟的网络数据， Immediate表示马上返回Stub的数据， Delayed  是在几秒后返回。Moya 默认是不使用Stub来测试。</p>
+<p>在 API 中我们给 sampleData 赋值后，这个属性是返回的Stub数据。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">AccountAPI</span>: <span class="title">TargetType</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">var</span> sampleData: <span class="type">NSData</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Login</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"&#123;'code': 400, 'Token':'123455'&#125;"</span>.dataUsingEncoding(<span class="type">NSUTF8StringEncoding</span>)!</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Register</span>(<span class="keyword">let</span> userName, <span class="keyword">let</span> passwd):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"找不到数据"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> endPointAction = &#123; (target: <span class="type">TargetType</span>) -&gt; <span class="type">Endpoint</span>&lt;<span class="type">AccountAPI</span>&gt; <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">let</span> url = target.baseURL.<span class="type">URLByAppendingPathComponent</span>(target.path).absoluteString</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> target &#123;</span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Login</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Endpoint</span>(<span class="type">URL</span>: url, sampleResponseClosure: &#123;.<span class="type">NetworkResponse</span>(<span class="number">200</span>, target.sampleData)&#125;, method: target.method, parameters: target.parameters)</span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Register</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Endpoint</span>(<span class="type">URL</span>: url, sampleResponseClosure: &#123;.<span class="type">NetworkResponse</span>(<span class="number">404</span>, target.sampleData)&#125;, method: target.method, parameters: target.parameters)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> stubAction: (type: <span class="type">AccountAPI</span>) -&gt; <span class="type">Moya</span>.<span class="type">StubBehavior</span>  = &#123; type <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">switch</span> type &#123;</span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Login</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Moya</span>.<span class="type">StubBehavior</span>.<span class="type">Immediate</span></span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Register</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Moya</span>.<span class="type">StubBehavior</span>.<span class="type">Delayed</span>(seconds: <span class="number">3</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> loginAPIProvider = <span class="type">MoyaProvider</span>&lt;<span class="type">AccountAPI</span>&gt;(</span><br><span class="line">    endpointClosure: endPointAction,</span><br><span class="line">    stubClosure: stubAction</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">loginAPIProvider.request(<span class="type">AccountAPI</span>.<span class="type">Login</span>(userName: <span class="string">"user"</span>, passwd: <span class="string">"123456"</span>)) &#123; (result) <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">switch</span> result &#123;</span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Success</span>(<span class="keyword">let</span> respones) :</span><br><span class="line">        <span class="built_in">print</span>(respones)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> .<span class="type">Failure</span>(<span class="number">_</span>) :</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"We got an error"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就实现了一个 Stub。<br>Login 和 Register 都使用了Stub返回的数据。</p>
+<blockquote>
+<p>注意：Moya中Provider对象在销毁的时候会去Cancel网络请求。为了得到正确的结果，你必须保证在网络请求的时候你的Provider不会被释放。否者你会得到下面的错误 “But don’t forget to keep a reference for it in property. If it gets deallocated you’ll see -999 “cancelled” error on response” 。通常为了避免这种情况，你可以将Provider实例设置为类成员变量，或者shared实例</p>
+</blockquote>
+<h4 id="Manager"><a href="#Manager" class="headerlink" title="Manager"></a>Manager</h4><p>Moya 并不是一个网络请求的三方库，它只是一个抽象的网络层。它对其他网络库的进行了桥接，真正进行网络请求是别人的网络库（比如默认的Alamofire.Manager） </p>
+<p>Moya 为此做了几件事情：</p>
+<p>首先抽象了一个RequestType协议，利用这个协议将Alamofire隐藏了起来，让Provider类依赖于这个协议，而不是具体细节。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Plugin.swift</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">RequestType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Note:</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// We use this protocol instead of the Alamofire request to avoid leaking that abstraction.</span></span><br><span class="line">    <span class="comment">// A plugin should not know about Alamofire at all.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Retrieve an `NSURLRequest` representation.</span></span><br><span class="line">    <span class="keyword">var</span> request: <span class="type">URLRequest?</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Authenticates the request with a username and password.</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">authenticate</span><span class="params">(user: String, password: String, persistence: URLCredential.Persistence)</span></span> -&gt; <span class="type">Self</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Authenticates the request with an `NSURLCredential` instance.</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">authenticate</span><span class="params">(usingCredential credential: URLCredential)</span></span> -&gt; <span class="type">Self</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后让Moya.Manager == Alamofire.Manager，并且让Alamofire.Manager也实现RequestType协议</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Moya+Alamofire.swift</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">Manager</span> = <span class="type">Alamofire</span>.<span class="type">SessionManager</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/// Choice of parameter encoding.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">ParameterEncoding</span> = <span class="type">Alamofire</span>.<span class="type">ParameterEncoding</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 让Alamofire.Request也实现 RequestType协议</span></span><br><span class="line"><span class="keyword">internal</span> <span class="keyword">typealias</span> <span class="type">Request</span> = <span class="type">Alamofire</span>.<span class="type">Request</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Request</span>: <span class="title">RequestType</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>上面几步，就完成了Alamofire的封装、桥接。正因为桥接封装了Alamofire, 因此Moya的request,最终一定会调用Alamofire的request。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Moya+Internal.swift</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendRequest</span><span class="params">(<span class="number">_</span> target: Target, request: URLRequest, callbackQueue: DispatchQueue?, progress: Moya.ProgressBlock?, completion: @escaping Moya.Completion)</span></span> -&gt; <span class="type">CancellableToken</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> initialRequest = manager.request(request <span class="keyword">as</span> <span class="type">URLRequestConvertible</span>)</span><br><span class="line">        <span class="keyword">let</span> alamoRequest = target.validate ? initialRequest.validate() : initialRequest</span><br><span class="line">        <span class="keyword">return</span> sendAlamofireRequest(alamoRequest, target: target, callbackQueue: callbackQueue, progress: progress, completion: completion)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 Moya 的 <strong>sendRequest</strong> 方法中就是用 <code>manager</code> 去发送请求（默认是 Alamofire）</p>
+<p>如果你想自定义你自己的 Manager, 你可以传入你自己的 Manager 到 Privoder。之后所有的请求都会经过你的这个 Manager 。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> policies: [<span class="type">String</span>: <span class="type">ServerTrustPolicy</span>] = [</span><br><span class="line">    <span class="string">"example.com"</span>: .<span class="type">PinPublicKeys</span>(</span><br><span class="line">        publicKeys: <span class="type">ServerTrustPolicy</span>.publicKeysInBundle(),</span><br><span class="line">        validateCertificateChain: <span class="literal">true</span>,</span><br><span class="line">        validateHost: <span class="literal">true</span></span><br><span class="line">    )</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> manager = <span class="type">Manager</span>(</span><br><span class="line">    configuration: <span class="type">NSURLSessionConfiguration</span>.defaultSessionConfiguration(),</span><br><span class="line">    serverTrustPolicyManager: <span class="type">ServerTrustPolicyManager</span>(policies: policies)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> provider = <span class="type">MoyaProvider</span>&lt;<span class="type">MyTarget</span>&gt;(manager: manager)</span><br></pre></td></tr></table></figure>
+<h3 id="requestNormal"><a href="#requestNormal" class="headerlink" title="requestNormal"></a>requestNormal</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">requestNormal</span><span class="params">(<span class="number">_</span> target: Target, callbackQueue: DispatchQueue?, progress: Moya.ProgressBlock?, completion: @escaping Moya.Completion)</span></span> -&gt; <span class="type">Cancellable</span> &#123;</span><br><span class="line">    <span class="comment">/// 生成端点</span></span><br><span class="line">    <span class="keyword">let</span> endpoint = <span class="keyword">self</span>.endpoint(target)</span><br><span class="line">    <span class="comment">/// 生成测试表现</span></span><br><span class="line">    <span class="keyword">let</span> stubBehavior = <span class="keyword">self</span>.stubClosure(target)</span><br><span class="line">    <span class="comment">/// 生成取消请求的Token</span></span><br><span class="line">    <span class="keyword">let</span> cancellableToken = <span class="type">CancellableWrapper</span>()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Allow plugins to modify response</span></span><br><span class="line">    <span class="comment">/// 通过自定义的插件完善请求回调的闭包</span></span><br><span class="line">    <span class="keyword">let</span> pluginsWithCompletion: <span class="type">Moya</span>.<span class="type">Completion</span> = &#123; result <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">let</span> processedResult = <span class="keyword">self</span>.plugins.<span class="built_in">reduce</span>(result) &#123; $<span class="number">1</span>.process($<span class="number">0</span>, target: target) &#125;</span><br><span class="line">        completion(processedResult)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 是否最终运行中的请求</span></span><br><span class="line">    <span class="keyword">if</span> trackInflights &#123;</span><br><span class="line">        <span class="comment">/// 进入原子锁</span></span><br><span class="line">        objc_sync_enter(<span class="keyword">self</span>)</span><br><span class="line">        <span class="comment">/// 保存请求Endpoint</span></span><br><span class="line">        <span class="keyword">var</span> inflightCompletionBlocks = <span class="keyword">self</span>.inflightRequests[endpoint]</span><br><span class="line">        inflightCompletionBlocks?.append(pluginsWithCompletion)</span><br><span class="line">        <span class="keyword">self</span>.inflightRequests[endpoint] = inflightCompletionBlocks</span><br><span class="line">        <span class="comment">/// 退出原子锁</span></span><br><span class="line">        objc_sync_exit(<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">/// 如果有正在运行中的CompletionBlock则取消本次请求，反之则记录本次请求</span></span><br><span class="line">        <span class="keyword">if</span> inflightCompletionBlocks != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> cancellableToken</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            objc_sync_enter(<span class="keyword">self</span>)</span><br><span class="line">            <span class="keyword">self</span>.inflightRequests[endpoint] = [pluginsWithCompletion]</span><br><span class="line">            objc_sync_exit(<span class="keyword">self</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 准备请求工作</span></span><br><span class="line">    <span class="keyword">let</span> performNetworking = &#123; (requestResult: <span class="type">Result</span>&lt;<span class="type">URLRequest</span>, <span class="type">MoyaError</span>&gt;) <span class="keyword">in</span></span><br><span class="line">        <span class="comment">/// 如果本次请求被取消了则返回</span></span><br><span class="line">        <span class="keyword">if</span> cancellableToken.isCancelled &#123;</span><br><span class="line">            <span class="keyword">self</span>.cancelCompletion(pluginsWithCompletion, target: target)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> request: <span class="type">URLRequest!</span></span><br><span class="line">        <span class="comment">/// 模式匹配取出request</span></span><br><span class="line">        <span class="keyword">switch</span> requestResult &#123;</span><br><span class="line">        <span class="keyword">case</span> .success(<span class="keyword">let</span> urlRequest):</span><br><span class="line">            request = urlRequest</span><br><span class="line">        <span class="keyword">case</span> .failure(<span class="keyword">let</span> error):</span><br><span class="line">            pluginsWithCompletion(.failure(error))</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Allow plugins to modify request</span></span><br><span class="line">        <span class="comment">// 通过自定义插件完善请求的闭包</span></span><br><span class="line">        <span class="keyword">let</span> preparedRequest = <span class="keyword">self</span>.plugins.<span class="built_in">reduce</span>(request) &#123; $<span class="number">1</span>.prepare($<span class="number">0</span>, target: target) &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> networkCompletion: <span class="type">Moya</span>.<span class="type">Completion</span> = &#123; result <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">if</span> <span class="keyword">self</span>.trackInflights &#123;</span><br><span class="line">            <span class="keyword">self</span>.inflightRequests[endpoint]?.forEach &#123; $<span class="number">0</span>(result) &#125;</span><br><span class="line"></span><br><span class="line">            objc_sync_enter(<span class="keyword">self</span>)</span><br><span class="line">            <span class="keyword">self</span>.inflightRequests.removeValue(forKey: endpoint)</span><br><span class="line">            objc_sync_exit(<span class="keyword">self</span>)</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            pluginsWithCompletion(result)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cancellableToken.innerCancellable = <span class="keyword">self</span>.performRequest(target, request: preparedRequest, callbackQueue: callbackQueue, progress: progress, completion: networkCompletion, endpoint: endpoint, stubBehavior: stubBehavior)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    requestClosure(endpoint, performNetworking)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cancellableToken</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Endpoint（端点）"><a href="#Endpoint（端点）" class="headerlink" title="Endpoint（端点）"></a>Endpoint（端点）</h2><p>通过 MoyaProvider 产生了一个 API Endpoint，然后通过这个 <strong>Endpoint</strong> 发起请求。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Endpoint</span>&lt;<span class="title">Target</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">typealias</span> <span class="type">SampleResponseClosure</span> = () -&gt; <span class="type">EndpointSampleResponse</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// A string representation of the URL for the request.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">let</span> url: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// A closure responsible for returning an `EndpointSampleResponse`.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">let</span> sampleResponseClosure: <span class="type">SampleResponseClosure</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The HTTP method for the request.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">let</span> method: <span class="type">Moya</span>.<span class="type">Method</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The `Task` for the request.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">let</span> task: <span class="type">Task</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The HTTP header fields for the request.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">let</span> httpHeaderFields: [<span class="type">String</span>: <span class="type">String</span>]?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(url: <span class="type">String</span>,</span><br><span class="line">                sampleResponseClosure: @escaping <span class="type">SampleResponseClosure</span>,</span><br><span class="line">                method: <span class="type">Moya</span>.<span class="type">Method</span>,</span><br><span class="line">                task: <span class="type">Task</span>,</span><br><span class="line">                httpHeaderFields: [<span class="type">String</span>: <span class="type">String</span>]?) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.url = url</span><br><span class="line">        <span class="keyword">self</span>.sampleResponseClosure = sampleResponseClosure</span><br><span class="line">        <span class="keyword">self</span>.method = method</span><br><span class="line">        <span class="keyword">self</span>.task = task</span><br><span class="line">        <span class="keyword">self</span>.httpHeaderFields = httpHeaderFields</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Convenience method for creating a new `Endpoint` with the same properties as the receiver, but with added HTTP header fields.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">adding</span><span class="params">(newHTTPHeaderFields: [String: String])</span></span> -&gt; <span class="type">Endpoint</span>&lt;<span class="type">Target</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Endpoint</span>(url: url, sampleResponseClosure: sampleResponseClosure, method: method, task: task, httpHeaderFields: add(httpHeaderFields: newHTTPHeaderFields))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Convenience method for creating a new `Endpoint` with the same properties as the receiver, but with replaced `task` parameter.</span></span><br><span class="line">    <span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">replacing</span><span class="params">(task: Task)</span></span> -&gt; <span class="type">Endpoint</span>&lt;<span class="type">Target</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Endpoint</span>(url: url, sampleResponseClosure: sampleResponseClosure, method: method, task: task, httpHeaderFields: httpHeaderFields)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(httpHeaderFields headers: [String: String]?)</span></span> -&gt; [<span class="type">String</span>: <span class="type">String</span>]? &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> unwrappedHeaders = headers, unwrappedHeaders.isEmpty == <span class="literal">false</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">self</span>.httpHeaderFields</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> newHTTPHeaderFields = <span class="keyword">self</span>.httpHeaderFields ?? [:]</span><br><span class="line">        unwrappedHeaders.forEach &#123; key, value <span class="keyword">in</span></span><br><span class="line">            newHTTPHeaderFields[key] = value</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> newHTTPHeaderFields</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Endpoint 包含着我们这次请求的所有信息。</p>
+<h3 id="Endpoint-urlRequest"><a href="#Endpoint-urlRequest" class="headerlink" title="Endpoint.urlRequest"></a>Endpoint.urlRequest</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Endpoint</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// Returns the `Endpoint` converted to a `URLRequest` if valid. Throws an error otherwise.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">urlRequest</span><span class="params">()</span></span> <span class="keyword">throws</span> -&gt; <span class="type">URLRequest</span> &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> requestURL = <span class="type">Foundation</span>.<span class="type">URL</span>(string: url) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">MoyaError</span>.requestMapping(url)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> request = <span class="type">URLRequest</span>(url: requestURL)</span><br><span class="line">        request.httpMethod = method.rawValue</span><br><span class="line">        request.allHTTPHeaderFields = httpHeaderFields</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> task &#123;</span><br><span class="line">        <span class="keyword">case</span> .requestPlain, .uploadFile, .uploadMultipart, .downloadDestination:</span><br><span class="line">            <span class="keyword">return</span> request</span><br><span class="line">        <span class="keyword">case</span> .requestData(<span class="keyword">let</span> data):</span><br><span class="line">            request.httpBody = data</span><br><span class="line">            <span class="keyword">return</span> request</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .requestJSONEncodable(encodable):</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> request.encoded(encodable: encodable)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .requestParameters(parameters, parameterEncoding):</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> request.encoded(parameters: parameters, parameterEncoding: parameterEncoding)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .uploadCompositeMultipart(<span class="number">_</span>, urlParameters):</span><br><span class="line">            <span class="keyword">let</span> parameterEncoding = <span class="type">URLEncoding</span>(destination: .queryString)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> request.encoded(parameters: urlParameters, parameterEncoding: parameterEncoding)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .downloadParameters(parameters, parameterEncoding, <span class="number">_</span>):</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> request.encoded(parameters: parameters, parameterEncoding: parameterEncoding)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .requestCompositeData(bodyData: bodyData, urlParameters: urlParameters):</span><br><span class="line">            request.httpBody = bodyData</span><br><span class="line">            <span class="keyword">let</span> parameterEncoding = <span class="type">URLEncoding</span>(destination: .queryString)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> request.encoded(parameters: urlParameters, parameterEncoding: parameterEncoding)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .requestCompositeParameters(bodyParameters: bodyParameters, bodyEncoding: bodyParameterEncoding, urlParameters: urlParameters):</span><br><span class="line">            <span class="keyword">if</span> bodyParameterEncoding <span class="keyword">is</span> <span class="type">URLEncoding</span> &#123; <span class="built_in">fatalError</span>(<span class="string">"URLEncoding is disallowed as bodyEncoding."</span>) &#125;</span><br><span class="line">            <span class="keyword">let</span> bodyfulRequest = <span class="keyword">try</span> request.encoded(parameters: bodyParameters, parameterEncoding: bodyParameterEncoding)</span><br><span class="line">            <span class="keyword">let</span> urlEncoding = <span class="type">URLEncoding</span>(destination: .queryString)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">try</span> bodyfulRequest.encoded(parameters: urlParameters, parameterEncoding: urlEncoding)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码可以知道 通过 <strong>urlRequest()</strong> 将 <code>Endpoint</code> 转换为一个 <code>URLRequest</code></p>
+<h3 id="Endpoint-比较"><a href="#Endpoint-比较" class="headerlink" title="Endpoint 比较"></a>Endpoint 比较</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Endpoint</span>: <span class="title">Equatable</span>, <span class="title">Hashable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> hashValue: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> request = <span class="keyword">try</span>? urlRequest()</span><br><span class="line">        <span class="keyword">return</span> request?.hashValue ?? url.hashValue</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Note: If both Endpoints fail to produce a URLRequest the comparison will</span></span><br><span class="line">    <span class="comment">/// fall back to comparing each Endpoint's hashValue.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> == &lt;T&gt;<span class="params">(lhs: Endpoint&lt;T&gt;, rhs: Endpoint&lt;T&gt;)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> lhsRequest = <span class="keyword">try</span>? lhs.urlRequest()</span><br><span class="line">        <span class="keyword">let</span> rhsRequest = <span class="keyword">try</span>? rhs.urlRequest()</span><br><span class="line">        <span class="keyword">if</span> lhsRequest != <span class="literal">nil</span>, rhsRequest == <span class="literal">nil</span> &#123; <span class="keyword">return</span> <span class="literal">false</span> &#125;</span><br><span class="line">        <span class="keyword">if</span> lhsRequest == <span class="literal">nil</span>, rhsRequest != <span class="literal">nil</span> &#123; <span class="keyword">return</span> <span class="literal">false</span> &#125;</span><br><span class="line">        <span class="keyword">if</span> lhsRequest == <span class="literal">nil</span>, rhsRequest == <span class="literal">nil</span> &#123; <span class="keyword">return</span> lhs.hashValue == rhs.hashValue &#125;</span><br><span class="line">        <span class="keyword">return</span> (lhsRequest == rhsRequest)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遵守 <strong>Equatable</strong> 和 <strong>Hashable</strong> 协议并实现响应方法即可为自己的类提供==比较方法.这个对比方法用来追踪已经在请求中的request。排除多次无用请求。</p>
+<p>Moya 提供了一个默认的 <strong>EndpointClosure</strong> 的函数，来实现这个Target到Endpoint的转换：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">defaultEndpointMapping</span>(<span class="title">for</span> <span class="title">target</span>: <span class="title">Target</span>) -&gt; <span class="title">Endpoint</span>&lt;<span class="title">Target</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Endpoint</span>(</span><br><span class="line">        url: <span class="type">URL</span>(target: target).absoluteString,</span><br><span class="line">        sampleResponseClosure: &#123; .networkResponse(<span class="number">200</span>, target.sampleData) &#125;,</span><br><span class="line">        method: target.method,</span><br><span class="line">        task: target.task,</span><br><span class="line">        httpHeaderFields: target.headers</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="SampleResponseClosure"><a href="#SampleResponseClosure" class="headerlink" title="SampleResponseClosure"></a>SampleResponseClosure</h3><p>Endpoint 有一个叫做 SampleResponseClosure 的 Enum，用来返回定制的测试networkResponse。比如特定的StautsCode之类的。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Used for stubbing responses.</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">EndpointSampleResponse</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The network returned a response, including status code and data.</span></span><br><span class="line">    <span class="keyword">case</span> networkResponse(<span class="type">Int</span>, <span class="type">Data</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The network returned response which can be fully customized.</span></span><br><span class="line">    <span class="keyword">case</span> response(<span class="type">HTTPURLResponse</span>, <span class="type">Data</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The network failed to send the request, or failed to retrieve a response (eg a timeout).</span></span><br><span class="line">    <span class="keyword">case</span> networkError(<span class="type">NSError</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><p><strong>endpointClosure</strong>、<strong>requestClosure</strong>、<strong>stubClosure</strong>，这3个Closure是让我们定制请求、响应和进行测试时的回调，非常有用。</p>
+</li>
+<li><p><strong>Manager</strong> 是真正用来网络请求的类，Moya 自己并不提供 Manager 类，Moya只是对其他网络请求类进行了简单的桥接。这么做是为了让调用方可以轻易地定制、更换网络请求的库。比如你不想用Alamofire，可以十分简单的换成其他库。</p>
+</li>
+<li><p><strong>PluginType</strong> 数组。Moya 提供了一个插件机制，使我们可以建立自己的插件类来做一些额外的事情。比如写Log，显示“菊花”等。抽离出Plugin层的目的，就是让Provider职责单一，满足开闭原则。把和自己网络无关的行为抽离。避免各种业务揉在一起不利于扩展。</p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Source-Code-Analyze/">Source Code Analyze</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Moya/">Moya</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/09/09/moya-analysis-2/" data-title="Moya 源码分析（二） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/10/28/moya-analysis-3/" title="Moya 源码分析（三）">
+  <strong>上一篇：</strong><br>
+  <span>
+  Moya 源码分析（三）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/08/27/moya-analysis-1/" title="Moya 源码分析（一）">
+ <strong>下一篇：</strong><br> 
+ <span>Moya 源码分析（一）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,593 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>《Swifter - Swift 必备 Tips》总结（一） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言本篇文章是对 王巍 (@onevcat) 的著作《Swifter - Swift 必备 Tips》的个人阅读总结和代码片段记录。 正则表达式Swift 至今为止并没有在语言层面上支持正则表达式。我们可以使用 Cocoa 中的 NSRegularExpression 来做正则匹配。 一个最简单的实现： 123456789101112struct RegexHelper &amp;#123;    let">
+<meta name="keywords" content="Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Swifter - Swift 必备 Tips》总结（一）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/11/11/2017-11-11-swifter-tips-summary-1/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言本篇文章是对 王巍 (@onevcat) 的著作《Swifter - Swift 必备 Tips》的个人阅读总结和代码片段记录。 正则表达式Swift 至今为止并没有在语言层面上支持正则表达式。我们可以使用 Cocoa 中的 NSRegularExpression 来做正则匹配。 一个最简单的实现： 123456789101112struct RegexHelper &amp;#123;    let">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-02T03:30:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Swifter - Swift 必备 Tips》总结（一）">
+<meta name="twitter:description" content="前言本篇文章是对 王巍 (@onevcat) 的著作《Swifter - Swift 必备 Tips》的个人阅读总结和代码片段记录。 正则表达式Swift 至今为止并没有在语言层面上支持正则表达式。我们可以使用 Cocoa 中的 NSRegularExpression 来做正则匹配。 一个最简单的实现： 123456789101112struct RegexHelper &amp;#123;    let">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/11/2017-11-11-swifter-tips-summary-1/" title="《Swifter - Swift 必备 Tips》总结（一）" itemprop="url">《Swifter - Swift 必备 Tips》总结（一）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-11-11T07:50:51.000Z" itemprop="datePublished"> 发表于 2017-11-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正则表达式"><span class="toc-number">2.</span> <span class="toc-text">正则表达式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单例"><span class="toc-number">3.</span> <span class="toc-text">单例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#条件编译"><span class="toc-number">4.</span> <span class="toc-text">条件编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译标记"><span class="toc-number">5.</span> <span class="toc-text">编译标记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存管理，weak-和-unowned"><span class="toc-number">6.</span> <span class="toc-text">内存管理，weak 和 unowned</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值类型和引用类型"><span class="toc-number">7.</span> <span class="toc-text">值类型和引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String-还是-NSString"><span class="toc-number">8.</span> <span class="toc-text">String 还是 NSString</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD-和延时调用"><span class="toc-number">9.</span> <span class="toc-text">GCD 和延时调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调用C动态库"><span class="toc-number">10.</span> <span class="toc-text">调用C动态库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输出格式化"><span class="toc-number">11.</span> <span class="toc-text">输出格式化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组-enumerate"><span class="toc-number">12.</span> <span class="toc-text">数组 enumerate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">13.</span> <span class="toc-text">小结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇文章是对 <a href="https://onevcat.com/" target="_blank" rel="noopener">王巍 (@onevcat)</a> 的著作<a href="https://onev.cat/publication/swifter/" target="_blank" rel="noopener">《Swifter - Swift 必备 Tips》</a>的个人阅读总结和代码片段记录。</p>
+<h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p>Swift 至今为止并没有在语言层面上支持正则表达式。我们可以使用 Cocoa 中的 <strong>NSRegularExpression</strong> 来做正则匹配。</p>
+<p>一个最简单的实现：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">RegexHelper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> regex: <span class="type">NSRegularExpression</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(<span class="number">_</span> pattern: <span class="type">String</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> regex = <span class="type">NSRegularExpression</span>(pattern: pattern, options: .caseInsensitive)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">match</span><span class="params">(<span class="number">_</span> input: String)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> matches = regex.matches(<span class="keyword">in</span>: input, options: [], range: <span class="type">NSMakeRange</span>(<span class="number">0</span>, input.utf16.<span class="built_in">count</span>))</span><br><span class="line">        <span class="keyword">return</span> matches.<span class="built_in">count</span> &gt; <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mailPattern = <span class="string">"^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]&#123;2,6&#125;)$"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> matcher: <span class="type">RegexHelper</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    matcher = <span class="keyword">try</span> <span class="type">RegexHelper</span>(mailPattern)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> maybeMailAddress = <span class="string">"onev@onevcat.com"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> matcher.match(maybeMailAddress) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"有效的邮箱地址"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一个很棒的正则表达式文章<a href="https://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="noopener">《正则表达式 30 分钟入门教程》</a>，还有<a href="https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149" target="_blank" rel="noopener">《8个常用正则表达式》</a></p>
+</blockquote>
+<p>现在有了方便的封装，使用 <strong>=~</strong> 来实现：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">precedencegroup <span class="type">MatchPrecedence</span> &#123;</span><br><span class="line">    <span class="keyword">associativity</span>: <span class="keyword">none</span></span><br><span class="line">    higherThan: <span class="type">DefaultPrecedence</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">infix</span> <span class="keyword">operator</span> =~: <span class="type">MatchPrecedence</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> =~<span class="params">(lhs: String, rhs: String)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">try</span> <span class="type">RegexHelper</span>(rhs).match(lhs)</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="number">_</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="string">"onev@onevcat.com"</span> =~</span><br><span class="line"><span class="string">"^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]&#123;2,6&#125;)$"</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"有效的邮箱地址"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h2><p>在 Objective-C 中单例的公认写法类似这样：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">MyManager</span></span></span><br><span class="line">+ (<span class="keyword">id</span>)sharedManager &#123;</span><br><span class="line">    <span class="keyword">static</span> MyManager * staticInstance = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        staticInstance = [[<span class="keyword">self</span> alloc] init];</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> staticInstance;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>Swift 1.2 之后支持了 class 的 static let 和 static var 这样的存储变量后，有个推荐的写法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyManager</span>  </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared = <span class="type">MyManager</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>私有初始化方法，是让项目其他地方不能够通过 <strong>init</strong> 来生成自己的 <strong>MyManager</strong> 实例，保证了类型单例的唯一性。如果你需要的是类似 <strong>default</strong> 的形式的单例（也就是说这个类的使用者可以创建自己的实例）的话，可以去掉这个私有的 <strong>init</strong> 方法。</p>
+<h2 id="条件编译"><a href="#条件编译" class="headerlink" title="条件编译"></a>条件编译</h2><p>Swift 中没有宏定义的概念，因此我们不能使用 <strong>#ifdef</strong> 的方法来检查某个符号是否经过宏定义。为了控制编译流程和内容，Swift 还是提供了几种简答的机制来根据需求定制编译内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#if &lt;condition&gt;</span><br><span class="line"></span><br><span class="line">#elseif &lt;condition&gt;</span><br><span class="line"></span><br><span class="line">#else</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+<p>使用例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@IBAction func someButtonPressed(sender: AnyObject!) &#123;</span><br><span class="line">    #if FREE_VERSION</span><br><span class="line">        // 弹出购买提示，导航至商店等</span><br><span class="line">    #else</span><br><span class="line">        // 实际功能</span><br><span class="line">    #endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>FREE_VERSION</strong> 这个编译符号代表免费版本，我们需要在项目的编一个选项中进行设置，在项目的 Build Settings 中，找到 Swift Compiler - Custom Flags，并在其中的 Other Swift Flags 加上 <strong>-D FREE_VERSION</strong> 就可以了。</p>
+<h2 id="编译标记"><a href="#编译标记" class="headerlink" title="编译标记"></a>编译标记</h2><p>在 Objective-C 中，我们经常插入 <strong>#param</strong> 来标记代码的间距。Swift 中也有类似的标记：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MARK:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// <span class="doctag">TODO:</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// <span class="doctag">FIXME:</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="内存管理，weak-和-unowned"><a href="#内存管理，weak-和-unowned" class="headerlink" title="内存管理，weak 和 unowned"></a>内存管理，weak 和 unowned</h2><p><strong>unowned</strong> 更像以前的 <strong>unsafe_unretained</strong>，而 <strong>weak</strong> 就是以前的 <strong>weak</strong>。用通俗的话说，就是 unowned 设置以后即使它原来引用的内容已经被释放了，它仍然会保持对被已经释放了的对象的一个 “无效的” 引用，它不能是 Optional 值，也不会被指向 nil。如果你尝试调用这个引用的方法或者访问成员属性的话，程序就会崩溃。而 weak 则友好一些，在引用的内容被释放后，标记为 weak 的成员将会自动地变成 nil (因此被标记为@weak 的变量一定需要是 Optional 值)。</p>
+<p>关于两者使用的选择，Apple 给我们的建议是如果能够确定在访问时不会已被释放的话，尽量使用 unowned，如果存在被释放的可能，那就选择用 weak。</p>
+<h2 id="值类型和引用类型"><a href="#值类型和引用类型" class="headerlink" title="值类型和引用类型"></a>值类型和引用类型</h2><p>Swift 中的 struct 和 enum 定义的类型是值类型，使用 class 定义的为引用类型。很有意思的是，Swift 中的所有的内建类型都是值类型，不仅包括了传统意义像 Int，Bool 这些，甚至连 String，Array 以及 Dictionary 都是值类型的。</p>
+<p>在使用数组和字典时的最佳实践应该是，按照具体的数据规模和操作特点来决定到时是使用值类型的容器还是引用类型的容器：在需要处理大量数据并且频繁操作 (增减) 其中元素时，选择 NSMutableArray 和 NSMutableDictionary 会更好，而对于容器内条目小而容器本身数目多的情况，应该使用 Swift 语言内建的 Array 和 Dictionary。</p>
+<h2 id="String-还是-NSString"><a href="#String-还是-NSString" class="headerlink" title="String 还是 NSString"></a>String 还是 NSString</h2><p>没有什么特别需要注意的话，尽量使用原生的 <strong>String</strong> 类型。</p>
+<p>具体原因查阅原文。</p>
+<p>String 唯一一个比较麻烦的地方在于它和 <strong>Range</strong> 的配合。在 NSString 中，我们在匹配字符串的时候通常使用 NSRange 来表征结果或者作为输入。而在使用 String 的对应的 API 时，NSRange 也会被映射成它在 Swift 中且对应 String 的特殊版本：<strong>Range&lt;String.Index&gt;</strong>。这有时候会让人非常讨厌： </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> levels = <span class="string">"ABCDE"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> nsRange = <span class="type">NSMakeRange</span>(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"><span class="comment">// 编译错误</span></span><br><span class="line"><span class="comment">// Cannot convert value of type `NSRanve` to expected argument type 'Range&lt;Index&gt;'</span></span><br><span class="line">levels.replacingCharacters(<span class="keyword">in</span>: nsRange, with: <span class="string">"AAAA"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> indexPositionOne = levels.index(levels.startIndex, offsetBy: <span class="number">1</span>)</span><br><span class="line"><span class="keyword">let</span> swiftRange = indexPositionOne ..&lt; levels.index(levels.startIndex, offsetBy: <span class="number">5</span>)</span><br><span class="line">levels.replacingCharacters(<span class="keyword">in</span>: swiftRange, with: <span class="string">"AAAA"</span>)</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// AAAAA</span></span><br></pre></td></tr></table></figure>
+<p>这样太麻烦了，这种情况下，将 <strong>string</strong> 转为 <strong>NSString</strong> 也许是个不错的选择：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> nsRange = <span class="type">NSMakeRange</span>(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">(levels <span class="keyword">as</span> <span class="type">NSString</span>).replacingCharacters(<span class="keyword">in</span>: nsRange, with: <span class="string">"AAAA"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="GCD-和延时调用"><a href="#GCD-和延时调用" class="headerlink" title="GCD 和延时调用"></a>GCD 和延时调用</h2><p>GCD 里面有一个很好用的延时调用：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> time: <span class="type">TimeInterval</span> = <span class="number">2.0</span></span><br><span class="line"><span class="type">DispatchQueue</span>.main.asyncAfter(deadline: <span class="type">DispatchTime</span>.now() + time) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"2秒后输出"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>👆代码非常简单，但是还可以稍微封装下，最好加上取消功能：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">Task</span> = (<span class="number">_</span> cancel : <span class="type">Bool</span>) -&gt; <span class="type">Void</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">delay</span><span class="params">(<span class="number">_</span> time: TimeInterval, task: @escaping <span class="params">()</span></span></span>-&gt;()) -&gt;  <span class="type">Task?</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">dispatch_later</span><span class="params">(block: @escaping <span class="params">()</span></span></span>-&gt;()) &#123;</span><br><span class="line">        <span class="keyword">let</span> t = <span class="type">DispatchTime</span>.now() + time</span><br><span class="line">        <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: t, execute: block)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> closure: (()-&gt;<span class="type">Void</span>)? = task</span><br><span class="line">    <span class="keyword">var</span> result: <span class="type">Task?</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> delayedClosure: <span class="type">Task</span> = &#123;</span><br><span class="line">        cancel <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> internalClosure = closure &#123;</span><br><span class="line">            <span class="keyword">if</span> (cancel == <span class="literal">false</span>) &#123;</span><br><span class="line">                <span class="type">DispatchQueue</span>.main.async(execute: internalClosure)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        closure = <span class="literal">nil</span></span><br><span class="line">        result = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    result = delayedClosure</span><br><span class="line">    </span><br><span class="line">    dispatch_later &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> delayedClosure = result &#123;</span><br><span class="line">            delayedClosure(<span class="literal">false</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">cancel</span><span class="params">(<span class="number">_</span> task: Task?)</span></span> &#123;</span><br><span class="line">    task?(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">delay(<span class="number">2</span>) &#123; <span class="built_in">print</span>(<span class="string">"2 秒后输出"</span>) &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> task = delay(<span class="number">5</span>) &#123; <span class="built_in">print</span>(<span class="string">"拨打 110"</span>) &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 仔细想一想..</span></span><br><span class="line"><span class="comment">// 还是取消为妙..</span></span><br><span class="line">cancel(task)</span><br></pre></td></tr></table></figure>
+<h2 id="调用C动态库"><a href="#调用C动态库" class="headerlink" title="调用C动态库"></a>调用C动态库</h2><p>生成 <strong>MD5</strong> 密钥：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TargetName-Bridging-Header.h</span></span><br><span class="line">#<span class="keyword">import</span> &lt;CommonCrypto/CommonCrypto.h&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// StringMD5.swift</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">String</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="type">MD5</span>: <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> digest = [<span class="type">UInt8</span>](repeating: <span class="number">0</span>, <span class="built_in">count</span>: <span class="type">Int</span>(<span class="type">CC_MD5_DIGEST_LENGTH</span>))</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> data = data(using: .utf8) &#123;</span><br><span class="line">            data.withUnsafeBytes &#123; (bytes: <span class="type">UnsafePointer</span>&lt;<span class="type">UInt8</span>&gt;) -&gt; <span class="type">Void</span> <span class="keyword">in</span></span><br><span class="line">                <span class="type">CC_MD5</span>(bytes, <span class="type">CC_LONG</span>(data.<span class="built_in">count</span>), &amp;digest)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> digestHex = <span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> <span class="number">0</span>..&lt;<span class="type">Int</span>(<span class="type">CC_MD5_DIGEST_LENGTH</span>) &#123;</span><br><span class="line">            digestHex += <span class="type">String</span>(format: <span class="string">"%02x"</span>, digest[index])</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> digestHex</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">"swifter.tips"</span>.<span class="type">MD5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// dff88de99ff03d109de22fed4f71a273</span></span><br></pre></td></tr></table></figure>
+<h2 id="输出格式化"><a href="#输出格式化" class="headerlink" title="输出格式化"></a>输出格式化</h2><p>在 <strong>Objective-C</strong> 中经常使用 <strong>NSLog</strong> 配合上 <strong>%@</strong> 来输出打印内容到控制台：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">float</span> b = <span class="number">1.234567</span>;</span><br><span class="line"><span class="built_in">NSString</span> *c = <span class="string">@"Hello"</span>;</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"int:%d float:%f string:%@"</span>,a,b,c);</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// int:3 float:1.234567 string:Hello</span></span><br></pre></td></tr></table></figure>
+<p>在 Swift 里，我们一般使用 <strong>Print</strong> 来打印：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">let</span> b = <span class="number">1.234567</span>  <span class="comment">// 我们在这里不去区分 float 和 Double 了</span></span><br><span class="line"><span class="keyword">let</span> <span class="built_in">c</span> = <span class="string">"Hello"</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">"int:\(a) double:\(b) string:\(c)"</span>)</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// int:3 double:1.234567 string:Hello</span></span><br></pre></td></tr></table></figure>
+<p>这时候我们常常遇到有些问题，比如打印👆 <strong>b</strong> 中的小数点后两位，在 Objective-C 中使用 <strong>NSLog</strong> 时可以写成：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"float:%.2f"</span>,b);</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// float:1.23</span></span><br></pre></td></tr></table></figure>
+<p>Swift 的 <strong>Print</strong> 就没这么幸运了。<strong>String</strong> 的格式化初始化方法可以帮助我们利用格式化的字符串：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> format = <span class="type">String</span>(format:<span class="string">"%.2f"</span>, <span class="number">1.234567</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">"double:\(format)"</span>)</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// double:1.23</span></span><br></pre></td></tr></table></figure>
+<p>每次这么写也很麻烦。如果大量使用的话，还是写个 Double 的扩展：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Double</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">format</span><span class="params">(<span class="number">_</span> f: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">String</span>(format: <span class="string">"%\(f)f"</span>, <span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> f = <span class="string">".2"</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">"double:\(1.234567.format(f))"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="数组-enumerate"><a href="#数组-enumerate" class="headerlink" title="数组 enumerate"></a>数组 enumerate</h2><p>使用 <strong>NSArray</strong> 时经常遇到的是同时获取值和下标索引，在 Objective-C 中最方便的方式是使用 <strong>enumerateObjectsUsingBlock:</strong> 方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSArray</span> *arr = @[@<span class="number">1</span>, @<span class="number">2</span>, @<span class="number">3</span>, @<span class="number">4</span>, @<span class="number">5</span>];</span><br><span class="line">__block <span class="built_in">NSInteger</span> result = <span class="number">0</span>;</span><br><span class="line">[arr enumerateObjectsUsingBlock:^(<span class="built_in">NSNumber</span> *num, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> *stop) &#123;</span><br><span class="line">    result += [num integerValue];</span><br><span class="line">    <span class="keyword">if</span> (idx == <span class="number">2</span>) &#123;</span><br><span class="line">        *stop = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%ld"</span>, result);</span><br><span class="line"><span class="comment">// 输出：6</span></span><br></pre></td></tr></table></figure>
+<p>停止遍历需要用到 <strong>*stop</strong> 来标记停止，在 Swift 中，这个 API 的 <strong>*stop</strong> 被转换为对应的 <strong>UnsafeMutablePointer<objcbool></objcbool></strong>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr: <span class="type">NSArray</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line"><span class="keyword">var</span> result = <span class="number">0</span></span><br><span class="line">arr.enumerateObjects (&#123; (num, idx, stop) -&gt; <span class="type">Void</span> <span class="keyword">in</span></span><br><span class="line">    result += num <span class="keyword">as</span>! <span class="type">Int</span></span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">2</span> &#123;</span><br><span class="line">        stop.pointee = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment">// 输出：6</span></span><br></pre></td></tr></table></figure>
+<p>虽然使用 <strong>enumerateObjectsUsingBlock:</strong> 很方便，但是其实从性能上来说这个方法并不理想（具体见原文章），另外它需要使用 <strong>NSArray</strong> 类型，已经不符合 Swift的编码方式了。</p>
+<p>在 Swift 上有个很好的替代：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> (idx, num) <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>].enumerated() &#123;</span><br><span class="line">    result += num</span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">2</span> &#123;</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>以上代码片段全部出自 <a href="https://onevcat.com/" target="_blank" rel="noopener">王巍 (@onevcat)</a> 的著作<a href="https://onev.cat/publication/swifter/" target="_blank" rel="noopener">《Swifter - Swift 必备 Tips》</a>，仅供参考查阅使用，更加详细的内容请参考原著，请支持正版。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tips/">Tips</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Swift/">Swift</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/11/11/2017-11-11-swifter-tips-summary-1/" data-title="《Swifter - Swift 必备 Tips》总结（一） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/11/12/2017-11-26-swifter-tips-summary-2/" title="《Swifter - Swift 必备 Tips》总结（二）">
+  <strong>上一篇：</strong><br>
+  <span>
+  《Swifter - Swift 必备 Tips》总结（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/10/28/moya-analysis-3/" title="Moya 源码分析（三）">
+ <strong>下一篇：</strong><br> 
+ <span>Moya 源码分析（三）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

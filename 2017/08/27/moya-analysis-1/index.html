@@ -1,0 +1,575 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Moya 源码分析（一） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言由于现在业务需要，新项目将使用 Swift 语言进行开发，需要进行技术预言，APP 的开发最重要的部分就是网络请求了。iOS 中可以使用 URLSession 进行网络请求，但是方便起见，我通常会选择使用 Alamofire 这样的著名第三方库。 而 Moya 又是基于 Alamofire 的更高一层的网络请求封装抽象层，我们可以直接操作 Moya，然后 Moya 去管理请求，而不用直接和 A">
+<meta name="keywords" content="Moya">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Moya 源码分析（一）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/08/27/moya-analysis-1/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言由于现在业务需要，新项目将使用 Swift 语言进行开发，需要进行技术预言，APP 的开发最重要的部分就是网络请求了。iOS 中可以使用 URLSession 进行网络请求，但是方便起见，我通常会选择使用 Alamofire 这样的著名第三方库。 而 Moya 又是基于 Alamofire 的更高一层的网络请求封装抽象层，我们可以直接操作 Moya，然后 Moya 去管理请求，而不用直接和 A">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2017/08/27/moya-analysis-1/WechatIMG32.jpeg">
+<meta property="og:updated_time" content="2018-01-20T11:39:15.298Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Moya 源码分析（一）">
+<meta name="twitter:description" content="前言由于现在业务需要，新项目将使用 Swift 语言进行开发，需要进行技术预言，APP 的开发最重要的部分就是网络请求了。iOS 中可以使用 URLSession 进行网络请求，但是方便起见，我通常会选择使用 Alamofire 这样的著名第三方库。 而 Moya 又是基于 Alamofire 的更高一层的网络请求封装抽象层，我们可以直接操作 Moya，然后 Moya 去管理请求，而不用直接和 A">
+<meta name="twitter:image" content="http://piglikeyoung.com/2017/08/27/moya-analysis-1/WechatIMG32.jpeg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/08/27/moya-analysis-1/" title="Moya 源码分析（一）" itemprop="url">Moya 源码分析（一）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-08-27T09:46:51.000Z" itemprop="datePublished"> 发表于 2017-08-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结构"><span class="toc-number">2.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Target"><span class="toc-number">3.</span> <span class="toc-text">Target</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TargetType-swift"><span class="toc-number">3.1.</span> <span class="toc-text">TargetType.swift</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过Enum来管理APIs"><span class="toc-number">3.1.1.</span> <span class="toc-text">通过Enum来管理APIs</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MultiTarget-swift"><span class="toc-number">4.</span> <span class="toc-text">MultiTarget.swift</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Provider-定义"><span class="toc-number">4.1.</span> <span class="toc-text">Provider 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Provider-使用"><span class="toc-number">4.2.</span> <span class="toc-text">Provider 使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">5.</span> <span class="toc-text">参考文档</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于现在业务需要，新项目将使用 Swift 语言进行开发，需要进行技术预言，APP 的开发最重要的部分就是网络请求了。iOS 中可以使用 <strong>URLSession</strong> 进行网络请求，但是方便起见，我通常会选择使用 <a href="https://github.com/Alamofire/Alamofire" target="_blank" rel="noopener"><strong>Alamofire</strong></a> 这样的著名第三方库。</p>
+<p>而 <a href="https://github.com/Moya/Moya" target="_blank" rel="noopener"><strong>Moya</strong></a> 又是基于 <strong>Alamofire</strong> 的更高一层的网络请求封装抽象层，我们可以直接操作 <strong>Moya</strong>，然后 <strong>Moya</strong> 去管理请求，而不用直接和 <strong>Alamofire</strong> 进行接触。</p>
+<blockquote>
+<p>本文不会详细指导如何使用 Moya ，如果你还没使用过 Moya 建议你去下载Demo看看，或者去查看它的温度。</p>
+</blockquote>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>本文是基于 <strong>Moya 10.0.1</strong>  进行分析的。</p>
+<img src="/2017/08/27/moya-analysis-1/WechatIMG32.jpeg" title="Moya_struct">
+<p>上图是 Moya 的文件结构，接下来将对其主要部分进行分析。</p>
+<h2 id="Target"><a href="#Target" class="headerlink" title="Target"></a>Target</h2><p>发出网络请求之前，一般是先建立一个 <strong>Enum</strong> 的 <strong>Target</strong>，它定义了网络请求相关行为，<strong>Target</strong> 必须实现 <strong>TargetType</strong> 协议。</p>
+<h3 id="TargetType-swift"><a href="#TargetType-swift" class="headerlink" title="TargetType.swift"></a>TargetType.swift</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">TargetType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The target's base `URL`.</span></span><br><span class="line">    <span class="keyword">var</span> baseURL: <span class="type">URL</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The path to be appended to `baseURL` to form the full `URL`.</span></span><br><span class="line">    <span class="keyword">var</span> path: <span class="type">String</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The HTTP method used in the request.</span></span><br><span class="line">    <span class="keyword">var</span> method: <span class="type">Moya</span>.<span class="type">Method</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Provides stub data for use in testing.</span></span><br><span class="line">    <span class="comment">/// 用于单元测试的测试数据，只会在单元测试文件中有作用</span></span><br><span class="line">    <span class="keyword">var</span> sampleData: <span class="type">Data</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The type of HTTP task to be performed.</span></span><br><span class="line">    <span class="comment">/// request、upload、download</span></span><br><span class="line">    <span class="keyword">var</span> task: <span class="type">Task</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// A Boolean value determining whether the embedded target performs Alamofire validation. Defaults to `false`.</span></span><br><span class="line">    <span class="comment">/// 是否执行Alamofire校验 ，一般有手机号、邮箱号校验之类的</span></span><br><span class="line">    <span class="keyword">var</span> validate: <span class="type">Bool</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// The headers to be used in the request.</span></span><br><span class="line">    <span class="comment">/// 请求头</span></span><br><span class="line">    <span class="keyword">var</span> headers: [<span class="type">String</span>: <span class="type">String</span>]? &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">TargetType</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// Defaults to `false`.</span></span><br><span class="line">    <span class="comment">/// 默认不执行Alamofire校验</span></span><br><span class="line">    <span class="keyword">var</span> validate: <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>协议很简单，都是网络请求的基础参数，其中有两个有意思的参数：<strong>SampleData</strong> 和 <strong>validate</strong></p>
+<p><strong>SampleData</strong>，在我们进行单元测试的时候自动返回设置的测试数据，这样在服务器接口没有完成的情况下也能调用网络请求。</p>
+<p><strong>validate</strong>，以前我们想要验证参数的合法性，可能需要这么做：</p>
+<ul>
+<li>在发送请求前先校验，不合法 return 并弹出提示框</li>
+<li>写一个 Block：(参数)-&gt;(校验结果) 当做一个参数传进 Request 方法中</li>
+</ul>
+<p>而在 Moya 中，简单很多：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">var</span> validate: <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> .login(params):</span><br><span class="line">        <span class="keyword">let</span> phoneNumber = params.phoneNumber</span><br><span class="line">        <span class="keyword">return</span> phoneNumber.<span class="built_in">count</span> == <span class="number">11</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过Enum来管理APIs"><a href="#通过Enum来管理APIs" class="headerlink" title="通过Enum来管理APIs"></a>通过Enum来管理APIs</h4><p>可能你们有疑问，返回的值都是固定的，是不是每个API都要创建一个实例遵守 <strong>TargetType</strong> 协议，然后创建一个基类 baseAPI 让其他API继承减少重复代码？</p>
+<p><strong>肯定是不需要基类的</strong>，可以仿照 <strong>TargetType</strong> 返回默认值的扩展，给每个参数返回默认值，这样之后每个API实现了协议，没有赋值的均使用默认值：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">TargetType</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 服务器地址</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> baseURL: <span class="type">URL</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">ServerHelper</span>.getServerBasePath()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> path: <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 请求类型</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> method: <span class="type">Moya</span>.<span class="type">Method</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> .post</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 是否执行Alamofire验证</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> validate: <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> sampleData: <span class="type">Data</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"&#123;&#125;"</span>.data(using: <span class="type">String</span>.<span class="type">Encoding</span>.utf8)!</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> headers: [<span class="type">String</span>: <span class="type">String</span>]? &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Demo 中提供了一个GithubAPI的模块，通过使用Enum的关联值来表示各个API的具体参数：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">GitHub</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> zen</span><br><span class="line">    <span class="keyword">case</span> userProfile(<span class="type">String</span>)</span><br><span class="line">    <span class="keyword">case</span> userRepositories(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这么简便的使用方式，都需要归功于 Swift 强大的 Enum，如果不是很清楚可以参考这篇文章<a href="http://swift.gg/2015/11/20/advanced-practical-enum-examples/" target="_blank" rel="noopener">《Swift 中枚举高级用法及实践》</a></p>
+<h2 id="MultiTarget-swift"><a href="#MultiTarget-swift" class="headerlink" title="MultiTarget.swift"></a>MultiTarget.swift</h2><p>Moya 中还有个 <strong>MultiTarget.swift</strong> 的文件，它是个遵守了 <strong>TargetType</strong> 协议的 Enum，也重写了协议的每个属性，但是它只有一个Case：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// The embedded `TargetType`.</span></span><br><span class="line"><span class="keyword">case</span> target(<span class="type">TargetType</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">/// Initializes a `MultiTarget`.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">init</span>(<span class="number">_</span> target: <span class="type">TargetType</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span> = <span class="type">MultiTarget</span>.target(target)</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/// The embedded `TargetType`.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">var</span> target: <span class="type">TargetType</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> .target(<span class="keyword">let</span> t): <span class="keyword">return</span> t</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它的初始化就是传入一个API枚举参数，比如 <strong>GitHub.userRepositories(username)</strong>。</p>
+<p>之前我们都是一个 <strong>target</strong> 对应一个 <strong>Provider</strong>。有时我们程序会根据业务逻辑拆分成多个 <strong>target</strong>，这样 <strong>target</strong> 可能就会有很多个，如果有多少个 <strong>target</strong> 我们就创建多少个 <strong>Provider</strong>，会让应用程序的逻辑复杂化。特别是当它们使用同样的 <strong>plugins</strong> 或 <strong>closures</strong> 时，又要做一些额外的工作去维护。</p>
+<h3 id="Provider-定义"><a href="#Provider-定义" class="headerlink" title="Provider 定义"></a>Provider 定义</h3><p>之前一一对应的Privider：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> giphyProvider = <span class="type">MoyaProvider</span>&lt;<span class="type">Giphy</span>&gt;()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> gitHubProvider = <span class="type">MoyaProvider</span>&lt;<span class="type">GitHub</span>&gt;()</span><br></pre></td></tr></table></figure>
+<p>现在使用多个 <strong>target</strong> 的 Privider：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> provider = <span class="type">MoyaProvider</span>&lt;<span class="type">MultiTarget</span>&gt;()</span><br></pre></td></tr></table></figure>
+<h3 id="Provider-使用"><a href="#Provider-使用" class="headerlink" title="Provider 使用"></a>Provider 使用</h3><p>之前一一对应的Privider：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">giphyProvider.request(.upload) &#123; result <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// do something with `result`</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">gitHubProvider.request(.zen) &#123; result <span class="keyword">in</span></span><br><span class="line">    <span class="comment">// do something with `result`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在使用多个 <strong>target</strong> 的 Privider：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">provider.request(<span class="type">MultiTarget</span>(<span class="type">Giphy</span>.upload)) &#123; result <span class="keyword">in</span></span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider.request(<span class="type">MultiTarget</span>(<span class="type">GitHub</span>.zen)) &#123; result <span class="keyword">in</span></span><br><span class="line">            </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li><a href="http://swift.gg/2015/11/20/advanced-practical-enum-examples/" target="_blank" rel="noopener">Swift 中枚举高级用法及实践</a></li>
+<li><a href="http://www.hangge.com/blog/cache/detail_1817.html" target="_blank" rel="noopener">Swift - 网络抽象层库Moya的使用详解7(多个target使用同一个Provider)</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Source-Code-Analyze/">Source Code Analyze</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Moya/">Moya</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/08/27/moya-analysis-1/" data-title="Moya 源码分析（一） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/09/09/moya-analysis-2/" title="Moya 源码分析（二）">
+  <strong>上一篇：</strong><br>
+  <span>
+  Moya 源码分析（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/07/30/work-preferredStatusBarStyle/" title="preferredStatusBarStyle 使用Tips">
+ <strong>下一篇：</strong><br> 
+ <span>preferredStatusBarStyle 使用Tips
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,599 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习CALayer（二） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言上一篇文章学习了CALayer和它的两个子类CAScrollLayer和CATextLayer。本章继续学习别的Layer。 AVPlayerLayerAVPlayerLayer是AVFoundation的一个Layer，它有个AVPlayer来播放 AV media 文件（AVPlayerItems）。 12345678910111213141516171819202122232425262">
+<meta name="keywords" content="CALayer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习CALayer（二）">
+<meta property="og:url" content="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言上一篇文章学习了CALayer和它的两个子类CAScrollLayer和CATextLayer。本章继续学习别的Layer。 AVPlayerLayerAVPlayerLayer是AVFoundation的一个Layer，它有个AVPlayer来播放 AV media 文件（AVPlayerItems）。 12345678910111213141516171819202122232425262">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/AxialGradientLayerType.gif">
+<meta property="og:image" content="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/CAGradientLayer-500x500.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/CAReplicatorLayer.gif">
+<meta property="og:updated_time" content="2016-10-29T14:56:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习CALayer（二）">
+<meta name="twitter:description" content="前言上一篇文章学习了CALayer和它的两个子类CAScrollLayer和CATextLayer。本章继续学习别的Layer。 AVPlayerLayerAVPlayerLayer是AVFoundation的一个Layer，它有个AVPlayer来播放 AV media 文件（AVPlayerItems）。 12345678910111213141516171819202122232425262">
+<meta name="twitter:image" content="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/AxialGradientLayerType.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/22/learn-CALayer-2/" title="学习CALayer（二）" itemprop="url">学习CALayer（二）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-10-22T12:07:08.000Z" itemprop="datePublished"> 发表于 2016-10-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVPlayerLayer"><span class="toc-number">2.</span> <span class="toc-text">AVPlayerLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAGradientLayer"><span class="toc-number">3.</span> <span class="toc-text">CAGradientLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAReplicatorLayer"><span class="toc-number">4.</span> <span class="toc-text">CAReplicatorLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CATiledLayer"><span class="toc-number">5.</span> <span class="toc-text">CATiledLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇文章学习了<strong>CALayer</strong>和它的两个子类<strong>CAScrollLayer</strong>和<strong>CATextLayer</strong>。本章继续学习别的Layer。</p>
+<h2 id="AVPlayerLayer"><a href="#AVPlayerLayer" class="headerlink" title="AVPlayerLayer"></a>AVPlayerLayer</h2><p>AVPlayerLayer是AVFoundation的一个Layer，它有个AVPlayer来播放 AV media 文件（AVPlayerItems）。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setUpPlayerLayer];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3</span></span><br><span class="line">    [[<span class="built_in">NSNotificationCenter</span> defaultCenter] addObserver:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(playerDidReachEndNotificationHandler:) name:<span class="built_in">AVPlayerItemDidPlayToEndTimeNotification</span> object:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setUpPlayerLayer &#123;</span><br><span class="line">    <span class="comment">// 1</span></span><br><span class="line">    <span class="built_in">NSURL</span> *url = [[<span class="built_in">NSBundle</span> mainBundle] URLForResource:<span class="string">@"colorfulStreak"</span> withExtension:<span class="string">@"m4v"</span>];</span><br><span class="line">    <span class="built_in">AVPlayer</span> *player = [<span class="built_in">AVPlayer</span> playerWithURL:url];</span><br><span class="line">    player.actionAtItemEnd = <span class="built_in">AVPlayerActionAtItemEndNone</span>;</span><br><span class="line">    <span class="comment">// 2</span></span><br><span class="line">    <span class="keyword">self</span>.playerLayer = [<span class="built_in">AVPlayerLayer</span> layer];</span><br><span class="line">    <span class="keyword">self</span>.playerLayer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">300</span>, <span class="number">180</span>);</span><br><span class="line">    <span class="keyword">self</span>.playerLayer.player = player;</span><br><span class="line">    [<span class="keyword">self</span>.viewForPlayerLayer.layer addSublayer:<span class="keyword">self</span>.playerLayer];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)playerDidReachEndNotificationHandler:(<span class="built_in">NSNotification</span> *)notification &#123;</span><br><span class="line">    <span class="built_in">AVPlayerItem</span> *playerItem = <span class="keyword">self</span>.playerLayer.player.currentItem;</span><br><span class="line">    <span class="keyword">if</span> (playerItem) &#123;</span><br><span class="line">        [playerItem seekToTime:kCMTimeZero];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ol>
+<li>根据播放文件路径创建 player ，告诉player播放完成后什么也不做</li>
+<li>创建 playerLayer</li>
+<li>注册 AVPlayer 的播放一个文件结束时的通知。（记得在controller销毁时移除监听）</li>
+</ol>
+<p><code>AVPlayerLayer</code> 有两个属性：</p>
+<ul>
+<li><strong>videoGravity</strong>：设置视频的显示方式</li>
+<li><strong>readyForDisplay</strong>：是否视频加载完成就立刻播放</li>
+</ul>
+<p><code>AVPlayer</code> 有几个特别的属性和方法：</p>
+<ul>
+<li><strong>rate</strong>：表示0到1的播放速率，0表示暂停，1表示正常速度播放（1X）。换句话说，调用 <strong>pause</strong> 方法等同于 设置 Rate 为 0；调用 <strong>play</strong> 方法等同于 设置 rate 为 1。</li>
+</ul>
+<p>那么设置快进，慢动作或者反向播放，可以直接 rate 的值来实现，设置超过 1 的值，就是要求视频快进播放，比如设置为 2，就是两倍的速度播放。设置为负数时，就是反向播放。</p>
+<p>在设置 rate 的时候，应该先验证视频能否按照想要设置速率来播放，在 <code>AVPlayerItem</code> 中提供了检验的方法：</p>
+<ul>
+<li><strong>canPlayFastForward</strong> rate 大于 1</li>
+<li><strong>canPlaySlowForward</strong> rate 在 0 和 1 之间</li>
+<li><strong>canPlayReverse</strong> rate 是 -1</li>
+<li><strong>canPlaySlowReverse</strong> rate 在 -1 和 0 之间</li>
+<li><strong>canPlayFastReverse</strong> rate 小于 -1</li>
+</ul>
+<h2 id="CAGradientLayer"><a href="#CAGradientLayer" class="headerlink" title="CAGradientLayer"></a>CAGradientLayer</h2><p>当你使用2种以上颜色时，CAGradientLayer 能够让它很容易应用到背景上，你需要配置一组从 <strong>startPoint</strong> 到 <strong>endPoint</strong> 对应的CGColors。</p>
+<p><strong>startPoint</strong> 和 <strong>endPoint</strong> 不是明确的点，它们是坐标系的边界反映。x的值是1，意味着该点位于layer的右边缘，y的值是1，意味着该点在layer的底部边缘。</p>
+<p>CAGradientLayer 有个 <strong>type</strong> 属性，只有<strong>kCAGradientLayerAxial</strong> 一个选项，表示线性过渡颜色数组的值。</p>
+<p>如下图所示，线A从 <strong>startPoint</strong> 到 <strong>endPoint</strong> 是渐变方向，垂直于线A的线B，沿着线B的颜色都是一样的。<br><img src="/2016/10/22/learn-CALayer-2/AxialGradientLayerType.gif" title="AxialGradientLayerType image"></p>
+<p>另外，你还可以通过 <strong>locations</strong> 属性来控制颜色数组的显示，分配给每个颜色的显示范围。如果没有设置 <strong>locations</strong> 这个值，每个颜色都是平均显示，均匀分布。如果设置了，它的数量必须和颜色的数量对应，否则会发生错误。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setUpGradientLayer &#123;</span><br><span class="line">    <span class="keyword">self</span>.gradientLayer = [<span class="built_in">CAGradientLayer</span> layer];</span><br><span class="line">    <span class="keyword">self</span>.gradientLayer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">200</span>, <span class="number">200</span>);</span><br><span class="line">    <span class="comment">// colors 接收 CGColorRef 的对象数组，用于定义每个 gradient 的结束位置</span></span><br><span class="line">    <span class="keyword">self</span>.gradientLayer.colors = <span class="keyword">self</span>.colors;</span><br><span class="line">    <span class="comment">// gradient 渐变的起始锚点</span></span><br><span class="line">    <span class="keyword">self</span>.gradientLayer.startPoint = <span class="built_in">CGPointMake</span>(<span class="number">0.5</span>f, <span class="number">0.0</span>f);</span><br><span class="line">    <span class="comment">// gradient 渐变的结束锚点</span></span><br><span class="line">    <span class="keyword">self</span>.gradientLayer.endPoint = <span class="built_in">CGPointMake</span>(<span class="number">0.5</span>f, <span class="number">1.0</span>f);</span><br><span class="line">    <span class="comment">// 渐变的结束位置，与colors一一对应</span></span><br><span class="line">    <span class="keyword">self</span>.gradientLayer.locations = <span class="keyword">self</span>.locations;</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span>.viewForGradientLayer.layer addSublayer:<span class="keyword">self</span>.gradientLayer];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>显示效果如下图：<br><img src="/2016/10/22/learn-CALayer-2/CAGradientLayer-500x500.png" title="CAGradientLayer image"></p>
+<h2 id="CAReplicatorLayer"><a href="#CAReplicatorLayer" class="headerlink" title="CAReplicatorLayer"></a>CAReplicatorLayer</h2><p>CAReplicatorLayer 可以将自己的sublayers复制指定的次数。<br>每个复制的layer都可以拥有自己的颜色和属性，CAReplicatorLayer可以延迟sublayers的动画效果显示，还支持 Depth（景深）效果产生3D效果。 </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 创建CAReplicatorLayer，它是个容器层，你添加内容到它上面，它会复制添加的内容。</span></span><br><span class="line">    _replicatorLayer = [<span class="built_in">CAReplicatorLayer</span> layer];</span><br><span class="line">    [<span class="keyword">self</span> setUpReplicatorLayer];</span><br><span class="line">    [_viewForReplicatorLayer.layer addSublayer:_replicatorLayer];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 需要被复制的layer</span></span><br><span class="line">    _instanceLayer = [<span class="built_in">CALayer</span> layer];</span><br><span class="line">    [<span class="keyword">self</span> setUpInstanceLayer];</span><br><span class="line">    [_replicatorLayer addSublayer:_instanceLayer];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setUpLayerFadeAnimation];</span><br><span class="line">    [<span class="keyword">self</span> instanceDelaySliderChanged:_instanceDelaySlider];</span><br><span class="line">    [<span class="keyword">self</span> updateLayerSizeSliderValueLabel];</span><br><span class="line">    [<span class="keyword">self</span> updateInstanceCountSliderValueLabel];</span><br><span class="line">    [<span class="keyword">self</span> updateInstanceDelaySliderValueLabel];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setUpReplicatorLayer &#123;</span><br><span class="line">    _replicatorLayer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">250</span>, <span class="number">250</span>);</span><br><span class="line">    <span class="built_in">CGFloat</span> count = <span class="keyword">self</span>.instanceCountSlider.value;</span><br><span class="line">    <span class="comment">// 复制多少份</span></span><br><span class="line">    _replicatorLayer.instanceCount = count;</span><br><span class="line">    <span class="comment">// 是否开启三维空间效果</span></span><br><span class="line">    _replicatorLayer.preservesDepth = <span class="literal">NO</span>;</span><br><span class="line">    _replicatorLayer.instanceColor = [[<span class="built_in">UIColor</span> whiteColor] <span class="built_in">CGColor</span>];</span><br><span class="line">    <span class="comment">// 颜色值递减</span></span><br><span class="line">    _replicatorLayer.instanceRedOffset = [<span class="keyword">self</span> offsetValueForSwitch:_offsetRedSwitch];</span><br><span class="line">    _replicatorLayer.instanceGreenOffset = [<span class="keyword">self</span> offsetValueForSwitch:_offsetGreenSwitch];</span><br><span class="line">    _replicatorLayer.instanceBlueOffset = [<span class="keyword">self</span> offsetValueForSwitch:_offsetBlueSwitch];</span><br><span class="line">    _replicatorLayer.instanceAlphaOffset = [<span class="keyword">self</span> offsetValueForSwitch:_offsetAlphaSwitch];</span><br><span class="line">    <span class="built_in">CGFloat</span> angle = (M_PI * <span class="number">2.0</span>) / count;</span><br><span class="line">    <span class="comment">// 复制图层在被创建时产生的和上一个复制图层的位移(位移的锚点时CAReplicatorlayer的中心点)</span></span><br><span class="line">    _replicatorLayer.instanceTransform = <span class="built_in">CATransform3DMakeRotation</span>(angle, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ol>
+<li>创建 CAReplicatorLayer 对象，设置它的frame</li>
+<li>设置 replicator layer 复制sublayers个数和延迟渲染时间，设置为2D效果，(preservesDepth = false) ，背景色为白色</li>
+<li>添加 RGBA渐变到每个成功复制的实例上，RGB默认都是0。在本例子中，默认颜色是白色，意味这个RGB都已经设置为1.0</li>
+<li>设置渐变路径是围成个圆</li>
+</ol>
+<p>更多详情看Demo的代码</p>
+<p>最终效果：<br><img src="/2016/10/22/learn-CALayer-2/CAReplicatorLayer.gif" title="CAReplicatorLayer image"></p>
+<p>使用 CAReplicatorLayer 可以创建很多 cool 的动画，可以参考：</p>
+<ul>
+<li><a href="http://www.ios-animations-by-emails.com/posts/2015-march#tutorial" target="_blank" rel="noopener">使用CAReplicatorLayer创建动画</a></li>
+<li><a href="http://www.jianshu.com/p/84455b674f55" target="_blank" rel="noopener">CALayer-CAReplicatorLayer(复制图层)</a></li>
+</ul>
+<h2 id="CATiledLayer"><a href="#CATiledLayer" class="headerlink" title="CATiledLayer"></a>CATiledLayer</h2><p>有些时候你可能需要绘制一个很大的图片，常见的例子就是一个高像素的照片或者是地球表面的详细地图。iOS应用通畅运行在内存受限的设备上，所以读取整个图片到内存中是不明智的。载入大图可能会相当地慢，那些对你看上去比较方便的做法（在主线程调用UIImage的-imageNamed:方法或者-imageWithContentsOfFile:方法）将会阻塞你的用户界面，至少会引起动画卡顿现象。</p>
+<p>CATiledLayer为载入大图造成的性能问题提供了一个解决方案：将大图分解成小片然后将他们单独按需载入。</p>
+<p><a href="https://zsisme.gitbooks.io/ios-/content/chapter6/catiledLayer.html" target="_blank" rel="noopener">详细实践</a></p>
+<p>CATiledLayer 有两个properties：（<a href="http://www.cocoachina.com/bbs/read.php?tid-31201.html" target="_blank" rel="noopener">详细解释</a>）</p>
+<ul>
+<li><strong>levelsOfDetail</strong> ：表示一共有多少个drawLayer的位置</li>
+<li><strong>levelsOfDetailBias</strong>：表示比1大的位置里有多少个drawLayer的位置（包括1）</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://www.cocoachina.com/ios/20150106/10840.html" target="_blank" rel="noopener">iOS-Core-Animation-Advanced-Techniques(七)</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150429/11712.html" target="_blank" rel="noopener">WWDC心得与延伸:iOS图形性能</a></li>
+<li><a href="https://github.com/AttackOnDobby/iOS-Core-Animation-Advanced-Techniques" target="_blank" rel="noopener">iOS-Core-Animation-Advanced-Techniques</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CALayer/">CALayer</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/10/22/learn-CALayer-2/" data-title="学习CALayer（二） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/10/29/learn-CALayer-3/" title="学习CALayer（三）">
+  <strong>上一篇：</strong><br>
+  <span>
+  学习CALayer（三）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/15/learn-CALayer-1/" title="学习CALayer（一）">
+ <strong>下一篇：</strong><br> 
+ <span>学习CALayer（一）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

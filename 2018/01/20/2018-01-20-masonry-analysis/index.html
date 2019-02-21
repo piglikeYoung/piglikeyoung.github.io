@@ -1,0 +1,590 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Masonry 源码分析 | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言在 iOS 开发中 Masonry 是控件布局中经常使用的一个轻量级框架布局控件，它简化了手写 AutoLayout 代码的难度，本文就分析一下 Masonry 框架的源码。 Masonry 与 NSLayoutConstraint 调用方式的对比1.NSLayoutConstraint给一个 View 设置相对父控件的顶部距离 10个pt： 1234567[NSLayoutConstrain">
+<meta name="keywords" content="Masonry">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Masonry 源码分析">
+<meta property="og:url" content="http://piglikeyoung.com/2018/01/20/2018-01-20-masonry-analysis/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言在 iOS 开发中 Masonry 是控件布局中经常使用的一个轻量级框架布局控件，它简化了手写 AutoLayout 代码的难度，本文就分析一下 Masonry 框架的源码。 Masonry 与 NSLayoutConstraint 调用方式的对比1.NSLayoutConstraint给一个 View 设置相对父控件的顶部距离 10个pt： 1234567[NSLayoutConstrain">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-02T03:35:02.608Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Masonry 源码分析">
+<meta name="twitter:description" content="前言在 iOS 开发中 Masonry 是控件布局中经常使用的一个轻量级框架布局控件，它简化了手写 AutoLayout 代码的难度，本文就分析一下 Masonry 框架的源码。 Masonry 与 NSLayoutConstraint 调用方式的对比1.NSLayoutConstraint给一个 View 设置相对父控件的顶部距离 10个pt： 1234567[NSLayoutConstrain">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/01/20/2018-01-20-masonry-analysis/" title="Masonry 源码分析" itemprop="url">Masonry 源码分析</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2018-01-20T01:50:51.000Z" itemprop="datePublished"> 发表于 2018-01-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Masonry-与-NSLayoutConstraint-调用方式的对比"><span class="toc-number">2.</span> <span class="toc-text">Masonry 与 NSLayoutConstraint 调用方式的对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-NSLayoutConstraint"><span class="toc-number">2.1.</span> <span class="toc-text">1.NSLayoutConstraint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Masonry"><span class="toc-number">2.2.</span> <span class="toc-text">2.Masonry</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类结构"><span class="toc-number">3.</span> <span class="toc-text">类结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-View-MASAdditions"><span class="toc-number">3.1.</span> <span class="toc-text">1. View+MASAdditions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-MASViewAttribute"><span class="toc-number">3.2.</span> <span class="toc-text">2. MASViewAttribute</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-MASViewConstraint"><span class="toc-number">3.3.</span> <span class="toc-text">3. MASViewConstraint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-MASConstraintMaker"><span class="toc-number">3.4.</span> <span class="toc-text">4. MASConstraintMaker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-MASAdditions源码解析"><span class="toc-number">4.</span> <span class="toc-text">View+MASAdditions源码解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-主要属性和getter方法"><span class="toc-number">5.</span> <span class="toc-text">1.主要属性和getter方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-mas-makeConstraints方法解析"><span class="toc-number">5.1.</span> <span class="toc-text">2. mas_makeConstraints方法解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-mas-updateConstraints-与-mas-remakeConstraints-函数的解析"><span class="toc-number">5.2.</span> <span class="toc-text">3. mas_updateConstraints 与 mas_remakeConstraints 函数的解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-mas-closestCommonSuperview"><span class="toc-number">5.3.</span> <span class="toc-text">4. mas_closestCommonSuperview</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工厂类-MASConstraintMaker-解析"><span class="toc-number">6.</span> <span class="toc-text">工厂类 MASConstraintMaker 解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-公共属性"><span class="toc-number">6.1.</span> <span class="toc-text">1. 公共属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-工厂方法"><span class="toc-number">6.2.</span> <span class="toc-text">2. 工厂方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-install-方法"><span class="toc-number">6.3.</span> <span class="toc-text">3. install 方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MASViewConstraint-解析"><span class="toc-number">7.</span> <span class="toc-text">MASViewConstraint 解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-链式调用"><span class="toc-number">7.1.</span> <span class="toc-text">1. 链式调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-install-方法解析"><span class="toc-number">7.2.</span> <span class="toc-text">2. install 方法解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-UIView-的私有类目-UIView-MASConstraints"><span class="toc-number">7.3.</span> <span class="toc-text">3. UIView 的私有类目 UIView+MASConstraints</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在 iOS 开发中 Masonry 是控件布局中经常使用的一个轻量级框架布局控件，它简化了手写 AutoLayout 代码的难度，本文就分析一下 Masonry 框架的源码。</p>
+<h2 id="Masonry-与-NSLayoutConstraint-调用方式的对比"><a href="#Masonry-与-NSLayoutConstraint-调用方式的对比" class="headerlink" title="Masonry 与 NSLayoutConstraint 调用方式的对比"></a>Masonry 与 NSLayoutConstraint 调用方式的对比</h2><h3 id="1-NSLayoutConstraint"><a href="#1-NSLayoutConstraint" class="headerlink" title="1.NSLayoutConstraint"></a>1.NSLayoutConstraint</h3><p>给一个 View 设置相对父控件的顶部距离 <code>10个pt</code>：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">NSLayoutConstraint</span> constraintWithItem:view1</span><br><span class="line">                                 attribute:<span class="built_in">NSLayoutAttributeTop</span></span><br><span class="line">                                 relatedBy:<span class="built_in">NSLayoutRelationEqual</span></span><br><span class="line">                                    toItem:superview</span><br><span class="line">                                 attribute:<span class="built_in">NSLayoutAttributeTop</span></span><br><span class="line">                                multiplier:<span class="number">1.0</span></span><br><span class="line">                                  constant:<span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p>代码相当直观的说明的约束关系。</p>
+<h3 id="2-Masonry"><a href="#2-Masonry" class="headerlink" title="2.Masonry"></a>2.Masonry</h3><p>Masonry 是通过链式调用和匿名闭包的方式来简化设置约束：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[view1 mas_makeConstraints:^(MASConstraintMaker *make) &#123;</span><br><span class="line">    make.top.equalTo(superview.mas_top).with.offset(<span class="number">10</span>); </span><br><span class="line">    <span class="comment">// 等价于</span></span><br><span class="line">    make.top.equalTo(@<span class="number">10</span>);</span><br><span class="line">    <span class="comment">// 等价于</span></span><br><span class="line">    make.top.equalTo(superview.mas_top).multipliedBy(<span class="number">1</span>).offset(<span class="number">10</span>); </span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<h2 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h2><h3 id="1-View-MASAdditions"><a href="#1-View-MASAdditions" class="headerlink" title="1. View+MASAdditions"></a>1. View+MASAdditions</h3><p>上面使用到的 <strong>mas_makeConstraints</strong> 是 UIView 扩展 <strong>UIView+MASAdditions</strong> 提供给的方法，这个类提供了一系列 <strong>MASViewAttribute</strong> 成员属性，和四个公开的方法： <strong>mas_closestCommonSuperview</strong> 寻找两个视图最近的公共父类、 <strong>mas_makeConstraints</strong> 创建安装约束、 <strong>mas_updateConstraints</strong> 更新已经存在的约束（不存在的就创建）、 <strong>mas_remakeConstraints</strong> 移除已经创建的约束并添加新的约束。</p>
+<h3 id="2-MASViewAttribute"><a href="#2-MASViewAttribute" class="headerlink" title="2. MASViewAttribute"></a>2. MASViewAttribute</h3><p><strong>MASViewAttribute</strong> 内部有三个属性和三个方法，从这些属性和方法可以看出，它就是对 UIView 和 NSLayoutAttribute 的封装，<code>MASViewAttribute = UIView + NSLayoutAttribute + item</code>，view 属性就是要约束的控件，item 就是控件上约束的部分。</p>
+<p>item 属性就是在创建 NSLayoutConstriant 构造方法时 <strong>constraintWithItem</strong> 与 <strong>toItem</strong> 的参数。对于 UIView 来说该 item 就是 UIView 本身。而对于UIViewController，该出 Item 就 topLayoutGuide，bottomLayoutGuide 。</p>
+<p>该类中除了初始化方法外还有一个 <strong>isSizeAttribute</strong> 方法，该方法用来判断 MASViewAttribute 类中的 <strong>layoutAttribute</strong> 属性是否是 <strong>NSLayoutAttributeWidth</strong> 或者<strong>NSLayoutAttributeHeight</strong>，如果是Width或者Height的话，那么约束就添加到当前View上，而不是添加在父视图上。</p>
+<h3 id="3-MASViewConstraint"><a href="#3-MASViewConstraint" class="headerlink" title="3. MASViewConstraint"></a>3. MASViewConstraint</h3><p><strong>MASViewConstraint</strong> 是对 <strong>NSLayoutConstraint</strong> 的进一步封装，对控件设置约束，底层还是使用了 <strong>NSLayoutConstraint</strong> 来设置约束，Masonry 只是简化了代码，所以 <strong>MASViewConstraint</strong> 最重要的事情就是创建 <strong>NSLayoutConstraint</strong> 并设置给相应的视图。<strong>总的来说 MASViewAttribute 是对 View 与 NSLayoutAttribute 进行的封装，所以 MASViewConstraint 类要依赖于 MASViewAttribute 类。</strong></p>
+<p><strong>MASConstraint</strong> 是 <strong>MASViewConstraint</strong> 的父类，它是个抽象父类，不能实例化，它定义了很多公共接口方法。</p>
+<p><strong>MASConstraint</strong> 还有个子类是 <strong>MASCompositeConstraint</strong> ，它里面只有一个方法 <strong>- (id)initWithChildren:(NSArray *)children;</strong>，其实就是存储一系列约束的类，内部有个私有属性数组 <strong>childConstraints</strong> 存储约束。总的来说是对它就是一个存储 <strong>MASViewAttribute</strong> 对象数组的封装。</p>
+<h3 id="4-MASConstraintMaker"><a href="#4-MASConstraintMaker" class="headerlink" title="4. MASConstraintMaker"></a>4. MASConstraintMaker</h3><p><strong>MASConstraintMaker</strong> 是个工厂类，负责创建 <strong>MASConstraint</strong> 类型的对象。在 <strong>View+MASAdditions</strong> 中 <strong>mas_makeConstraints</strong> 的 block 参数就是 <strong>MASConstraintMaker</strong> 对象。用户可以通过 block 回调的 <strong>MASConstraintMaker</strong> 对象 给 View 指定约束。类的内部有个 <strong>constraints</strong> 属性来记录它创建的所有 <strong>MASConstraint</strong> 对象。</p>
+<h2 id="View-MASAdditions源码解析"><a href="#View-MASAdditions源码解析" class="headerlink" title="View+MASAdditions源码解析"></a>View+MASAdditions源码解析</h2><h2 id="1-主要属性和getter方法"><a href="#1-主要属性和getter方法" class="headerlink" title="1.主要属性和getter方法"></a>1.主要属性和getter方法</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) MASViewAttribute *mas_left;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) MASViewAttribute *mas_top;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) MASViewAttribute *mas_right;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>, <span class="keyword">readonly</span>) MASViewAttribute *mas_bottom;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>上面是部分属性，属性的类型都是 <strong>MASViewAttribute</strong> 类型，因为 <strong>MASViewAttribute</strong> 是对 View 与 NSLayoutAttribute 进行的封装，所以 <strong>mas_left</strong> 就表示 View 和 NSLayoutAttributeLeft，一次类推别的属性。</p>
+<p>查看它们的 getter 方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - NSLayoutAttribute properties</span></span><br><span class="line"></span><br><span class="line">- (MASViewAttribute *)mas_left &#123;</span><br><span class="line">    <span class="keyword">return</span> [[MASViewAttribute alloc] initWithView:<span class="keyword">self</span> layoutAttribute:<span class="built_in">NSLayoutAttributeLeft</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (MASViewAttribute *)mas_top &#123;</span><br><span class="line">    <span class="keyword">return</span> [[MASViewAttribute alloc] initWithView:<span class="keyword">self</span> layoutAttribute:<span class="built_in">NSLayoutAttributeTop</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (MASViewAttribute *)mas_right &#123;</span><br><span class="line">    <span class="keyword">return</span> [[MASViewAttribute alloc] initWithView:<span class="keyword">self</span> layoutAttribute:<span class="built_in">NSLayoutAttributeRight</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (MASViewAttribute *)mas_bottom &#123;</span><br><span class="line">    <span class="keyword">return</span> [[MASViewAttribute alloc] initWithView:<span class="keyword">self</span> layoutAttribute:<span class="built_in">NSLayoutAttributeBottom</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就可以得知它所做的事情就是创建一个 <strong>MASViewAttribute</strong> ，也就是 <strong>mas_left = self + NSLayoutAttributeLeft</strong>。</p>
+<h3 id="2-mas-makeConstraints方法解析"><a href="#2-mas-makeConstraints方法解析" class="headerlink" title="2. mas_makeConstraints方法解析"></a>2. mas_makeConstraints方法解析</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSArray</span> *)mas_makeConstraints:(<span class="keyword">void</span>(^)(MASConstraintMaker *))block &#123;</span><br><span class="line">	  <span class="comment">// 关闭自动添加约束，自己手动添加</span></span><br><span class="line">    <span class="keyword">self</span>.translatesAutoresizingMaskIntoConstraints = <span class="literal">NO</span>;</span><br><span class="line">    <span class="comment">// 创建 MASConstraintMaker</span></span><br><span class="line">    MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:<span class="keyword">self</span>];</span><br><span class="line">    <span class="comment">// 给 maker 中的各种属性赋值，通过 block 进行值的回调</span></span><br><span class="line">    block(constraintMaker);</span><br><span class="line">    <span class="comment">// 进行约束添加，并返回所有Install的约束数组</span></span><br><span class="line">    <span class="keyword">return</span> [constraintMaker install];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面也说到用 <strong>mas_makeConstraints</strong> 来添加约束，该方法返回一个数组，数组里存放的是当前视图中添加的所有约束。因为 Masonry 对 <strong>NSLayoutAttribute</strong> 封装成了 <strong>MASViewConstraint</strong> ，所以数组中存储的全是 <strong>MASViewConstraint</strong> 类型的对象。</p>
+<p>方法的参数是 <strong>void(^)(MASConstraintMaker *)</strong> 的匿名闭包，无返回值，需要个 <strong>MASConstraintMaker</strong> 对象。在方法中，首先将 <strong>translatesAutoresizingMaskIntoConstraints</strong> 设置为 NO，然后创建了一个 <strong>MASConstraintMaker</strong> 对象，通过 block 将 <strong>MASConstraintMaker</strong> 对象传递给用户来设置约束，也就是让用户使用 <strong>MASConstraintMaker</strong> 中的 <strong>MASConstraint</strong> 类型的属性。</p>
+<h3 id="3-mas-updateConstraints-与-mas-remakeConstraints-函数的解析"><a href="#3-mas-updateConstraints-与-mas-remakeConstraints-函数的解析" class="headerlink" title="3. mas_updateConstraints 与 mas_remakeConstraints 函数的解析"></a>3. mas_updateConstraints 与 mas_remakeConstraints 函数的解析</h3><p>这两个函数内部的是想和 mas_makeConstraints 差不多，只是多设置一个属性。</p>
+<p>mas_updateConstraints 中将 <code>updateExisting</code> 设置为 YES，就是说添加约束时先检查是否已经被添加，如果被添加了就更新，如果没有被添加就添加。</p>
+<p>mas_remakeConstraints 中所做的事情是将 <code>removeExisting</code> 设置为 YES，就是说将视图上的旧约束先移除掉，在添加新的约束。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">constraintMaker.updateExisting = <span class="literal">YES</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">constraintMaker.removeExisting = <span class="literal">YES</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="4-mas-closestCommonSuperview"><a href="#4-mas-closestCommonSuperview" class="headerlink" title="4. mas_closestCommonSuperview"></a>4. mas_closestCommonSuperview</h3><p><strong>mas_closestCommonSuperview</strong> 方法负责计算出两个视图的公共父视图，找到最近的那个公共父视图后就返回，如果找不到就返回 nil：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">instancetype</span>)mas_closestCommonSuperview:(MAS_VIEW *)view &#123;</span><br><span class="line">    <span class="comment">// 临时父视图存储</span></span><br><span class="line">    MAS_VIEW *closestCommonSuperview = <span class="literal">nil</span>;</span><br><span class="line"></span><br><span class="line">    MAS_VIEW *secondViewSuperview = view;</span><br><span class="line">    <span class="comment">// 遍历 secondView 所有的父视图</span></span><br><span class="line">    <span class="keyword">while</span> (!closestCommonSuperview &amp;&amp; secondViewSuperview) &#123;</span><br><span class="line">        MAS_VIEW *firstViewSuperview = <span class="keyword">self</span>;</span><br><span class="line">        <span class="comment">// 遍历当前视图（self）的父视图</span></span><br><span class="line">        <span class="keyword">while</span> (!closestCommonSuperview &amp;&amp; firstViewSuperview) &#123;</span><br><span class="line">            <span class="keyword">if</span> (secondViewSuperview == firstViewSuperview) &#123;</span><br><span class="line">                <span class="comment">// 找到公共父视图后结束循环</span></span><br><span class="line">                closestCommonSuperview = secondViewSuperview;</span><br><span class="line">            &#125;</span><br><span class="line">            firstViewSuperview = firstViewSuperview.superview;</span><br><span class="line">        &#125;</span><br><span class="line">        secondViewSuperview = secondViewSuperview.superview;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回公共父视图</span></span><br><span class="line">    <span class="keyword">return</span> closestCommonSuperview;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>寻找两个视图的公共父视图对于约束很重要，因为相对的约束是添加到其公共父视图上的。比如  viewA.left = viewB.right + 10, 因为是 viewA 与 viewB 的相对约束，那么约束是添加在 viewA 与 viewB 的公共父视图上的，如果 viewB 是 viewA 的父视图，那么约束就添加在 viewB 上从而对 viewA 起到约束作用。</p>
+<h2 id="工厂类-MASConstraintMaker-解析"><a href="#工厂类-MASConstraintMaker-解析" class="headerlink" title="工厂类 MASConstraintMaker 解析"></a>工厂类 MASConstraintMaker 解析</h2><h3 id="1-公共属性"><a href="#1-公共属性" class="headerlink" title="1. 公共属性"></a>1. 公共属性</h3><p><strong>MASConstraintMaker</strong> 类里面的属性都有对应的 getter 方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (MASConstraint *)left &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> addConstraintWithLayoutAttribute:<span class="built_in">NSLayoutAttributeLeft</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (MASConstraint *)top &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> addConstraintWithLayoutAttribute:<span class="built_in">NSLayoutAttributeTop</span>];</span><br><span class="line">&#125;</span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
+<h3 id="2-工厂方法"><a href="#2-工厂方法" class="headerlink" title="2. 工厂方法"></a>2. 工厂方法</h3><p>getter 方法都会调用 <strong>addConstraintWithLayoutAttribute</strong> ，在 <strong>addConstraintWithLayoutAttribute</strong> 方法中又调用了 MASConstraintMaker 工厂类的工厂方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (MASConstraint *)addConstraintWithLayoutAttribute:(<span class="built_in">NSLayoutAttribute</span>)layoutAttribute &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> constraint:<span class="literal">nil</span> addConstraintWithLayoutAttribute:layoutAttribute];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">- (MASConstraint *)constraint:(MASConstraint *)constraint addConstraintWithLayoutAttribute:(<span class="built_in">NSLayoutAttribute</span>)layoutAttribute &#123;</span><br><span class="line">    <span class="comment">// 创建 MASViewAttribute</span></span><br><span class="line">    MASViewAttribute *viewAttribute = [[MASViewAttribute alloc] initWithView:<span class="keyword">self</span>.view layoutAttribute:layoutAttribute];</span><br><span class="line">    <span class="comment">// 根据 layoutAttribute 创建 MASViewConstraint</span></span><br><span class="line">    MASViewConstraint *newConstraint = [[MASViewConstraint alloc] initWithFirstViewAttribute:viewAttribute];</span><br><span class="line">    <span class="comment">// constraint 不为 nil时，就和 newConstraint 合并为 MASCompositeConstraint 对象</span></span><br><span class="line">    <span class="keyword">if</span> ([constraint isKindOfClass:MASViewConstraint.class]) &#123;</span><br><span class="line">        <span class="comment">//replace with composite constraint</span></span><br><span class="line">        <span class="built_in">NSArray</span> *children = @[constraint, newConstraint];</span><br><span class="line">        MASCompositeConstraint *compositeConstraint = [[MASCompositeConstraint alloc] initWithChildren:children];</span><br><span class="line">        compositeConstraint.delegate = <span class="keyword">self</span>;</span><br><span class="line">        [<span class="keyword">self</span> constraint:constraint shouldBeReplacedWithConstraint:compositeConstraint];</span><br><span class="line">        <span class="keyword">return</span> compositeConstraint;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!constraint) &#123;</span><br><span class="line">        <span class="comment">// 设置代理 MASConstraintDelegate，链式调用的核心，让 MASViewConstraint 也能调用这个方法</span></span><br><span class="line">        newConstraint.delegate = <span class="keyword">self</span>;</span><br><span class="line">        <span class="comment">// 添加进数组</span></span><br><span class="line">        [<span class="keyword">self</span>.constraints addObject:newConstraint];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newConstraint;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码根据提供的参数创建 MSAViewConstraint 对象，如果该函数的第一个参数不为空的话就会将新创建的 MSAViewConstraint 对象与参数进行合并组合成 <strong>MASCompositeConstraint</strong> 类（ MASCompositeConstraint 本质上是 MSAViewConstraint 对象的数组）的对象。</p>
+<p>创建完 MASConstraint 类的相应的对象后，会把该创建的对象添加进 MASConstraintMaker 工厂类的私有 constraints 数组，来记录该工厂对象创建的所有约束。<code>newConstraint.delegate = self;</code> 这句话是非常重要的，由于为 MASConstraint 对象设置了代理，所以才支持链式调用。</p>
+<p>举个例子：maker.top.left.right.equalTo(@10)，第一步 maker.top 调用返回了 <strong>MASViewConstraint</strong> 类的对象，当调用 .left 时，其实就是 newConstraint.left ，这意味着，.left 并不是调用 maker 的 left 的 getter 方法，而是 <strong>MASViewConstraint</strong> 的 left 的 getter 方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MASConstraint.m</span></span><br><span class="line">- (MASConstraint *)left &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> addConstraintWithLayoutAttribute:<span class="built_in">NSLayoutAttributeLeft</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MASViewConstraint.m</span></span><br><span class="line">- (MASConstraint *)addConstraintWithLayoutAttribute:(<span class="built_in">NSLayoutAttribute</span>)layoutAttribute &#123;</span><br><span class="line">    <span class="built_in">NSAssert</span>(!<span class="keyword">self</span>.hasLayoutRelation, <span class="string">@"Attributes should be chained before defining the constraint relation"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span>.delegate constraint:<span class="keyword">self</span> addConstraintWithLayoutAttribute:layoutAttribute];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码可以看出，调用 <strong>MASViewConstraint</strong> 的 left 的 getter 方法其实就是调用 delegate 的 <strong>addConstraintWithLayoutAttribute</strong> 方法，而 delegate 就是前面提到的 <code>maker</code>，从而实现了链式调用。</p>
+<h3 id="3-install-方法"><a href="#3-install-方法" class="headerlink" title="3. install 方法"></a>3. install 方法</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加约束到View上</span></span><br><span class="line">- (<span class="built_in">NSArray</span> *)install &#123;</span><br><span class="line">    <span class="comment">// 如果是mas_remarkConstraint，先将该视图上的约束 uninstall</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.removeExisting) &#123;</span><br><span class="line">        <span class="comment">// 获取当前视图上添加的所有约束</span></span><br><span class="line">        <span class="built_in">NSArray</span> *installedConstraints = [MASViewConstraint installedConstraintsForView:<span class="keyword">self</span>.view];</span><br><span class="line">        <span class="comment">// 移除掉所有约束</span></span><br><span class="line">        <span class="keyword">for</span> (MASConstraint *constraint <span class="keyword">in</span> installedConstraints) &#123;</span><br><span class="line">            [constraint uninstall];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加约束</span></span><br><span class="line">    <span class="comment">// self.constraints 中存储的是通过 Block 中配置的参数</span></span><br><span class="line">    <span class="built_in">NSArray</span> *constraints = <span class="keyword">self</span>.constraints.copy;</span><br><span class="line">    <span class="keyword">for</span> (MASConstraint *constraint <span class="keyword">in</span> constraints) &#123;</span><br><span class="line">        <span class="comment">// 是否为 更新的约束</span></span><br><span class="line">        constraint.updateExisting = <span class="keyword">self</span>.updateExisting;</span><br><span class="line">        <span class="comment">// install 每个约束</span></span><br><span class="line">        [constraint install];</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">self</span>.constraints removeAllObjects];</span><br><span class="line">    <span class="keyword">return</span> constraints;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码可以看出，install 方法就是遍历工厂对象所创建所有约束对象，并调用每个约束对象的 isntall 方法来添加约束。</p>
+<p>在安装约束时，如果 self.removeExisting == YES，那么就先 uninstall 旧约束，再 install 新约束。在安装约束时，将 updateExisting 赋值给每个约束，每个约束在调用本身的 install 方法时会判断是否更新。</p>
+<h2 id="MASViewConstraint-解析"><a href="#MASViewConstraint-解析" class="headerlink" title="MASViewConstraint 解析"></a>MASViewConstraint 解析</h2><p><strong>MASConstraintMaker</strong> 工厂类所创建的对象实质上是 <strong>MASViewConstraint</strong> 类的对象。而 <strong>MASViewConstraint</strong> 类实质上是对 <strong>MASLayoutConstraint</strong> 的封装，进一步说 <strong>MASViewConstraint</strong> 负责为 <strong>MASLayoutConstraint</strong> 构造器组织参数并创建 <strong>MASLayoutConstraint</strong> 的对象，并将该对象添加到相应的视图中。</p>
+<h3 id="1-链式调用"><a href="#1-链式调用" class="headerlink" title="1. 链式调用"></a>1. 链式调用</h3><p>我们设置约束的时候经常这么使用： <strong>constraint.top.left.equalTo(superView).offset(10);</strong> ，在 Objective-C 中这不是方法调用的形式，在 Objective-C 中的调用形式是 <code>[]</code> ，但是 Masonry 使用了 <code>()</code>，我们来看下怎么做到的：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (MASConstraint *)addConstraintWithLayoutAttribute:(<span class="built_in">NSLayoutAttribute</span>)layoutAttribute &#123;</span><br><span class="line">    <span class="built_in">NSAssert</span>(!<span class="keyword">self</span>.hasLayoutRelation, <span class="string">@"Attributes should be chained before defining the constraint relation"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span>.delegate constraint:<span class="keyword">self</span> addConstraintWithLayoutAttribute:layoutAttribute];</span><br><span class="line">&#125;</span><br><span class="line">``` </span><br><span class="line">这个在上面说到，调用类似 left、Top 等属性的时候其实是通过 delegate 去调用 maker 工厂类的工厂方法来创建 MASConstraint 对象。</span><br><span class="line"></span><br><span class="line">但是 **.offset(<span class="number">10</span>)** 是怎么做到的，因为 OC 中不能通过小括号来调用方法：</span><br><span class="line"></span><br><span class="line">```objc</span><br><span class="line">- (MASConstraint * (^)(<span class="built_in">CGFloat</span>))offset &#123;</span><br><span class="line">    <span class="keyword">return</span> ^<span class="keyword">id</span>(<span class="built_in">CGFloat</span> offset)&#123;</span><br><span class="line">        <span class="keyword">self</span>.offset = offset;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原来 offset() 是个闭包，它的返回值是个匿名block，参数是个 CGFloat 类型。总的来说 offset() = offset + ()，即先调用了 offset 方法，然后通过 () 调用了返回的匿名 block，闭包返回了 MASConstraint 对象。</p>
+<h3 id="2-install-方法解析"><a href="#2-install-方法解析" class="headerlink" title="2. install 方法解析"></a>2. install 方法解析</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MASLayoutConstraint *layoutConstraint</span><br><span class="line">        = [MASLayoutConstraint constraintWithItem:firstLayoutItem</span><br><span class="line">                                        attribute:firstLayoutAttribute</span><br><span class="line">                                        relatedBy:<span class="keyword">self</span>.layoutRelation</span><br><span class="line">                                           toItem:secondLayoutItem</span><br><span class="line">                                        attribute:secondLayoutAttribute</span><br><span class="line">                                       multiplier:<span class="keyword">self</span>.layoutMultiplier</span><br><span class="line">                                         constant:<span class="keyword">self</span>.layoutConstant];</span><br><span class="line">                                         </span><br><span class="line">layoutConstraint.priority = <span class="keyword">self</span>.layoutPriority;</span><br><span class="line">layoutConstraint.mas_key = <span class="keyword">self</span>.mas_key;</span><br></pre></td></tr></table></figure>
+<p>install 方法创建 <strong>MASLayoutConstraint</strong> 对象，并将该对象添加到相应的 View 上。</p>
+<p>上面的代码就是根据获取的属性来创建 MASLayoutConstraint 对象，MASLayoutConstraint 就是继承自 NSLayoutConstraint。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 寻找要添加约束的 View</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">self</span>.secondViewAttribute.view) &#123;</span><br><span class="line">		  <span class="comment">// 寻找两个视图的公共父视图</span></span><br><span class="line">        MAS_VIEW *closestCommonSuperview = [<span class="keyword">self</span>.firstViewAttribute.view mas_closestCommonSuperview:<span class="keyword">self</span>.secondViewAttribute.view];</span><br><span class="line">        <span class="built_in">NSAssert</span>(closestCommonSuperview,</span><br><span class="line">                 <span class="string">@"couldn't find a common superview for %@ and %@"</span>,</span><br><span class="line">                 <span class="keyword">self</span>.firstViewAttribute.view, <span class="keyword">self</span>.secondViewAttribute.view);</span><br><span class="line">        <span class="keyword">self</span>.installedView = closestCommonSuperview;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">self</span>.firstViewAttribute.isSizeAttribute) &#123;</span><br><span class="line">        <span class="keyword">self</span>.installedView = <span class="keyword">self</span>.firstViewAttribute.view;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.installedView = <span class="keyword">self</span>.firstViewAttribute.view.superview;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码就是创建约束对象后，寻找要添加约束的 View，如果是两个视图相对约束，就获取两种的公共父视图。如果添加的是 Width 或者 Height ，那么就添加到当前视图上。如果既没有指定相对视图，也不是 Size 类型的约束，那么就将该约束对象添加到当前视图的父视图上。</p>
+<p>创建完约束对象 <strong>MASLayoutConstraint</strong> ，并且找到要添加约束的 View 后，就要开始添加约束了。添加前判断是不是对约束的更新，如果约束已经存在就更新约束，如果不存在就进行添加。添加成功后通过 <strong>mas_installedConstraints</strong> 属性记录一下本安装的约束。mas_installedConstraints 是通过运行时为 UIView 关联的一个 NSMutable 类型的属性，用来记录约束该视图的所有约束。<br>参考下面代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">MASLayoutConstraint *existingConstraint = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.updateExisting) &#123;</span><br><span class="line">        existingConstraint = [<span class="keyword">self</span> layoutConstraintSimilarTo:layoutConstraint];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (existingConstraint) &#123;</span><br><span class="line">        <span class="comment">// 更新约束</span></span><br><span class="line">        existingConstraint.constant = layoutConstraint.constant;</span><br><span class="line">        <span class="keyword">self</span>.layoutConstraint = existingConstraint;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 添加约束</span></span><br><span class="line">        [<span class="keyword">self</span>.installedView addConstraint:layoutConstraint];</span><br><span class="line">        <span class="keyword">self</span>.layoutConstraint = layoutConstraint;</span><br><span class="line">        <span class="comment">// 约束所在的 View 记录被添加的约束</span></span><br><span class="line">        [firstLayoutItem.mas_installedConstraints addObject:<span class="keyword">self</span>];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-UIView-的私有类目-UIView-MASConstraints"><a href="#3-UIView-的私有类目-UIView-MASConstraints" class="headerlink" title="3. UIView 的私有类目 UIView+MASConstraints"></a>3. UIView 的私有类目 UIView+MASConstraints</h3><p>MASViewConstraint 中定义了一个 UIView 的私有扩展 <code>UIView+MASConstraints</code>，它的作用是为 UIView 通过运行时来关联一个 <strong>NSMutableSet</strong> 类型的 <strong>mas_installedConstraints</strong> 属性。该属性记录了该 View 的所有约束。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	私有类，只有 MASViewConstraint 使用它</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">MAS_VIEW</span> (<span class="title">MASConstraints</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">readonly</span>) <span class="built_in">NSMutableSet</span> *mas_installedConstraints;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">MAS_VIEW</span> (<span class="title">MASConstraints</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 动态添加属性的 Key， 用来表示动态添加的属性</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> kInstalledConstraintsKey;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSMutableSet</span> *)mas_installedConstraints &#123;</span><br><span class="line">    <span class="comment">// 通过 kInstalledConstraintsKey 来获取已经动态添加的约束集合</span></span><br><span class="line">    <span class="built_in">NSMutableSet</span> *constraints = objc_getAssociatedObject(<span class="keyword">self</span>, &amp;kInstalledConstraintsKey);</span><br><span class="line">    <span class="comment">// 如果不存在，创建一个，并进行动态绑定</span></span><br><span class="line">    <span class="keyword">if</span> (!constraints) &#123;</span><br><span class="line">        constraints = [<span class="built_in">NSMutableSet</span> set];</span><br><span class="line">        objc_setAssociatedObject(<span class="keyword">self</span>, &amp;kInstalledConstraintsKey, constraints, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> constraints;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文简单的对 Masonry 的核心代码进行分析，更加细节的东西还请自行去阅读源码。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Source-Code-Analyze/">Source Code Analyze</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Masonry/">Masonry</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2018/01/20/2018-01-20-masonry-analysis/" data-title="Masonry 源码分析 | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/02/24/2018-02-24-YYCache-analysis/" title="YYCache 源码分析">
+  <strong>上一篇：</strong><br>
+  <span>
+  YYCache 源码分析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/12/16/2017-12-16-mjrefresh-analysis/" title="MJRefresh 源码分析">
+ <strong>下一篇：</strong><br> 
+ <span>MJRefresh 源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

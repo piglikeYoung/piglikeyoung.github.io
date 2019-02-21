@@ -1,0 +1,579 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习ReactNative基础（六） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言本篇文章将学习 Navigator组件、TabBarIOS组件和fetch网络请求。 Navigator 组件官方文档 app 由很多公共视图组成，一个应用中重要的功能之一是“导航”，在ReactNative中成为“路由route”，使用导航器可以让你在应用的不同场景（页面）间进行切换。 在ReactNative中，有两个实现导航功能的组件：Navigator 和 NavigatorIOS">
+<meta name="keywords" content="RN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ReactNative基础（六）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/04/27/Learn-ReactNative-6/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言本篇文章将学习 Navigator组件、TabBarIOS组件和fetch网络请求。 Navigator 组件官方文档 app 由很多公共视图组成，一个应用中重要的功能之一是“导航”，在ReactNative中成为“路由route”，使用导航器可以让你在应用的不同场景（页面）间进行切换。 在ReactNative中，有两个实现导航功能的组件：Navigator 和 NavigatorIOS">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-05-01T06:48:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习ReactNative基础（六）">
+<meta name="twitter:description" content="前言本篇文章将学习 Navigator组件、TabBarIOS组件和fetch网络请求。 Navigator 组件官方文档 app 由很多公共视图组成，一个应用中重要的功能之一是“导航”，在ReactNative中成为“路由route”，使用导航器可以让你在应用的不同场景（页面）间进行切换。 在ReactNative中，有两个实现导航功能的组件：Navigator 和 NavigatorIOS">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/27/Learn-ReactNative-6/" title="学习ReactNative基础（六）" itemprop="url">学习ReactNative基础（六）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-04-27T06:18:48.000Z" itemprop="datePublished"> 发表于 2017-04-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Navigator-组件"><span class="toc-number">2.</span> <span class="toc-text">Navigator 组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#导航功能"><span class="toc-number">2.1.</span> <span class="toc-text">导航功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#传值功能"><span class="toc-number">2.2.</span> <span class="toc-text">传值功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TabBarIOS"><span class="toc-number">3.</span> <span class="toc-text">TabBarIOS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fetch网络请求"><span class="toc-number">4.</span> <span class="toc-text">fetch网络请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GET请求"><span class="toc-number">4.1.</span> <span class="toc-text">GET请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POST请求"><span class="toc-number">4.2.</span> <span class="toc-text">POST请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#网络请求获取电影列表数据"><span class="toc-number">4.3.</span> <span class="toc-text">网络请求获取电影列表数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇文章将学习 Navigator组件、TabBarIOS组件和fetch网络请求。</p>
+<h2 id="Navigator-组件"><a href="#Navigator-组件" class="headerlink" title="Navigator 组件"></a>Navigator 组件</h2><p><a href="https://facebook.github.io/react-native/docs/navigator.html" target="_blank" rel="noopener">官方文档</a></p>
+<p>app 由很多公共视图组成，一个应用中重要的功能之一是“导航”，在ReactNative中成为“路由route”，使用导航器可以让你在应用的不同场景（页面）间进行切换。</p>
+<p>在ReactNative中，有两个实现导航功能的组件：<code>Navigator</code> 和 <code>NavigatorIOS</code></p>
+<ul>
+<li>Navigator支持安卓和iOS，NavigatorIOS支持iOS</li>
+<li>NavigatorIOS比Navigator具有更多的属性和方法，在UI方面可以进行更多的设置，例如：backButtonIcon、backButtonTitle、onLeftButtonPress等等，比较方便，如果想实现更多的自定义设置，建议使用Navigator</li>
+</ul>
+<h3 id="导航功能"><a href="#导航功能" class="headerlink" title="导航功能"></a>导航功能</h3><p>导航器通过路由对象(route)来分辨不同的场景。每个路由对象都对应一个页面组件，开发者设置什么，导航器显示什么，所有route是导航器中重要的一个对象。</p>
+<p>三部操作实现导航功能：</p>
+<ol>
+<li>设置路由对象（告诉导航器我要现实哪个页面），创建路由对象，对象的内容自定义，但是必须包含该场景需要展示的页面组件</li>
+<li>场景渲染配置（告诉导航器我要什么样的页面跳转效果）</li>
+<li>渲染场景（告诉导航器如何渲染页面）<br> 利用第一步设置的路由对象进行渲染场景</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个页面</span></span><br><span class="line"><span class="comment">// FirstPage 一个button，点击进入下一级页面</span></span><br><span class="line"><span class="keyword">var</span> FirstPage = React.createClass(&#123;</span><br><span class="line">  <span class="comment">// 按钮onPress事件处理方法</span></span><br><span class="line">  pressPush: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 推出下一级页面</span></span><br><span class="line">    <span class="keyword">var</span> nextRoute = &#123;</span><br><span class="line">      component: SecondPage</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">this</span>.props.navigator.push(nextRoute);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;[styles.flex, &#123;<span class="attr">backgroundColor</span>:<span class="string">'green'</span>&#125;]&#125;&gt;</span><br><span class="line">        &lt;TouchableOpacity style=&#123;styles.btn&#125; onPress=&#123;<span class="keyword">this</span>.pressPush&#125;&gt;</span><br><span class="line">          &lt;Text&gt;点击推出下一级页面&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>TouchableOpacity&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 定义第二个页面</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ SecondPage 一个button，点击返回上一级页面</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var SecondPage = React.createClass(&#123;</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 按钮onPress事件处理方法</span></span><br><span class="line"><span class="regexp">  pressPop: function() &#123;</span></span><br><span class="line"><span class="regexp">    /</span><span class="regexp">/ 返回上一级页面</span></span><br><span class="line"><span class="regexp">    this.props.navigator.pop();</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  render: function() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;View style=&#123;[styles.flex, &#123;backgroundColor:'pink'&#125;]&#125;&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TouchableOpacity style=&#123;styles.btn&#125; onPress=&#123;this.pressPop&#125;&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Text&gt;点击返回上一级页面&lt;/</span>Text&gt;</span><br><span class="line">        &lt;<span class="regexp">/TouchableOpacity&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> LessonNavigator = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> rootRoute = &#123;</span><br><span class="line">      component: FirstPage</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span>(</span><br><span class="line">      &lt;Navigator</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">          第一步：</span></span><br><span class="line"><span class="comment">          initialRoute</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          这个指定了默认的页面，也就是启动APP之后会看到界面的第一屏</span></span><br><span class="line"><span class="comment">          对象的属性是自定义的，这个对象中的内容会在renderScene方法中处理</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          备注：必须包含的属性，即component，表示需要渲染的页面组件</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        initialRoute=&#123;rootRoute&#125;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">          第二步：</span></span><br><span class="line"><span class="comment">          configureScene</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          场景渲染的配置</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        configureScene=&#123;(route) =&gt; &#123;</span><br><span class="line">          <span class="keyword">return</span> Navigator.SceneConfigs.PushFromRight;</span><br><span class="line">        &#125;&#125;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">          第三步：</span></span><br><span class="line"><span class="comment">          renderScene</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          渲染场景</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          参数：route (第一步创建并设置给导航器的路由对象)，navigator（导航器对象）</span></span><br><span class="line"><span class="comment">          实现：给需要显示的组件设置属性</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        renderScene=&#123;(route, navigator) =&gt; &#123;</span><br><span class="line">          <span class="comment">// 从route对象中获取页面组件</span></span><br><span class="line">          <span class="keyword">var</span> Component = route.component;</span><br><span class="line">          <span class="keyword">return</span> (</span><br><span class="line">            &lt;Component</span><br><span class="line">              navigator=&#123;navigator&#125;</span><br><span class="line">              route=&#123;route&#125;</span><br><span class="line">            /&gt;</span><br><span class="line">          );</span><br><span class="line">        &#125;&#125;</span><br><span class="line">      /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  flex: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  btn: &#123;</span><br><span class="line">    width: <span class="number">150</span>,</span><br><span class="line">    height: <span class="number">30</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#0089FF'</span>,</span><br><span class="line">    borderWidth: <span class="number">1</span>,</span><br><span class="line">    borderRadius: <span class="number">3</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = LessonNavigator;</span><br></pre></td></tr></table></figure>
+<h3 id="传值功能"><a href="#传值功能" class="headerlink" title="传值功能"></a>传值功能</h3><p>将第一个界面输入的值，传递到第二个界面显示。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有输入的页面</span></span><br><span class="line"><span class="keyword">var</span> InputPage = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 记录输入的值</span></span><br><span class="line">      content: <span class="string">''</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  getInputContent: <span class="function"><span class="keyword">function</span>(<span class="params">inputText</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 将输入框的值进行记录</span></span><br><span class="line">    <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">      content: inputText</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  pushNextPage: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//进入下一个界面并传值</span></span><br><span class="line">    <span class="keyword">var</span> route = &#123;</span><br><span class="line">      component: DetailsPage,</span><br><span class="line">      passProps: &#123;</span><br><span class="line">        showText: <span class="keyword">this</span>.state.content</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">this</span>.props.navigator.push(route);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;inputStyle.container&#125;&gt;</span><br><span class="line">        &lt;TextInput</span><br><span class="line">          style=&#123;inputStyle.input&#125;</span><br><span class="line">          placeholder=<span class="string">'请输入内容'</span></span><br><span class="line">          onChangeText=&#123;<span class="keyword">this</span>.getInputContent&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">        &lt;TouchableOpacity style=&#123;inputStyle.btn&#125; onPress=&#123;<span class="keyword">this</span>.pushNextPage&#125;&gt;</span><br><span class="line">          &lt;Text&gt;进入下一页&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>TouchableOpacity&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var inputStyle = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp">  container: &#123;</span></span><br><span class="line"><span class="regexp">    flex: 1,</span></span><br><span class="line"><span class="regexp">    justifyContent: 'center',</span></span><br><span class="line"><span class="regexp">    alignItems: 'center',</span></span><br><span class="line"><span class="regexp">    backgroundColor: 'white',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  input: &#123;</span></span><br><span class="line"><span class="regexp">    height: 45,</span></span><br><span class="line"><span class="regexp">    marginLeft: 25,</span></span><br><span class="line"><span class="regexp">    marginRight: 25,</span></span><br><span class="line"><span class="regexp">    paddingLeft: 5,</span></span><br><span class="line"><span class="regexp">    borderWidth: 1,</span></span><br><span class="line"><span class="regexp">    borderColor: 'black',</span></span><br><span class="line"><span class="regexp">    borderRadius: 4,</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  btn: &#123;</span></span><br><span class="line"><span class="regexp">    marginTop: 20,</span></span><br><span class="line"><span class="regexp">    height: 30,</span></span><br><span class="line"><span class="regexp">    borderWidth: 1,</span></span><br><span class="line"><span class="regexp">    borderRadius: 4,</span></span><br><span class="line"><span class="regexp">    borderColor: 'black',</span></span><br><span class="line"><span class="regexp">    padding: 5,</span></span><br><span class="line"><span class="regexp">    justifyContent: 'center',</span></span><br><span class="line"><span class="regexp">    alignItems: 'center',</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 显示输入内容的页面</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var DetailsPage = React.createClass(&#123;</span></span><br><span class="line"><span class="regexp">  popFrontPage: function() &#123;</span></span><br><span class="line"><span class="regexp">    /</span><span class="regexp">/ 返回上一级</span></span><br><span class="line"><span class="regexp">    this.props.navigator.pop();</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  render: function() &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;View style=&#123;detailStyle.container&#125;&gt;</span></span><br><span class="line"><span class="regexp">        &lt;Text style=&#123;detailStyle.text&#125;&gt;&#123;this.props.showText&#125;&lt;/</span>Text&gt;</span><br><span class="line">        &lt;TouchableOpacity style=&#123;detailStyle.btn&#125; onPress=&#123;<span class="keyword">this</span>.popFrontPage&#125;&gt;</span><br><span class="line">          &lt;Text&gt;返回上一页&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>TouchableOpacity&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var detailStyle = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp">  container: &#123;</span></span><br><span class="line"><span class="regexp">    flex: 1,</span></span><br><span class="line"><span class="regexp">    justifyContent: 'center',</span></span><br><span class="line"><span class="regexp">    alignItems: 'center',</span></span><br><span class="line"><span class="regexp">    backgroundColor: 'white',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  text: &#123;</span></span><br><span class="line"><span class="regexp">    marginLeft: 25,</span></span><br><span class="line"><span class="regexp">    marginRight: 25,</span></span><br><span class="line"><span class="regexp">    padding: 25,</span></span><br><span class="line"><span class="regexp">    backgroundColor: 'cyan',</span></span><br><span class="line"><span class="regexp">    fontSize: 20,</span></span><br><span class="line"><span class="regexp">    textAlign: 'center',</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  btn: &#123;</span></span><br><span class="line"><span class="regexp">    marginTop: 20,</span></span><br><span class="line"><span class="regexp">    height: 30,</span></span><br><span class="line"><span class="regexp">    borderWidth: 1,</span></span><br><span class="line"><span class="regexp">    borderRadius: 4,</span></span><br><span class="line"><span class="regexp">    borderColor: 'black',</span></span><br><span class="line"><span class="regexp">    padding: 5,</span></span><br><span class="line"><span class="regexp">    justifyContent: 'center',</span></span><br><span class="line"><span class="regexp">    alignItems: 'center',</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var LessonNavigator = React.createClass(&#123;</span></span><br><span class="line"><span class="regexp">  render: function() &#123;</span></span><br><span class="line"><span class="regexp">    var rootRoute = &#123;</span></span><br><span class="line"><span class="regexp">      component: InputPage,</span></span><br><span class="line"><span class="regexp">      /</span><span class="regexp">/ 存储需要传递的内容</span></span><br><span class="line"><span class="regexp">      passProps: &#123;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">      &#125;</span></span><br><span class="line"><span class="regexp">    &#125;;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;View style=&#123;&#123;flex:1&#125;&#125;&gt;</span></span><br><span class="line"><span class="regexp">        &lt;Navigator</span></span><br><span class="line"><span class="regexp">          initialRoute=&#123;rootRoute&#125;</span></span><br><span class="line"><span class="regexp">          configureScene=&#123;(route) =&gt; &#123;</span></span><br><span class="line"><span class="regexp">            return Navigator.SceneConfigs.PushFromRight;</span></span><br><span class="line"><span class="regexp">          &#125;&#125;</span></span><br><span class="line"><span class="regexp">          renderScene=&#123;(route, navigator) =&gt; &#123;</span></span><br><span class="line"><span class="regexp">            var Component = route.component;</span></span><br><span class="line"><span class="regexp">            return (</span></span><br><span class="line"><span class="regexp">              &lt;Component</span></span><br><span class="line"><span class="regexp">                navigator=&#123;navigator&#125;</span></span><br><span class="line"><span class="regexp">                route=&#123;route&#125;</span></span><br><span class="line"><span class="regexp">                &#123;...route.passProps&#125;</span></span><br><span class="line"><span class="regexp">              /</span>&gt;</span><br><span class="line">            );</span><br><span class="line">          &#125;&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var styles = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">module.exports = LessonNavigator;</span></span><br></pre></td></tr></table></figure>
+<h2 id="TabBarIOS"><a href="#TabBarIOS" class="headerlink" title="TabBarIOS"></a>TabBarIOS</h2><p><a href="https://facebook.github.io/react-native/docs/tabbarios.html" target="_blank" rel="noopener">官方文档</a></p>
+<p>在ReactNative中，实现页面切换，提供了两个组件：TabBarIOS和TabBarIOS.Item，常用功能：</p>
+<ul>
+<li>selected：是否选中某个Tab。如果为true则选中并显示组件</li>
+<li>title： 标题</li>
+<li>barTintColor：Tab栏的背景颜色</li>
+<li>icon：图标</li>
+<li>onPress：点击事件，当某个tab被选中时，需要改变组件的select={true}</li>
+</ul>
+<p>实现原理：点击tab时触发onPress方法，记录被点击tab的title。再通过title设置tab是否被选中（通过比较设置selected的值，true/false）</p>
+<p>例子：先创建三个页面，引入模块，在 <code>index.ios.js</code> 中统一装配</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LessonTextInput = <span class="built_in">require</span>(<span class="string">'./testInput'</span>);</span><br><span class="line"><span class="keyword">var</span> LessonImage = <span class="built_in">require</span>(<span class="string">'./loadImage'</span>);</span><br><span class="line"><span class="keyword">var</span> MovieList = <span class="built_in">require</span>(<span class="string">'./movieList'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> LessonTabBarIOS = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 记录点击tab的title</span></span><br><span class="line">      tab: <span class="string">'LessonTextInput'</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// TabBarIOS.Item 的onPress触发方法</span></span><br><span class="line">  select: <span class="function"><span class="keyword">function</span>(<span class="params">tabName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">      tab: tabName</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;TabBarIOS style=&#123;&#123;<span class="attr">flex</span>:<span class="number">1</span>&#125;&#125;&gt;</span><br><span class="line">        &lt;TabBarIOS.Item</span><br><span class="line">          title=<span class="string">'LessonTextInput'</span></span><br><span class="line">          icon=&#123;<span class="built_in">require</span>(<span class="string">'./img/icon_chat_normal@3x.png'</span>)&#125;</span><br><span class="line">          onPress=&#123;<span class="keyword">this</span>.select.bind(<span class="keyword">this</span>, <span class="string">'LessonTextInput'</span>)&#125;</span><br><span class="line">          selected=&#123;<span class="keyword">this</span>.state.tab===<span class="string">'LessonTextInput'</span>&#125;</span><br><span class="line">          &gt;</span><br><span class="line">            &lt;LessonTextInput&gt;&lt;/LessonTextInput&gt;</span><br><span class="line">        &lt;<span class="regexp">/TabBarIOS.Item&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TabBarIOS.Item</span></span><br><span class="line"><span class="regexp">          title='LessonImage'</span></span><br><span class="line"><span class="regexp">          systemIcon='bookmarks'</span></span><br><span class="line"><span class="regexp">          onPress=&#123;this.select.bind(this, 'LessonImage')&#125;</span></span><br><span class="line"><span class="regexp">          selected=&#123;this.state.tab==='LessonImage'&#125;</span></span><br><span class="line"><span class="regexp">          &gt;</span></span><br><span class="line"><span class="regexp">            &lt;LessonImage&gt;&lt;/</span>LessonImage&gt;</span><br><span class="line">        &lt;<span class="regexp">/TabBarIOS.Item&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TabBarIOS.Item</span></span><br><span class="line"><span class="regexp">          title='MovieList'</span></span><br><span class="line"><span class="regexp">          icon=&#123;require('./img</span><span class="regexp">/icon_discover_selected@3x.png')&#125;</span></span><br><span class="line"><span class="regexp">          onPress=&#123;this.select.bind(this, 'MovieList')&#125;</span></span><br><span class="line"><span class="regexp">          selected=&#123;this.state.tab==='MovieList'&#125;</span></span><br><span class="line"><span class="regexp">          &gt;</span></span><br><span class="line"><span class="regexp">            &lt;MovieList&gt;&lt;/</span>MovieList&gt;</span><br><span class="line">        &lt;<span class="regexp">/TabBarIOS.Item&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>TabBarIOS&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="fetch网络请求"><a href="#fetch网络请求" class="headerlink" title="fetch网络请求"></a>fetch网络请求</h2><p>在ReactNative中，使用fetch实现了网络请求。fetch和XMLHttpRequest非常类似，是一个封装程度更高的网络API，使用起来很简洁，因为使用了Promise。</p>
+<p>Promise是异步编程的一种解决方案，比传统的解决方案（回调函数和事件），更加合理和强大，ES6将其写进了语言标准，统一了用法，原生提供了Promise对象。简单点说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果。</p>
+<p>Promise对象代表一个异步操作，有三种状态：Pending（进行中）、Resolved（已完成）、Rejected（已失败）。</p>
+<p>Promise对象生成后，可以分别指定“完成”和“失败”状态的回调函数，链式调用方法。</p>
+<p>语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">fetch(参数)</span><br><span class="line">  .then(完成的回调函数)</span><br><span class="line">  .catch(失败的回调函数)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// opts 网络请求的配置</span></span><br><span class="line">  fetch(url, opts)</span><br><span class="line">  .then(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 网络请求成功执行该回调函数，得到相应对象，通过response可以获取请求的数据</span></span><br><span class="line">    <span class="comment">// 例如：json、text等等</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> response.text();</span><br><span class="line">    <span class="comment">// return response.json();</span></span><br><span class="line">  &#125;)</span><br><span class="line">  .then((responseData) = &gt; &#123;</span><br><span class="line">    <span class="comment">// 处理请求得到的数据</span></span><br><span class="line"></span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 网络请求失败执行该回调函数，得到错误信息</span></span><br><span class="line"></span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="GET请求"><a href="#GET请求" class="headerlink" title="GET请求"></a>GET请求</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getRequest</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> opts = &#123;</span><br><span class="line">    method: <span class="string">'GET'</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  fetch(url, opts)</span><br><span class="line">  .then(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> response.text();</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function">(<span class="params">responseText</span>) =&gt;</span> &#123;</span><br><span class="line">    alert(responseText);</span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    alert(error);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="POST请求"><a href="#POST请求" class="headerlink" title="POST请求"></a>POST请求</h3><p>POST请求需要请求参数，配置请求参数需要先认识一个类 <code>FromData</code>。</p>
+<p>Web应用中频繁使用的一项功能就是表单数据的序列化，XMLHttpRequest的2级定义了FormData类型，FromData主要用于实现序列化表单已经创建与表单格式相同的数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data = <span class="keyword">new</span> FormData();</span><br><span class="line">data.append(<span class="string">'name'</span>, <span class="string">'yjh'</span>);</span><br></pre></td></tr></table></figure>
+<p>append方法接收两个参数：键和值，分别对应表单字段的名字和值，可添加多个键值对。</p>
+<blockquote>
+<p>在jquery中，‘key1=value1&amp;key2=value2’作为参数传入对象框架会自动封装成FormData形式<br>在Fetch中进行的post请求时，需要自动创建FormData对象传给body</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">postRequest</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> formData = <span class="keyword">new</span> FormData();</span><br><span class="line">  formData.append(<span class="string">'username'</span>, <span class="string">'yjh'</span>);</span><br><span class="line">  formData.append(<span class="string">'password'</span>, <span class="string">'123456'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> opts = &#123;</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">    body: formData</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  fetch(url, opts)</span><br><span class="line">  .then(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> response.text();</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function">(<span class="params">responseText</span>) =&gt;</span> &#123;</span><br><span class="line">    alert(responseText);</span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">    alert(error);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> GetData = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;TouchableOpacity onPress=&#123;getRequest.bind(<span class="keyword">this</span>, <span class="string">'https://httpbin.org/get?userName=yjh'</span>)&#125;&gt;</span><br><span class="line">          &lt;View style=&#123;styles.btn&#125;&gt;</span><br><span class="line">            &lt;Text&gt;GET&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">          &lt;/</span>View&gt;</span><br><span class="line">        &lt;<span class="regexp">/TouchableOpacity&gt;</span></span><br><span class="line"><span class="regexp">        &lt;TouchableOpacity&gt;</span></span><br><span class="line"><span class="regexp">          &lt;View style=&#123;styles.btn&#125; onPress=&#123;postRequest.bind(this, 'https:/</span><span class="regexp">/httpbin.org/</span>post<span class="string">')&#125;&gt;</span></span><br><span class="line"><span class="string">            &lt;Text&gt;POST&lt;/Text&gt;</span></span><br><span class="line"><span class="string">          &lt;/View&gt;</span></span><br><span class="line"><span class="string">        &lt;/TouchableOpacity&gt;</span></span><br><span class="line"><span class="string">      &lt;/View&gt;</span></span><br><span class="line"><span class="string">    );</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var styles = StyleSheet.create(&#123;</span></span><br><span class="line"><span class="string">  container: &#123;</span></span><br><span class="line"><span class="string">    flex: 1,</span></span><br><span class="line"><span class="string">    marginTop: 30,</span></span><br><span class="line"><span class="string">    backgroundColor: '</span>cyan<span class="string">',</span></span><br><span class="line"><span class="string">    flexDirection: '</span>row<span class="string">',</span></span><br><span class="line"><span class="string">    justifyContent: '</span>space-around<span class="string">',</span></span><br><span class="line"><span class="string">    alignItems: '</span>center<span class="string">',</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  btn: &#123;</span></span><br><span class="line"><span class="string">    width: 60,</span></span><br><span class="line"><span class="string">    height: 30,</span></span><br><span class="line"><span class="string">    borderWidth: 1,</span></span><br><span class="line"><span class="string">    borderRadius: 3,</span></span><br><span class="line"><span class="string">    borderColor: '</span>black<span class="string">',</span></span><br><span class="line"><span class="string">    backgroundColor: '</span>yellow<span class="string">',</span></span><br><span class="line"><span class="string">    justifyContent: '</span>center<span class="string">',</span></span><br><span class="line"><span class="string">    alignItems: '</span>center<span class="string">',</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">module.exports = GetData;</span></span><br></pre></td></tr></table></figure>
+<h3 id="网络请求获取电影列表数据"><a href="#网络请求获取电影列表数据" class="headerlink" title="网络请求获取电影列表数据"></a>网络请求获取电影列表数据</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  请求电影列表</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  未获得数据时，显示等待页面；获取数据后，显示电影列表页面</span></span><br><span class="line"><span class="comment">  需要给state添加一个属性，用于记录下载状态</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> REQUEST_URL = <span class="string">'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> MovieList = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ds = <span class="keyword">new</span> ListView.DataSource(&#123;</span><br><span class="line">      rowHasChanged: <span class="function">(<span class="params">oldRow, newRow</span>) =&gt;</span> oldRow!==newRow</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      loaded: <span class="literal">false</span>, <span class="comment">// 数据是否请求完成</span></span><br><span class="line">      dataSource: ds,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  getData: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    fetch(REQUEST_URL)</span><br><span class="line">    .then(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.json();</span><br><span class="line">    &#125;)</span><br><span class="line">    .then(<span class="function">(<span class="params">responseData</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 刷新组件，展示ListView</span></span><br><span class="line">      <span class="comment">// 更新dataSource</span></span><br><span class="line">      <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">        loaded: <span class="literal">true</span>,</span><br><span class="line">        dataSource: <span class="keyword">this</span>.state.dataSource.cloneWithRows(responseData.movies),</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">    .catch(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">      alert(error);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 判断请求是否完成</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.state.loaded) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.renderLoadingView();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 电影列表</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;ListView</span><br><span class="line">        style=&#123;styles.listView&#125;</span><br><span class="line">        dataSource=&#123;<span class="keyword">this</span>.state.dataSource&#125;</span><br><span class="line">        renderRow=&#123;<span class="keyword">this</span>._renderRow&#125;</span><br><span class="line">        renderHeader=&#123;<span class="keyword">this</span>._renderHeader&#125;</span><br><span class="line">        renderSeparator=&#123;<span class="keyword">this</span>._renderSeparator&#125;</span><br><span class="line">        <span class="comment">// 一开始渲染的行数</span></span><br><span class="line">        initialListSize=&#123;<span class="number">10</span>&#125;</span><br><span class="line">      /&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 组件挂载完成</span></span><br><span class="line">  componentDidMount: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 组件挂载后，开始下载数据</span></span><br><span class="line">    <span class="keyword">this</span>.getData();</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 等待请求页面</span></span><br><span class="line">  renderLoadingView: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.loadingContainer&#125;&gt;</span><br><span class="line">        &lt;Text style=&#123;styles.loadingText&#125;&gt;Loading movie.....&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 渲染行组件</span></span><br><span class="line">  _renderRow: <span class="function"><span class="keyword">function</span>(<span class="params">movie</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.row&#125;&gt;</span><br><span class="line">        &lt;Image</span><br><span class="line">          style=&#123;styles.thumbnail&#125;</span><br><span class="line">          source=&#123;&#123;<span class="attr">uri</span>:movie.posters.thumbnail&#125;&#125;/&gt;</span><br><span class="line">        &lt;View style=&#123;styles.rightContainer&#125;&gt;</span><br><span class="line">          &lt;Text style=&#123;styles.title&#125;&gt;&#123;movie.title&#125;&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">          &lt;Text style=&#123;styles.year&#125;&gt;&#123;movie.year&#125;&lt;/</span>Text&gt;</span><br><span class="line">        &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 渲染头部</span></span><br><span class="line">  _renderHeader: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.header&#125;&gt;</span><br><span class="line">        &lt;Text style=&#123;styles.header_text&#125;&gt;Movies List&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">        &lt;View style=&#123;styles.separator&#125;&gt;&lt;/</span>View&gt;</span><br><span class="line">      &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;,</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 渲染分隔线</span></span><br><span class="line"><span class="regexp">  _renderSeparator: function(sectionID:number, rowID:number) &#123;</span></span><br><span class="line"><span class="regexp">    return (</span></span><br><span class="line"><span class="regexp">      &lt;View style=&#123;styles.separator&#125; key=&#123;sectionID+rowID&#125;&gt;&lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  <span class="comment">// Loading样式</span></span><br><span class="line">  loadingContainer: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">    backgroundColor: <span class="string">'cyan'</span>,</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  loadingText: &#123;</span><br><span class="line">    fontSize: <span class="number">30</span>,</span><br><span class="line">    fontWeight: <span class="string">'bold'</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span>,</span><br><span class="line">    marginLeft: <span class="number">10</span>,</span><br><span class="line">    marginRight: <span class="number">10</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// listView</span></span><br><span class="line">  listView: &#123;</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#F5FCFF'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  row: &#123;</span><br><span class="line">    flexDirection: <span class="string">'row'</span>,</span><br><span class="line">    padding: <span class="number">5</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#F5FCFF'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  thumbnail: &#123;</span><br><span class="line">    width: <span class="number">53</span>,</span><br><span class="line">    height: <span class="number">81</span>,</span><br><span class="line">    backgroundColor: <span class="string">'gray'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  rightContainer: &#123;</span><br><span class="line">    marginLeft: <span class="number">10</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  title: &#123;</span><br><span class="line">    fontSize: <span class="number">10</span>,</span><br><span class="line">    marginTop: <span class="number">3</span>,</span><br><span class="line">    marginBottom: <span class="number">3</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  year: &#123;</span><br><span class="line">    marginBottom: <span class="number">3</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// header</span></span><br><span class="line">  header: &#123;</span><br><span class="line">    height: <span class="number">44</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#F5FCFF'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  header_text: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    fontSize: <span class="number">20</span>,</span><br><span class="line">    fontWeight: <span class="string">'bold'</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span>,</span><br><span class="line">    lineHeight: <span class="number">44</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 分隔线</span></span><br><span class="line">  separator: &#123;</span><br><span class="line">    height: <span class="number">1</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#CCCCCC'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = MovieList;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>截止至本章，学习 ReactNative 基础系列文章，已经把 ReactNative 基础的内容都已经过了个遍，通过这几篇文章的内容学习，相信你应该对 ReactNative 已经有个大致的了解，并且能够上手完成一个小应用了，如果你还想深入了解 ReactNative 的高级特性，可以去官网上查阅文档。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ReactNative/">ReactNative</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RN/">RN</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/04/27/Learn-ReactNative-6/" data-title="学习ReactNative基础（六） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/05/06/use-UIActivityItemSource/" title="记一次 UIActivityItemSource 使用">
+  <strong>上一篇：</strong><br>
+  <span>
+  记一次 UIActivityItemSource 使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/22/Learn-ReactNative-5/" title="学习ReactNative基础（五）">
+ <strong>下一篇：</strong><br> 
+ <span>学习ReactNative基础（五）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

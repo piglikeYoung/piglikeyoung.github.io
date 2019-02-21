@@ -1,0 +1,609 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习CALayer（一） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言我们都知道在iOS中每一个你看到的东西都是由View组成的，比如按钮视图，table视图等等。但是你可能不知道每个View背后都有一个叫做CALayer的类。本系列文章着重学习使用CALayer，CALayer和View的区别请参考：  详解CALayer 和 UIView的区别和联系 View-Layer 协作  本章的内容大部分是从CALayer Tutorial: Getting Sta">
+<meta name="keywords" content="CALayer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习CALayer（一）">
+<meta property="og:url" content="http://piglikeyoung.com/2016/10/15/learn-CALayer-1/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言我们都知道在iOS中每一个你看到的东西都是由View组成的，比如按钮视图，table视图等等。但是你可能不知道每个View背后都有一个叫做CALayer的类。本系列文章着重学习使用CALayer，CALayer和View的区别请参考：  详解CALayer 和 UIView的区别和联系 View-Layer 协作  本章的内容大部分是从CALayer Tutorial: Getting Sta">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2016/10/15/learn-CALayer-1/Snip20161029_1.png">
+<meta property="og:updated_time" content="2016-10-29T11:57:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习CALayer（一）">
+<meta name="twitter:description" content="前言我们都知道在iOS中每一个你看到的东西都是由View组成的，比如按钮视图，table视图等等。但是你可能不知道每个View背后都有一个叫做CALayer的类。本系列文章着重学习使用CALayer，CALayer和View的区别请参考：  详解CALayer 和 UIView的区别和联系 View-Layer 协作  本章的内容大部分是从CALayer Tutorial: Getting Sta">
+<meta name="twitter:image" content="http://piglikeyoung.com/2016/10/15/learn-CALayer-1/Snip20161029_1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/15/learn-CALayer-1/" title="学习CALayer（一）" itemprop="url">学习CALayer（一）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-10-15T08:43:40.000Z" itemprop="datePublished"> 发表于 2016-10-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CALayer"><span class="toc-number">2.</span> <span class="toc-text">CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAScrollLayer"><span class="toc-number">3.</span> <span class="toc-text">CAScrollLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CATextLayer"><span class="toc-number">4.</span> <span class="toc-text">CATextLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们都知道在iOS中每一个你看到的东西都是由View组成的，比如按钮视图，table视图等等。但是你可能不知道每个View背后都有一个叫做CALayer的类。本系列文章着重学习使用CALayer，CALayer和View的区别请参考：</p>
+<ul>
+<li><a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="noopener">详解CALayer 和 UIView的区别和联系</a></li>
+<li><a href="https://objccn.io/issue-12-4/" target="_blank" rel="noopener">View-Layer 协作</a></li>
+</ul>
+<p>本章的内容大部分是从<a href="http://www.raywenderlich.com/90488/calayer-in-ios-with-swift-10-examples" target="_blank" rel="noopener">CALayer Tutorial: Getting Started</a>学习得来。</p>
+<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>CALayer是接下来要学习到的Layers的基类，包含了很多基础属性，比如</p>
+<ul>
+<li><strong>contents</strong>：表示Layer呈现的内容，一般会设置为CGImage的对象</li>
+<li><strong>contentsGravity</strong>：表示内容对齐和填充方式</li>
+<li><strong>cornerRadius</strong>：表示Layer圆角半径，默认zero</li>
+<li><strong>masksToBounds</strong>：是否进行bounds的切割，设置圆角属性是会设置为YES</li>
+</ul>
+<p>Layer还有很多属性和View相似，比如<strong>frame</strong>，<strong>bounds</strong>等等用于设置Layer的位置。</p>
+<p>CALayer还有几个知识点：</p>
+<ul>
+<li>Layers有subLayer，就像Views有subViews</li>
+<li>Layer的properties能够产生隐式动画。当你改变Layer的property，它会默认产生隐式动画。你也可以使用自定义动画。</li>
+<li>Layer比Views更轻量级，更能节约性能。</li>
+<li>Layers有大量有用的properties。</li>
+</ul>
+<p>看下面这段代码：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1</span></span><br><span class="line">_layer = [<span class="built_in">CALayer</span> new];</span><br><span class="line">_layer.frame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">200</span>, <span class="number">200</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line">_layer.contents = (__bridge <span class="keyword">id</span> _Nullable)([[<span class="built_in">UIImage</span> imageNamed:<span class="string">@"star"</span>] <span class="built_in">CGImage</span>]);</span><br><span class="line">_layer.contentsGravity = kCAGravityCenter;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line">_layer.magnificationFilter = kCAFilterLinear;</span><br><span class="line">_layer.geometryFlipped = <span class="literal">NO</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4</span></span><br><span class="line">_layer.backgroundColor = [kDefaultBackgroundColor <span class="built_in">CGColor</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5</span></span><br><span class="line">_layer.cornerRadius = <span class="number">100.0</span>;</span><br><span class="line">_layer.borderWidth = <span class="number">12.0</span>;</span><br><span class="line">_layer.borderColor = [[<span class="built_in">UIColor</span> whiteColor] <span class="built_in">CGColor</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 6</span></span><br><span class="line">_layer.shadowOpacity = <span class="number">0.75</span>;</span><br><span class="line">_layer.shadowOffset = <span class="built_in">CGSizeMake</span>(<span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line">_layer.shadowRadius = <span class="number">3.0</span>;</span><br></pre></td></tr></table></figure></p>
+<p>分析：</p>
+<ol>
+<li>创建了一个CALayer对象，设置它的frame</li>
+<li>把layer的内容设置为一张图片，图片的格式是Quartz image data（CGImage）</li>
+<li>设置内容对齐和填充方式</li>
+<li>设置layer的背景色</li>
+<li>设置layer的圆角弧度为自己宽度的一半（它就会变成圆形），设置它的边框宽度和颜色</li>
+<li>设置layer的阴影透明度，阴影偏移量，阴影圆角半径</li>
+</ol>
+<p>最终效果：<br><img src="/2016/10/15/learn-CALayer-1/Snip20161029_1.png" title="CALayer image"></p>
+<p><strong>CALayer有附加属性能够提高性能</strong>：</p>
+<ul>
+<li><strong>shouldRasterize</strong>：光栅化，设置为YES后CALayer会被光栅化为bitmap，layer的阴影等效果也会被保存到bitmap中，<code>缓存起来后不需要多次渲染提高了性能</code>，而对于经常变动的内容，这个时候不要开启，否则会造成性能的浪费。</li>
+<li><strong>drawsAsynchronously</strong>：异步渲染，这个和shouldRasterize正好相反，默认也是NO，设置为YES能够提高<code>需要反复渲染</code>layer内容的性能，比如之后会学习到的<strong>emitter layer</strong>连续渲染颗粒动画。</li>
+</ul>
+<blockquote>
+<p>提醒：在设置<strong>shouldrasterize</strong>或<strong>drawsasynchronously</strong>时，应该反复比较设置前后的性能，正确使用时，能够提高性能，误用时，性能可能会急转直下。</p>
+</blockquote>
+<blockquote>
+<p>注意：Layer不属于响应链条的一部分，它无法和View一样直接响应点击和手势。</p>
+</blockquote>
+<h2 id="CAScrollLayer"><a href="#CAScrollLayer" class="headerlink" title="CAScrollLayer"></a>CAScrollLayer</h2><p>CAScrollLayer是CALayer的子类，用于显示Layer的一部分，不能直接响应用户的触摸甚至检查滚动范围。CAScrollLayer的可滚动区域的范围是由它的子层布局来确定的。 CAScrollLayer不提供键盘或鼠标事件处理，也没有提供可见滚动条。 </p>
+<p>UIScrollView并没有用CAScrollLayer，事实上，就是简单的通过直接操作图层边界来实现滑动。</p>
+<p>CAScrollLayer可以设置它的滚动方向，还可以滚动到特定的点或者区域。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"ScrollView.h"</span></span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ScrollView</span></span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line">+ (Class)layerClass</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">CAScrollLayer</span> <span class="keyword">class</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setUp</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//enable clipping</span></span><br><span class="line">    <span class="keyword">self</span>.layer.masksToBounds = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//attach pan gesture recognizer</span></span><br><span class="line">    <span class="built_in">UIPanGestureRecognizer</span> *recognizer = <span class="literal">nil</span>;</span><br><span class="line">    recognizer = [[<span class="built_in">UIPanGestureRecognizer</span> alloc] initWithTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(pan:)];</span><br><span class="line">    [<span class="keyword">self</span> addGestureRecognizer:recognizer];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">id</span>)initWithFrame:(<span class="built_in">CGRect</span>)frame</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//this is called when view is created in code</span></span><br><span class="line">    <span class="keyword">if</span> ((<span class="keyword">self</span> = [<span class="keyword">super</span> initWithFrame:frame])) &#123;</span><br><span class="line">        [<span class="keyword">self</span> setUp];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)awakeFromNib &#123;</span><br><span class="line">    <span class="comment">//this is called when view is created from a nib</span></span><br><span class="line">    [<span class="keyword">self</span> setUp];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pan:(<span class="built_in">UIPanGestureRecognizer</span> *)recognizer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//get the offset by subtracting the pan gesture</span></span><br><span class="line">    <span class="comment">//translation from the current bounds origin</span></span><br><span class="line">    <span class="built_in">CGPoint</span> offset = <span class="keyword">self</span>.bounds.origin;</span><br><span class="line">    offset.x -= [recognizer translationInView:<span class="keyword">self</span>].x;</span><br><span class="line">    offset.y -= [recognizer translationInView:<span class="keyword">self</span>].y;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//scroll the layer</span></span><br><span class="line">    [(<span class="built_in">CAScrollLayer</span> *)<span class="keyword">self</span>.layer scrollToPoint:offset];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//reset the pan gesture translation</span></span><br><span class="line">    [recognizer setTranslation:<span class="built_in">CGPointZero</span> inView:<span class="keyword">self</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 结束恢复原点</span></span><br><span class="line"><span class="comment">//    if (sender.state == UIGestureRecognizerStateEnded) &#123;</span></span><br><span class="line"><span class="comment">//        [UIView animateWithDuration:0.3 animations:^&#123;</span></span><br><span class="line"><span class="comment">//            [self.scrollingViewLayer scrollToPoint:CGPointZero];</span></span><br><span class="line"><span class="comment">//        &#125;];</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ol>
+<li>创建一个View的子类，重写<strong>layerClass</strong>方法，返回<strong>CAScrollLayer</strong>。这里修改了创建的Layer类，并添加它作为sublayer。</li>
+<li>在手势响应方法中，它会滚到触摸点。注意：<strong>scrollToPoint</strong> 和 <strong>scrollToRect</strong>方法没有隐式动画，需要使用 UIView 动画才会有滚动动画。</li>
+</ol>
+<p>这里有一些经验规则时使用（或不使用）CAScrollLayer：</p>
+<ul>
+<li>如果你想使用轻量级的，只需要通过代码的方式滚动：考虑使用CAScrollLayer</li>
+<li>如果你想用户能够通过屏幕滚动：最好使用UIScrollView，了解更多可以点击<a href="https://videos.raywenderlich.com/courses/scroll-view-school/lessons/1" target="_blank" rel="noopener">链接</a></li>
+<li>如果你要滚动非常巨大的图片：考虑使用CATiledLayer（接下来会学到）</li>
+</ul>
+<h2 id="CATextLayer"><a href="#CATextLayer" class="headerlink" title="CATextLayer"></a>CATextLayer</h2><p>CATextLayer能够简单而快速绘制普通文本或者富文本，和UILabel不一样，CATextLayer没有UIFont属性，只有 CTFontRef 或者 CGFontRef。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setUpTextLayer &#123;</span><br><span class="line">	<span class="comment">// 1</span></span><br><span class="line">	<span class="built_in">CFStringRef</span> fontName = (__bridge <span class="built_in">CFStringRef</span>)<span class="string">@"Noteworthy-Light"</span>;</span><br><span class="line">	<span class="keyword">self</span>.noteworthyLightFont = <span class="built_in">CTFontCreateWithName</span>(fontName, baseFontSize, <span class="literal">nil</span>);</span><br><span class="line">	fontName = (__bridge <span class="built_in">CFStringRef</span>)<span class="string">@"Helvetica"</span>;</span><br><span class="line">	<span class="keyword">self</span>.helveticaFont = <span class="built_in">CTFontCreateWithName</span>(fontName, baseFontSize, <span class="literal">nil</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 2</span></span><br><span class="line">	<span class="built_in">NSMutableString</span> *string =[<span class="built_in">NSMutableString</span> string];</span><br><span class="line">	<span class="keyword">for</span> (<span class="built_in">NSInteger</span> i = <span class="number">0</span>; i &lt;= <span class="number">20</span>; i++) &#123;</span><br><span class="line">		[string appendFormat:<span class="string">@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor arcu quis velit congue dictum. "</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3</span></span><br><span class="line">	<span class="keyword">self</span>.textLayer = (&#123;</span><br><span class="line">	   <span class="built_in">CATextLayer</span> *layer = [<span class="built_in">CATextLayer</span> layer];</span><br><span class="line">	   layer.frame = <span class="keyword">self</span>.viewForTextLayer.bounds;</span><br><span class="line">	   layer.string = string;</span><br><span class="line">	   layer.font = <span class="keyword">self</span>.helveticaFont;</span><br><span class="line">	   layer.foregroundColor = [[<span class="built_in">UIColor</span> darkGrayColor] <span class="built_in">CGColor</span>];</span><br><span class="line">	   layer.wrapped = <span class="literal">YES</span>;</span><br><span class="line">	   layer.alignmentMode = kCAAlignmentLeft;</span><br><span class="line">	   layer.truncationMode = kCATruncationEnd;</span><br><span class="line">	   layer.contentsScale = [[<span class="built_in">UIScreen</span> mainScreen] scale];</span><br><span class="line">	   layer;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ol>
+<li>创建给Layer赋值的字体</li>
+<li>创建显示文本</li>
+<li>创建CATextLayer并设置属性，contentsScale匹配当前屏幕的发大倍数</li>
+</ol>
+<p>不仅仅是CATextLayer，所有的Layer类，默认的放大系数<strong>contentsScale</strong>都是 1。当关联上Views时，layer会自动设置<strong>contentsScale</strong>与当前屏幕的放大系数一致。你手动创建的Layer时，需要设置<strong>contentsScale</strong>，否则它的放大系数和Retina不匹配。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="noopener">详解CALayer 和 UIView的区别和联系</a></li>
+<li><a href="https://objccn.io/issue-12-4/" target="_blank" rel="noopener">View-Layer 协作</a></li>
+<li><a href="http://www.360doc.com/content/16/0318/10/31697881_543270664.shtml" target="_blank" rel="noopener">CALyer.h阅读笔记</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150106/10840.html" target="_blank" rel="noopener">iOS-Core-Animation-Advanced-Techniques(七)</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150429/11712.html" target="_blank" rel="noopener">WWDC心得与延伸:iOS图形性能</a></li>
+<li><a href="https://github.com/AttackOnDobby/iOS-Core-Animation-Advanced-Techniques" target="_blank" rel="noopener">iOS-Core-Animation-Advanced-Techniques</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CALayer/">CALayer</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/10/15/learn-CALayer-1/" data-title="学习CALayer（一） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/10/22/learn-CALayer-2/" title="学习CALayer（二）">
+  <strong>上一篇：</strong><br>
+  <span>
+  学习CALayer（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/07/Using-Grand-Central-Dispatch-3/" title="使用GCD（三）">
+ <strong>下一篇：</strong><br> 
+ <span>使用GCD（三）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

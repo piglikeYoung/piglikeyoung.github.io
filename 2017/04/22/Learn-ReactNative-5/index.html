@@ -1,0 +1,659 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习ReactNative基础（五） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言本章继续学习 ReactNative 常用组件，ScrollView 和 ListView。有过移动开发经验的同学都知道 ScrollView 和 ListView 都是不可获取的组件，ListView 就是继承自 ScrollView。 还有学习非常重要的 Navigator组件。 ScrollViewScrollView 有很多回调方法，比如开始拖拽、结束拖拽、开始滑动、结束滑动等等，下面">
+<meta name="keywords" content="RN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ReactNative基础（五）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/04/22/Learn-ReactNative-5/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言本章继续学习 ReactNative 常用组件，ScrollView 和 ListView。有过移动开发经验的同学都知道 ScrollView 和 ListView 都是不可获取的组件，ListView 就是继承自 ScrollView。 还有学习非常重要的 Navigator组件。 ScrollViewScrollView 有很多回调方法，比如开始拖拽、结束拖拽、开始滑动、结束滑动等等，下面">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-05-01T06:18:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习ReactNative基础（五）">
+<meta name="twitter:description" content="前言本章继续学习 ReactNative 常用组件，ScrollView 和 ListView。有过移动开发经验的同学都知道 ScrollView 和 ListView 都是不可获取的组件，ListView 就是继承自 ScrollView。 还有学习非常重要的 Navigator组件。 ScrollViewScrollView 有很多回调方法，比如开始拖拽、结束拖拽、开始滑动、结束滑动等等，下面">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/22/Learn-ReactNative-5/" title="学习ReactNative基础（五）" itemprop="url">学习ReactNative基础（五）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-04-22T04:42:00.000Z" itemprop="datePublished"> 发表于 2017-04-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ScrollView"><span class="toc-number">2.</span> <span class="toc-text">ScrollView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ListView"><span class="toc-number">3.</span> <span class="toc-text">ListView</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本章继续学习 ReactNative 常用组件，ScrollView 和 ListView。有过移动开发经验的同学都知道 ScrollView 和 ListView 都是不可获取的组件，ListView 就是继承自 ScrollView。</p>
+<p>还有学习非常重要的 Navigator组件。</p>
+<h2 id="ScrollView"><a href="#ScrollView" class="headerlink" title="ScrollView"></a>ScrollView</h2><p>ScrollView 有很多回调方法，比如开始拖拽、结束拖拽、开始滑动、结束滑动等等，下面这个例子就是实现相关的回调，看看 ScrollView 的简单实现。</p>
+<p>例子1：ScrollView 的简单实现，实现监测拖拽、滑动的相关方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> MyScrollView = React.createClass(&#123;</span><br><span class="line">  _onScrollBeginDrag: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'开始拖拽'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  _onScrollEndDrag: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'结束拖拽'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  _onMomentumScrollBegin: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'开始滑动'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  _onMomentumScrollEnd: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'结束滑动'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  _onRefresh: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'刷新'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;ScrollView</span><br><span class="line">          style=&#123;styles.scrollView&#125;</span><br><span class="line">          showsVerticalScrollIndicator=&#123;<span class="literal">true</span>&#125;</span><br><span class="line">          onScrollBeginDrag=&#123;<span class="keyword">this</span>._onScrollBeginDrag&#125;</span><br><span class="line">          onScrollEndDrag=&#123;<span class="keyword">this</span>._onScrollEndDrag&#125;</span><br><span class="line">          onMomentumScrollBegin=&#123;<span class="keyword">this</span>._onMomentumScrollBegin&#125;</span><br><span class="line">          onMomentumScrollEnd=&#123;<span class="keyword">this</span>._onMomentumScrollEnd&#125;</span><br><span class="line">          refreshControl=&#123;</span><br><span class="line">            &lt;RefreshControl</span><br><span class="line">              refreshing=&#123;<span class="literal">false</span>&#125;</span><br><span class="line">              tintColor=<span class="string">'red'</span></span><br><span class="line">              title=<span class="string">'正在刷新......'</span></span><br><span class="line">              onRefresh=&#123;<span class="keyword">this</span>._onRefresh&#125;</span><br><span class="line">            /&gt;</span><br><span class="line">          &#125;&gt;</span><br><span class="line">          &lt;View style=&#123;styles.view_1&#125;&gt;&lt;/View&gt;</span><br><span class="line">          &lt;View style=&#123;styles.view_2&#125;&gt;&lt;/View&gt;</span><br><span class="line">          &lt;View style=&#123;styles.view_3&#125;&gt;&lt;/View&gt;</span><br><span class="line">        &lt;<span class="regexp">/ScrollView&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    backgroundColor: <span class="string">'cyan'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  scrollView: &#123;</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#CCCCCC'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  view_1: &#123;</span><br><span class="line">    margin: <span class="number">15</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    height: <span class="number">300</span>,</span><br><span class="line">    backgroundColor: <span class="string">'yellow'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  view_2: &#123;</span><br><span class="line">    margin: <span class="number">15</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    height: <span class="number">300</span>,</span><br><span class="line">    backgroundColor: <span class="string">'blue'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  view_3: &#123;</span><br><span class="line">    margin: <span class="number">15</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    height: <span class="number">300</span>,</span><br><span class="line">    backgroundColor: <span class="string">'green'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = MyScrollView;</span><br></pre></td></tr></table></figure>
+<p>下面这个例子是通过 ScrollView 实现电影列表，电影的数据是 RN 提供的<a href="// https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json">数据</a>，因为还没有学习如何获取网络数据，我把数据拷贝下来，生成了个JSON文件，需要的时候本地加载。</p>
+<p>例子2：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从文件中读取数据。执行JSON.Parse()方法，将JSON格式的字符串转换为JSON格式对象</span></span><br><span class="line"><span class="keyword">var</span> movieData = <span class="built_in">require</span>(<span class="string">'./data.json'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取所有movies数据</span></span><br><span class="line"><span class="keyword">var</span> movies = movieData.movies;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> MovieList = React.createClass(&#123;</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 创建电影列表组件，根据movie中元素的个数，创建对应的组件</span></span><br><span class="line">    <span class="comment">// 遍历数组，每次创建一个movie对象</span></span><br><span class="line">    <span class="comment">// 定义一个空数组，存储电影组件</span></span><br><span class="line">    <span class="keyword">var</span> movieRows = [];</span><br><span class="line">    <span class="comment">// 遍历数组</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> movies) &#123;</span><br><span class="line">      <span class="comment">// 获取movie对象</span></span><br><span class="line">      <span class="keyword">var</span> movie = movies[i];</span><br><span class="line">      <span class="comment">// 创建组件，显示电影信息：</span></span><br><span class="line">      <span class="comment">// 图像(movie.posters.thumbnail)</span></span><br><span class="line">      <span class="comment">// 电影名称(movie.title)</span></span><br><span class="line">      <span class="comment">// 上映时间(movie.year)</span></span><br><span class="line">      <span class="keyword">var</span> row = (</span><br><span class="line">        &lt;View key=&#123;i&#125; style=&#123;styles.row&#125;&gt;</span><br><span class="line">          &lt;Image</span><br><span class="line">            style=&#123;styles.thumbnail&#125;</span><br><span class="line">            source=&#123;&#123;<span class="attr">uri</span>:movie.posters.thumbnail&#125;&#125;/&gt;</span><br><span class="line">          &lt;View style=&#123;styles.rightContainer&#125;&gt;</span><br><span class="line">            &lt;Text style=&#123;styles.title&#125;&gt;&#123;movie.title&#125;&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">            &lt;Text style=&#123;styles.year&#125;&gt;&#123;movie.year&#125;&lt;/</span>Text&gt;</span><br><span class="line">          &lt;<span class="regexp">/View&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>View&gt;</span><br><span class="line">      );</span><br><span class="line">      movieRows.push(row);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.container&#125;&gt;</span><br><span class="line">        &lt;ScrollView style=&#123;styles.scrollView&#125;&gt;</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="comment">// 数组(所有子组件)</span></span><br><span class="line">            movieRows</span><br><span class="line">          &#125;</span><br><span class="line">        &lt;<span class="regexp">/ScrollView&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  scrollView: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#F5FCFF'</span></span><br><span class="line">  &#125;,</span><br><span class="line">  row: &#123;</span><br><span class="line">    flexDirection: <span class="string">'row'</span>,</span><br><span class="line">    padding: <span class="number">5</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">    backgroundColor: <span class="string">'#F5FCFF'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  thumbnail: &#123;</span><br><span class="line">    width: <span class="number">53</span>,</span><br><span class="line">    height: <span class="number">81</span>,</span><br><span class="line">    backgroundColor: <span class="string">'gray'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  rightContainer: &#123;</span><br><span class="line">    marginLeft: <span class="number">10</span>,</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  title: &#123;</span><br><span class="line">    fontSize: <span class="number">18</span>,</span><br><span class="line">    marginTop: <span class="number">3</span>,</span><br><span class="line">    marginBottom: <span class="number">3</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  year: &#123;</span><br><span class="line">    marginBottom: <span class="number">3</span>,</span><br><span class="line">    textAlign: <span class="string">'center'</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = MovieList;</span><br></pre></td></tr></table></figure></p>
+<h2 id="ListView"><a href="#ListView" class="headerlink" title="ListView"></a>ListView</h2><p>ListView 和 ScrollView 一样都可以滚动视图显示内容，但是它有一些高级特性：譬如给每段/组(section)数据添加一个带有粘性的头部（类似iPhone的通讯录，其首字母会在滑动过程中吸附在屏幕上方）；在列表头部和尾部增加单独的内容；在到达列表尾部的时候调用回调函数(onEndReached)，还有在视野内可见的数据变化时调用回调函数(onChangeVisibleRows)，以及一些性能方面的优化。</p>
+<p>特别是加载大数据时的性能优化，只需渲染显示在屏幕上的内容即可，超出屏幕的内容可以不渲染。<br><a href="https://facebook.github.io/react-native/docs/listview.html" target="_blank" rel="noopener">官方文档</a></p>
+<p>例子1：简单的ListView列表</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> contents = [</span><br><span class="line">  <span class="string">'312312'</span>,</span><br><span class="line">  <span class="string">'fsdfsad'</span>,</span><br><span class="line">  <span class="string">'312312444'</span>,</span><br><span class="line">  <span class="string">'4324231421'</span>,</span><br><span class="line">  <span class="string">'423142134213'</span>,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> MyListView = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 创建dataSource对象</span></span><br><span class="line">    <span class="keyword">var</span> ds = <span class="keyword">new</span> ListView.DataSource(&#123;</span><br><span class="line">      <span class="comment">// 通过判断决定渲染哪些行组件，避免全部渲染，提高性能</span></span><br><span class="line">      rowHasChanged: <span class="function">(<span class="params">oldRow, newRow</span>) =&gt;</span> oldRow!==newRow</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="comment">// 设置dataSource时，不直接使用提供的原始数据，使用cloneWithRows对数据源进行复制</span></span><br><span class="line">      <span class="comment">// 使用复制后的数据源实例化ListView。</span></span><br><span class="line">      <span class="comment">// 优点：当原始数据源发生变化时，ListView组件的dataSource不会改变</span></span><br><span class="line">      dataSource: ds.cloneWithRows(contents)</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// 渲染行组件，参数是每行要显示的数据对象</span></span><br><span class="line">  _renderRow: <span class="function"><span class="keyword">function</span>(<span class="params">rowData:string</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;View style=&#123;styles.row&#125;&gt;</span><br><span class="line">        &lt;Text style=&#123;styles.content&#125;&gt;&#123;rowData&#125;&lt;<span class="regexp">/Text&gt;</span></span><br><span class="line"><span class="regexp">      &lt;/</span>View&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">  render: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;ListView</span><br><span class="line">        style=&#123;styles.container&#125;</span><br><span class="line">        dataSource=&#123;<span class="keyword">this</span>.state.dataSource&#125;</span><br><span class="line">        renderRow=&#123;<span class="keyword">this</span>._renderRow&#125;/&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = StyleSheet.create(&#123;</span><br><span class="line">  container: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    marginTop: <span class="number">25</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  row: &#123;</span><br><span class="line">    justifyContent: <span class="string">'center'</span>,</span><br><span class="line">    alignItems: <span class="string">'center'</span>,</span><br><span class="line">    padding: <span class="number">5</span>,</span><br><span class="line">    height: <span class="number">100</span>,</span><br><span class="line">    borderBottomWidth: <span class="number">1</span>,</span><br><span class="line">    borderColor: <span class="string">'#CCCCCC'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  content: &#123;</span><br><span class="line">    flex: <span class="number">1</span>,</span><br><span class="line">    fontSize: <span class="number">20</span>,</span><br><span class="line">    color: <span class="string">'blue'</span>,</span><br><span class="line">    lineHeight: <span class="number">100</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = MyListView;</span><br></pre></td></tr></table></figure>
+<p>例子2：使用 ListView 改写 ScrollView 的电影列表</p>
+<pre><code class="JavaScript"><span class="comment">// 从文件中读取数据</span>
+<span class="keyword">var</span> movieData = <span class="built_in">require</span>(<span class="string">'./data.json'</span>);
+
+<span class="comment">// 获取所有movies数据，属性movies是个数组</span>
+<span class="comment">// 原始数据</span>
+<span class="keyword">var</span> movies = movieData.movies;
+
+<span class="keyword">var</span> MovieList = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{
+    <span class="keyword">var</span> ds = <span class="keyword">new</span> ListView.DataSource({
+      rowHasChanged: <span class="function">(<span class="params">oldRow, newRow</span>) =&gt;</span> oldRow!==newRow
+    });
+
+    <span class="keyword">return</span> {
+      dataSource: ds.cloneWithRows(movies)
+    };
+  },
+  <span class="comment">// 渲染行组件</span>
+  _renderRow: <span class="function"><span class="keyword">function</span>(<span class="params">movie</span>) </span>{
+    <span class="keyword">return</span> (
+      &lt;View style={styles.row}&gt;
+        &lt;Image
+          style={styles.thumbnail}
+          source={{uri:movie.posters.thumbnail}}/&gt;
+        &lt;View style={styles.rightContainer}&gt;
+          &lt;Text style={styles.title}&gt;{movie.title}&lt;/Text&gt;
+          &lt;Text style={styles.year}&gt;{movie.year}&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+    );
+  },
+  <span class="comment">// 渲染头部</span>
+  _renderHeader: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{
+    <span class="keyword">return</span> (
+      &lt;View style={styles.header}&gt;
+        &lt;Text style={styles.header_text}&gt;Movies List&lt;<span class="regexp">/Text&gt;</span>
+<span class="regexp">        &lt;View style={styles.separator}&gt;&lt;/</span>View&gt;
+      &lt;<span class="regexp">/View&gt;</span>
+<span class="regexp">    );</span>
+<span class="regexp">  },</span>
+<span class="regexp">  /</span><span class="regexp">/ 渲染分隔线</span>
+<span class="regexp">  _renderSeparator: function(sectionID:number, rowID:number) {</span>
+<span class="regexp">    return (</span>
+<span class="regexp">      &lt;View style={styles.separator} key={sectionID+rowID}&gt;&lt;/</span>View&gt;
+    );
+  },
+  render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{
+    <span class="keyword">return</span> (
+      &lt;ListView
+        style={styles.listView}
+        dataSource={<span class="keyword">this</span>.state.dataSource}
+        renderRow={<span class="keyword">this</span>._renderRow}
+        renderHeader={<span class="keyword">this</span>._renderHeader}
+        renderSeparator={<span class="keyword">this</span>._renderSeparator}
+        <span class="comment">// 一开始渲染的行数</span>
+        initialListSize={<span class="number">10</span>}
+      /&gt;
+    );
+  }
+});
+
+<span class="keyword">var</span> styles = StyleSheet.create({
+  <span class="comment">// listView</span>
+  listView: {
+    marginTop: <span class="number">25</span>,
+    flex: <span class="number">1</span>,
+    backgroundColor: <span class="string">'#F5FCFF'</span>,
+  },
+  row: {
+    flexDirection: <span class="string">'row'</span>,
+    padding: <span class="number">5</span>,
+    alignItems: <span class="string">'center'</span>,
+    backgroundColor: <span class="string">'#F5FCFF'</span>
+  },
+  thumbnail: {
+    width: <span class="number">53</span>,
+    height: <span class="number">81</span>,
+    backgroundColor: <span class="string">'gray'</span>
+  },
+  rightContainer: {
+    marginLeft: <span class="number">10</span>,
+    flex: <span class="number">1</span>,
+  },
+  title: {
+    fontSize: <span class="number">10</span>,
+    marginTop: <span class="number">3</span>,
+    marginBottom: <span class="number">3</span>,
+    textAlign: <span class="string">'center'</span>
+  },
+  year: {
+    marginBottom: <span class="number">3</span>,
+    textAlign: <span class="string">'center'</span>,
+  },
+  <span class="comment">// header</span>
+  header: {
+    height: <span class="number">44</span>,
+    backgroundColor: <span class="string">'#F5FCFF'</span>,
+  },
+  header_text: {
+    flex: <span class="number">1</span>,
+    fontSize: <span class="number">20</span>,
+    fontWeight: <span class="string">'bold'</span>,
+    textAlign: <span class="string">'center'</span>,
+    lineHeight: <span class="number">44</span>,
+  },
+  <span class="comment">// 分隔线</span>
+  separator: {
+    height: <span class="number">1</span>,
+    backgroundColor: <span class="string">'#CCCCCC'</span>,
+  },
+});
+
+<span class="built_in">module</span>.exports = MovieList;
+
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ReactNative/">ReactNative</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RN/">RN</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/04/22/Learn-ReactNative-5/" data-title="学习ReactNative基础（五） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/04/27/Learn-ReactNative-6/" title="学习ReactNative基础（六）">
+  <strong>上一篇：</strong><br>
+  <span>
+  学习ReactNative基础（六）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/03/Learn-ReactNative-4/" title="学习ReactNative基础（四）">
+ <strong>下一篇：</strong><br> 
+ <span>学习ReactNative基础（四）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,598 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>fastlane 实践 | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言众所周知，现在APP迭代的速度非常快，对开发和测试都是严重的考验，有很多客观因素可以通过自动化集成来减少人力成本，增加开发效率。fastlane 就是一个可以提高打包效率的工具。 fastlanefastlane 如何安装，怎么使用，可以Google或者baidu，也可以访问官网，总的来说它是一套自动化打包的工具集，用 Ruby 写的，用于 iOS 和 Android 的自动化打包的发布等工作">
+<meta name="keywords" content="fastlane">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastlane 实践">
+<meta property="og:url" content="http://piglikeyoung.com/2017/05/14/use-fastlane/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言众所周知，现在APP迭代的速度非常快，对开发和测试都是严重的考验，有很多客观因素可以通过自动化集成来减少人力成本，增加开发效率。fastlane 就是一个可以提高打包效率的工具。 fastlanefastlane 如何安装，怎么使用，可以Google或者baidu，也可以访问官网，总的来说它是一套自动化打包的工具集，用 Ruby 写的，用于 iOS 和 Android 的自动化打包的发布等工作">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2017/05/14/use-fastlane/WX20170514-140038.png">
+<meta property="og:image" content="http://piglikeyoung.com/2017/05/14/use-fastlane/WX20170514-142857.png">
+<meta property="og:updated_time" content="2017-05-14T07:24:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fastlane 实践">
+<meta name="twitter:description" content="前言众所周知，现在APP迭代的速度非常快，对开发和测试都是严重的考验，有很多客观因素可以通过自动化集成来减少人力成本，增加开发效率。fastlane 就是一个可以提高打包效率的工具。 fastlanefastlane 如何安装，怎么使用，可以Google或者baidu，也可以访问官网，总的来说它是一套自动化打包的工具集，用 Ruby 写的，用于 iOS 和 Android 的自动化打包的发布等工作">
+<meta name="twitter:image" content="http://piglikeyoung.com/2017/05/14/use-fastlane/WX20170514-140038.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/14/use-fastlane/" title="fastlane 实践" itemprop="url">fastlane 实践</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-05-14T04:46:12.000Z" itemprop="datePublished"> 发表于 2017-05-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastlane"><span class="toc-number">2.</span> <span class="toc-text">fastlane</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实践"><span class="toc-number">3.</span> <span class="toc-text">实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>众所周知，现在APP迭代的速度非常快，对开发和测试都是严重的考验，有很多客观因素可以通过自动化集成来减少人力成本，增加开发效率。<code>fastlane</code> 就是一个可以提高打包效率的工具。</p>
+<h2 id="fastlane"><a href="#fastlane" class="headerlink" title="fastlane"></a>fastlane</h2><p>fastlane 如何安装，怎么使用，可以Google或者baidu，也可以访问<a href="https://docs.fastlane.tools/getting-started/android/setup/" target="_blank" rel="noopener">官网</a>，总的来说它是一套自动化打包的工具集，用 Ruby 写的，用于 iOS 和 Android 的自动化打包的发布等工作。gym是其中的打包命令。</p>
+<p>fastlane 主要有以下指令：</p>
+<ul>
+<li>deliver: 上传屏幕截图、二进制程序数据和应用程序到App Store</li>
+<li>snapshot: 自动截取你的程序在每个设备上的图片</li>
+<li>frameit: 快速将截图放入对应的手机设备中</li>
+<li>pem: 自动生成和更新应用推送通知描述文件</li>
+<li>sigh: 生成配置文件</li>
+<li>produce: 通过命令行在iTunes Connect创建一个新的iOS app</li>
+<li>cert: 自动创建iOS证书</li>
+<li>gym: 建立新的发布的版本，打包</li>
+</ul>
+<p>一个最完整的发布过程使用fastlane可以这样描述：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">lane :appstore do</span><br><span class="line">  increment_build_number</span><br><span class="line">  cocoapods</span><br><span class="line">  xctool</span><br><span class="line">  snapshot</span><br><span class="line">  sigh</span><br><span class="line">  deliver</span><br><span class="line">  frameit</span><br><span class="line">  sh &quot;./customScript.sh&quot;</span><br><span class="line">slack end</span><br></pre></td></tr></table></figure>
+<ol>
+<li>增加 build 的版本号</li>
+<li>cocoapods进行pod配置</li>
+<li>xctool进行编译</li>
+<li>snapshot自动生成截图</li>
+<li>sigh处理配置文件</li>
+<li>deliver上传截图</li>
+<li>frameit将应用截图快速放入对应的设备尺寸中</li>
+<li>执行些自动化脚本</li>
+</ol>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>现在实践：执行命令–&gt;打包–&gt;上传Bugly</p>
+<p>首先，cd到项目的根目录，执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fastlane init</span><br></pre></td></tr></table></figure>
+<p>初始化的过程会让你填写一些项目信息，比如Apple ID，项目的Targets（如果你有多个的话），还会生成如下图的项目结构：</p>
+<img src="/2017/05/14/use-fastlane/WX20170514-140038.png" title="fastlane-project">
+<ul>
+<li><p>Appfile：里存放App基本信息包括app_identifier、apple_id、team_id。</p>
+</li>
+<li><p>Fastfile：就是编写执行action的文件，所有的自定义功能都写在这个文件里面。</p>
+</li>
+</ul>
+<p>我使用的脚本如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ios_scheme_name = "Livestar.tv"</span><br><span class="line">ios_ipa_name = "Livestar"</span><br><span class="line">debug_ipa_path = "/Users/pikeyoung/Documents/" + Time.now.strftime("%Y-%m-%d") + "/Debug/"</span><br><span class="line">release_ipa_path = "/Users/pikeyoung/Documents/" + Time.now.strftime("%Y-%m-%d") + "/Release/"</span><br><span class="line"></span><br><span class="line">before_all do</span><br><span class="line"><span class="meta">  #</span><span class="bash"> git_pull(only_tags: <span class="literal">true</span>)</span></span><br><span class="line">  cocoapods</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">after_all do</span><br><span class="line"><span class="meta">  #</span><span class="bash"> push_git_tags</span></span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">lane :createDebugIPA do</span><br><span class="line">  ipa_path = debug_ipa_path</span><br><span class="line">  ipa_name = ios_ipa_name</span><br><span class="line">  ios_app_version = get_info_plist_value(path: "./" + ios_scheme_name + "/Info.plist", key: "CFBundleShortVersionString")</span><br><span class="line">  ios_app_build = get_info_plist_value(path: "./" + ios_scheme_name + "/Info.plist", key: "CFBundleVersion")</span><br><span class="line">  gym(</span><br><span class="line">    scheme: ios_scheme_name,</span><br><span class="line">    output_name: ipa_name + "_" + ios_app_build, # 输出的IPA名称</span><br><span class="line">    silent: true, # 隐藏不必要的信息</span><br><span class="line">    clean: true, # 在构建前先clean</span><br><span class="line">    configuration: "Debug", # 指定要打包的配置名</span><br><span class="line">    export_method: 'ad-hoc', # 指定打包所使用的输出方式，目前支持app-store, package, ad-hoc, enterprise, development, 和developer-id，即xcodebuild的method参数</span><br><span class="line">    output_directory: ipa_path # IPA输出目录</span><br><span class="line">  )</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面就是在指定目录下创建一个Debug的IPA，由于我司没有使用企业证书，构建的流程比较简单，所以没有使用很复杂的打包脚本。fastlane 支持从外部传入参数，指定打包的环境，增加build的版本号等action，目前都没用上。</p>
+<p>上传Bugly就很简单了，需要在Bugly官网下载upload的Ruby文件：</p>
+<img src="/2017/05/14/use-fastlane/WX20170514-142857.png" title="fastlane-project">
+<p>然后还是通过fastlane执行action：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">lane :uploadDebugIPA do</span><br><span class="line">  ios_app_version = get_info_plist_value(path: "./" + ios_scheme_name + "/Info.plist", key: "CFBundleShortVersionString")</span><br><span class="line">  ios_app_build = get_info_plist_value(path: "./" + ios_scheme_name + "/Info.plist", key: "CFBundleVersion")</span><br><span class="line">  debug_ipa_upload_path = debug_ipa_path + ios_ipa_name + "_" + ios_app_build + ".ipa"</span><br><span class="line">  upload_app_to_bugly(</span><br><span class="line">    file_path: debug_ipa_upload_path,</span><br><span class="line">    app_key: "123456",</span><br><span class="line">    app_id: "456123",</span><br><span class="line">    pid: "2",</span><br><span class="line">    title: "iOS-Debug-" + Time.now.strftime("%Y-%m-%d %H:%M:%S"),</span><br><span class="line">    desc: "内部测试,请勿外泄"</span><br><span class="line">  )</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>假如，你需要从外部传入参数，确认需要打包的git分支，你可以这样：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">lane :ci do|options|</span><br><span class="line">    branch = options[:branch] # 获取传入的git分支名</span><br><span class="line">    build_no = get_version_number + '.' + Time.new.strftime("%m%d%H%M") # 生成build号，获取版本号+时间</span><br><span class="line"></span><br><span class="line">    puts "Begin to run ci"</span><br><span class="line"></span><br><span class="line">    # 确认分支、git状态、拉取最新代码</span><br><span class="line">    sh "git checkout #&#123;branch&#125;"</span><br><span class="line">    ensure_git_branch(branch: branch)</span><br><span class="line">    ensure_git_status_clean</span><br><span class="line">    git_pull</span><br><span class="line"></span><br><span class="line">    # 递增build number</span><br><span class="line">    increment_build_number(build_number: build_no)</span><br><span class="line"></span><br><span class="line">    #开始打包</span><br><span class="line">    gym(</span><br><span class="line">      export_method:"development",</span><br><span class="line">      output_directory:"./fastlane/build",</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    # 使用fir-cli上传ipa</span><br><span class="line">    sh "fir publish ./build/LSTestDemo.ipa -T fasdfsdafas13213213sfs"</span><br><span class="line"></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>然后这样执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fastlane ci branch:dev1</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面的action还是比较简单的，上面的步骤其实还可以优化下，使用一台专门的Mac电脑配合<code>Jenkins</code>做打包操作。</p>
+<p>一些常用的 fastlane action 指令总结：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git_pull: git拉取代码</span><br><span class="line">cocoapods: 更新pod库</span><br><span class="line">push_git_tags: git推送tags</span><br><span class="line">Time.now.strftime("%Y-%m-%d"): 获取现在的时间，格式化显示格式</span><br><span class="line">Time.new.strftime("%m%d%H%M"): 获取现在的时间，格式化显示格式（new与now的区别在于，new会调用initialize.）</span><br><span class="line">get_version_number: 获取项目version number</span><br><span class="line">ensure_git_branch(branch: branch): 确认git分支</span><br><span class="line">ensure_git_status_clean: 检查git状态</span><br><span class="line">increment_build_number: 递增build version number</span><br><span class="line">push_to_git_remote: git推送代码到远程仓库</span><br></pre></td></tr></table></figure>
+<p>最后推荐下官方给的一些例子，是国外很多优秀的例子，可以直接借鉴过来：<br><a href="https://github.com/fastlane/examples" target="_blank" rel="noopener">https://github.com/fastlane/examples</a></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://docs.fastlane.tools/" target="_blank" rel="noopener">fastlane docs</a></li>
+<li><a href="http://www.jianshu.com/p/38786933ba9c" target="_blank" rel="noopener">iOS菜鸟福利！带你一键轻松搞定项目构建、封包、上传</a></li>
+<li><a href="http://www.jianshu.com/p/8e571c835844?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=writer_share&amp;utm_source=weibo" target="_blank" rel="noopener">记fastlane一次实践</a></li>
+<li><a href="http://www.jianshu.com/p/41ecb06ae95f#" target="_blank" rel="noopener">手把手教你利用Jenkins持续集成iOS项目</a></li>
+<li><a href="http://blog.csdn.net/zhf198909/article/details/53365812" target="_blank" rel="noopener">Jenkins一键发布「apk&amp;ipa」 到Bugly</a></li>
+<li><a href="https://github.com/FIRHQ/fir-cli" target="_blank" rel="noopener">fir-cli</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150728/12733.html" target="_blank" rel="noopener">iOS可持续化集成: Jenkins+bundler+cocoapods+fastlane</a></li>
+<li><a href="https://www.raywenderlich.com/136168/fastlane-tutorial-getting-started-2" target="_blank" rel="noopener">fastlane Tutorial: Getting Started</a></li>
+<li><a href="http://www.jianshu.com/p/9f66b7a106ea" target="_blank" rel="noopener">Fastlane入门:初级使用篇</a></li>
+<li><a href="https://libraries.io/github/mythkiven/AD_Fastlane" target="_blank" rel="noopener">Fastlane 入门实战教程</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/fastlane/">fastlane</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/05/14/use-fastlane/" data-title="fastlane 实践 | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/05/27/UIDebuggingInformationOverlay/" title="UIDebuggingInformationOverlay">
+  <strong>上一篇：</strong><br>
+  <span>
+  UIDebuggingInformationOverlay</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/05/06/use-UIActivityItemSource/" title="记一次 UIActivityItemSource 使用">
+ <strong>下一篇：</strong><br> 
+ <span>记一次 UIActivityItemSource 使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

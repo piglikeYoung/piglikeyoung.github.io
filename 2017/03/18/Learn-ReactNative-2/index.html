@@ -1,0 +1,596 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>学习ReactNative基础（二） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言上一篇文章介绍了 ReactNative 背景以及优缺点，分析了测试安装工程的工程结构，以及index.ios.js 的代码结构。开始学习RN前，需要学习React的一些语法，本篇文章就带你学习些简单的React语法。 React有过Web前端开发基础的人都知道，写网页就是写HTML文件，所以先创建个HTML5的文件。引入以下js文件： 123456&amp;lt;!-- react.js 是Reac">
+<meta name="keywords" content="RN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ReactNative基础（二）">
+<meta property="og:url" content="http://piglikeyoung.com/2017/03/18/Learn-ReactNative-2/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言上一篇文章介绍了 ReactNative 背景以及优缺点，分析了测试安装工程的工程结构，以及index.ios.js 的代码结构。开始学习RN前，需要学习React的一些语法，本篇文章就带你学习些简单的React语法。 React有过Web前端开发基础的人都知道，写网页就是写HTML文件，所以先创建个HTML5的文件。引入以下js文件： 123456&amp;lt;!-- react.js 是Reac">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-04-30T12:23:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习ReactNative基础（二）">
+<meta name="twitter:description" content="前言上一篇文章介绍了 ReactNative 背景以及优缺点，分析了测试安装工程的工程结构，以及index.ios.js 的代码结构。开始学习RN前，需要学习React的一些语法，本篇文章就带你学习些简单的React语法。 React有过Web前端开发基础的人都知道，写网页就是写HTML文件，所以先创建个HTML5的文件。引入以下js文件： 123456&amp;lt;!-- react.js 是Reac">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/18/Learn-ReactNative-2/" title="学习ReactNative基础（二）" itemprop="url">学习ReactNative基础（二）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-03-18T09:44:11.000Z" itemprop="datePublished"> 发表于 2017-03-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#React"><span class="toc-number">2.</span> <span class="toc-text">React</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JSX"><span class="toc-number">2.1.</span> <span class="toc-text">JSX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义组件"><span class="toc-number">2.2.</span> <span class="toc-text">定义组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复合组件"><span class="toc-number">2.3.</span> <span class="toc-text">复合组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#props、state"><span class="toc-number">2.4.</span> <span class="toc-text">props、state</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#…this-props"><span class="toc-number">2.4.1.</span> <span class="toc-text">…this.props</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#this-props-childern"><span class="toc-number">2.4.2.</span> <span class="toc-text">this.props.childern</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#属性验证-propType"><span class="toc-number">2.4.3.</span> <span class="toc-text">属性验证 propType</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置组件属性的默认值"><span class="toc-number">2.4.4.</span> <span class="toc-text">设置组件属性的默认值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#事件处理"><span class="toc-number">2.4.5.</span> <span class="toc-text">事件处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#state-状态"><span class="toc-number">2.4.6.</span> <span class="toc-text">state 状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇文章介绍了 ReactNative 背景以及优缺点，分析了测试安装工程的工程结构，以及index.ios.js 的代码结构。<br>开始学习RN前，需要学习React的一些语法，本篇文章就带你学习些简单的React语法。</p>
+<h2 id="React"><a href="#React" class="headerlink" title="React"></a>React</h2><p>有过Web前端开发基础的人都知道，写网页就是写HTML文件，所以先创建个HTML5的文件。引入以下js文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- react.js 是React的核心库 --&gt;</span><br><span class="line">&lt;script src=<span class="string">"https://unpkg.com/react@15/dist/react.js"</span>  charset=<span class="string">"utf-8"</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;!-- react-dom.js的作用是提供与DOM相关的功能 --&gt;</span><br><span class="line">&lt;script src=<span class="string">"https://unpkg.com/react-dom@15/dist/react-dom.js"</span>  charset=<span class="string">"utf-8"</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;!-- browser.js的作用是将JSX语法转换成JavaScript的语法 --&gt;</span><br><span class="line">&lt;script src=<span class="string">"https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.38/browser.js"</span> charset=<span class="string">"utf-8"</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>并且在 body 标签中加入这行代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=&quot;example&quot;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>在React开发中，使用JSX，跟JavaScript不兼容，在使用JSX的地方，需要设置type:text/babel，babel是一个转换编译器，ES6转成可以在浏览器运行的代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/babel"</span>&gt;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后，我们的React代码就可以在里面编写了，先介绍个React的最基本的方法，用于将模板转换成HTML语言：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">ReactDOM.render()</span></span><br><span class="line"><span class="comment">React的最基本方法，用于将模板转换成HTML语言，渲染DOM</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">3个参数</span></span><br><span class="line"><span class="comment">第一个：模板的渲染内容（HTML形式）</span></span><br><span class="line"><span class="comment">第二个：这段模板需要插入的DOM节点</span></span><br><span class="line"><span class="comment">第三个：渲染后的回调，一般不用</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">ReactDOM.render(</span><br><span class="line">	&lt;h1&gt;Hello, world!&lt;/h1&gt;,</span><br><span class="line">	<span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>将HTML文件放到浏览器上运行，就能看到 Hello World 效果了。</p>
+<h3 id="JSX"><a href="#JSX" class="headerlink" title="JSX"></a>JSX</h3><p>前面提到了 JSX ，它不是一门新语言，是个语法糖，有以下特点：</p>
+<ol>
+<li>必须借助React环境运行</li>
+<li>JSX标签其实就是HTML标签，只不过我们不需要和JavaScript中一样，用“”包裹起来</li>
+<li>转换：JSX语法能够让我们更加直观的看到组件的DOM结构，不能直接在浏览器上运行，最终会转换成JavaScript代码</li>
+</ol>
+<p>改写前一个例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在JSX中运行JavaScript代码</span></span><br><span class="line"><span class="comment">// 使用&#123;&#125;括起来</span></span><br><span class="line"><span class="keyword">var</span> text = <span class="string">"你好"</span>;</span><br><span class="line">ReactDOM.render(</span><br><span class="line">	&lt;h1&gt;&#123;text&#125;&lt;<span class="regexp">/h1&gt;,</span></span><br><span class="line"><span class="regexp">	document.getElementById('example')</span></span><br><span class="line"><span class="regexp">);</span></span><br></pre></td></tr></table></figure>
+<h3 id="定义组件"><a href="#定义组件" class="headerlink" title="定义组件"></a>定义组件</h3><p>创建组件有几个规则要遵守：</p>
+<ol>
+<li>React中创建的组件类以大写字母开头，驼峰命名法</li>
+<li>在React中使用React.createClass方法创建一个组件类</li>
+<li>核心代码：每个组件类必须实现自己的render方法。输出定义好的组件模板。返回值：null、false、组件模板</li>
+<li>注意：组件类只能包含一个顶层标签</li>
+</ol>
+<p>例子1：创建一个组件类，用于输出 Hello React</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> HelloMessage = React.createClass(&#123;</span><br><span class="line">	render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> &lt;h1&gt;Hello React&lt;/h1&gt;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">	&lt;HelloMessage/&gt;,</span><br><span class="line">	<span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>例子2：实现组件从外部接收内容，并进行展示<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> HelloMessage = React.createClass(&#123;</span><br><span class="line">	render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">			this表示当前这个组件对象</span></span><br><span class="line"><span class="comment">			this.props.helloText 可以解释：当前组件对象的props对象中存储的helloText属性中的值</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">		<span class="keyword">return</span> &lt;h1&gt;&#123;this.props.helloText&#125;&lt;/h1&gt;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">	&lt;HelloMessage helloText=<span class="string">"你好"</span>/&gt;,</span><br><span class="line">	<span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>设置组件样式有三种：</p>
+<ol>
+<li>内联样式</li>
+<li>对象样式</li>
+<li>选择器样式</li>
+</ol>
+<p>注意：在React和HTML5中设置样式时的书写格式区别：</p>
+<ol>
+<li>HTML5以;结尾，React以,结尾</li>
+<li>HTML5中key、value都不加引号，React中属于JavaScript对象，key的名字不能出现“-”，需要使用驼峰命名法。如果value为字符串，需要加引号。</li>
+<li>HTML5中，value如果是数字，需要带单位，React中不需要带单位</li>
+</ol>
+<p>注意：在React中使用选择器样式设置组件样式时，属性名不能使用class，需要使用className替换</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">	.pStyle &#123;</span><br><span class="line">		font-size: <span class="number">20</span>px;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;<span class="regexp">/style&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var hstyle = &#123;</span></span><br><span class="line"><span class="regexp">	backgroundColor: "green",</span></span><br><span class="line"><span class="regexp">	color: "red",</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">var ShowMessage = React.createClass(&#123;</span></span><br><span class="line"><span class="regexp">	render: function () &#123;</span></span><br><span class="line"><span class="regexp">		return (</span></span><br><span class="line"><span class="regexp">			&lt;div style=&#123;&#123;backgroundColor:"yellow", borderWidth:5, borderColor:"black", borderStyle:"solid"&#125;&#125;&gt;</span></span><br><span class="line"><span class="regexp">				&lt;h1 style=&#123;hStyle&#125;&gt;&#123;this.props.firstRow&#125;&lt;/</span>h1&gt;</span><br><span class="line">				&lt;p className=<span class="string">"pStyle"</span>&gt;&#123;<span class="keyword">this</span>.props.secondRow&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">			&lt;/</span>div&gt;</span><br><span class="line">		);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="复合组件"><a href="#复合组件" class="headerlink" title="复合组件"></a>复合组件</h3><p>复合组件，又也叫做组合组件，创建多个组件合成一个组件</p>
+<p>例子1：定义一个组件WebShow。功能：输出网站名字和网址，网址是一个可以点击的链接<br>分析：定义一个组件WebName负责输出网站名字，定义组件WebLink显示网站网址，并可以点击</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义WebName</span></span><br><span class="line"><span class="keyword">var</span> WebName = React.createClass(&#123;</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &lt;h1&gt;&#123;this.props.webname&#125;&lt;/h1&gt;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义WebLink</span></span><br><span class="line"><span class="keyword">var</span> WebLink = React.createClass(&#123;</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &lt;a href=&#123;this.props.weblink&#125;&gt;&#123;this.props.weblink&#125;&lt;/a&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义WebShow</span></span><br><span class="line"><span class="keyword">var</span> WebShow = React.createClass(&#123;</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;WebName webname=&#123;<span class="keyword">this</span>.props.wname&#125;/&gt;</span><br><span class="line">                &lt;WebLink weblink=&#123;<span class="keyword">this</span>.props.wlink&#125;/&gt;</span><br><span class="line">            &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        )</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">ReactDOM.render(</span></span><br><span class="line"><span class="regexp">    &lt;WebShow wname="淘宝" wlink="https:/</span><span class="regexp">/www.taobao.com"/</span>&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h3 id="props、state"><a href="#props、state" class="headerlink" title="props、state"></a>props、state</h3><p>props 是组件自身的属性，一般用于嵌套的内外层组件中，负责传递信息（通常是由浮层组件向子层组件传递）。</p>
+<p>注意：props对象中属性与组件的属性一一对应，不要直接去修改props中属性的值。</p>
+<h4 id="…this-props"><a href="#…this-props" class="headerlink" title="…this.props"></a>…this.props</h4><p>其中props提供了一个语法糖：<code>...this.props</code>，可以将父组件中的全部属性都复制给子组件</p>
+<p>例子：定义一个link，link组件中只包含一个超链接，不写任何属性，任何属性从父组件中拿到</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Link = React.createClass(&#123;</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &lt;a &#123;...this.props&#125;&gt;&#123;this.props.name&#125;&lt;/a&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">    &lt;Link href=<span class="string">"https://www.taobao.com"</span> name=<span class="string">'淘宝'</span>/&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="this-props-childern"><a href="#this-props-childern" class="headerlink" title="this.props.childern"></a>this.props.childern</h4><p>children是个例外，不是跟组件的属性对应，表示组件的所有子节点。</p>
+<p>例子：定义一个列表组件，列表项中显示的内容，以及列表项的数量都由外部决定</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ListComponent = React.createClass(&#123;</span><br><span class="line">   render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> (</span><br><span class="line">         &lt;ul&gt;</span><br><span class="line">             &#123;</span><br><span class="line">                 <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 *  列表项数量以及内容不确定，在创建模板时确定</span></span><br><span class="line"><span class="comment">                 *  利用this.props.children从父组件获取需要展示的内容</span></span><br><span class="line"><span class="comment">                 *</span></span><br><span class="line"><span class="comment">                 *  获取到列表内容后，需要遍历设置</span></span><br><span class="line"><span class="comment">                 *  使用this.props.map方法</span></span><br><span class="line"><span class="comment">                 *  返回值：数组对象。这里数组中的元素是&lt;li&gt;</span></span><br><span class="line"><span class="comment">                 * */</span></span><br><span class="line"></span><br><span class="line">                 React.Children.map(<span class="keyword">this</span>.props.children, <span class="function"><span class="keyword">function</span> (<span class="params">child</span>) </span>&#123;</span><br><span class="line">                     <span class="comment">// child是遍历得到的父组件的子节点</span></span><br><span class="line">                     <span class="keyword">return</span> &lt;li&gt;&#123;child&#125;&lt;/li&gt;</span><br><span class="line">                 &#125;)</span><br><span class="line">             &#125;</span><br><span class="line">         &lt;<span class="regexp">/ul&gt;</span></span><br><span class="line"><span class="regexp">       );</span></span><br><span class="line"><span class="regexp">   &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">ReactDOM.render(</span></span><br><span class="line"><span class="regexp">    (</span></span><br><span class="line"><span class="regexp">        &lt;ListComponent&gt;</span></span><br><span class="line"><span class="regexp">            &lt;h1&gt;淘宝&lt;/</span>h1&gt;</span><br><span class="line">            &lt;a href=<span class="string">"https://www.taobao.com"</span>&gt;taobao&lt;<span class="regexp">/a&gt;</span></span><br><span class="line"><span class="regexp">        &lt;/</span>ListComponent&gt;</span><br><span class="line">    ),</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="属性验证-propType"><a href="#属性验证-propType" class="headerlink" title="属性验证 propType"></a>属性验证 propType</h4><p>用于验证组件实例的属性是否符合要求.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ShowTitle = React.createClass(&#123;</span><br><span class="line">    propTypes: &#123;</span><br><span class="line">        <span class="comment">// title属性类型必须输字符串</span></span><br><span class="line">        title: React.PropTypes.string.isRequired</span><br><span class="line">    &#125;,</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &lt;h1&gt;&#123;this.props.title&#125;&lt;/h1&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">    &lt;ShowTitle title=<span class="number">123</span> /&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="设置组件属性的默认值"><a href="#设置组件属性的默认值" class="headerlink" title="设置组件属性的默认值"></a>设置组件属性的默认值</h4><p>通过实现组件的getDefaultProps方法，对组件设置默认值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> MyTitel = React.createClass(&#123;</span><br><span class="line">    getDefaultProps: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            title: <span class="string">'O(∩_∩)O哈哈~'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &lt;h1&gt;&#123;this.props.title&#125;&lt;/h1&gt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">    &lt;MyTitel/&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h4><p>例子： 定义一个组件，组件中包括一个button，给button绑定onClick事件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> MyButton = React.createClass(&#123;</span><br><span class="line"></span><br><span class="line">    handleClick: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      alert(<span class="string">"点击了"</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;button onClick=&#123;<span class="keyword">this</span>.handleClick&#125;&gt;&#123;<span class="keyword">this</span>.props.buttonTitle&#125;&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">        )</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">ReactDOM.render(</span></span><br><span class="line"><span class="regexp">    &lt;MyButton buttonTitle="我是个按钮"/</span>&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="state-状态"><a href="#state-状态" class="headerlink" title="state 状态"></a>state 状态</h4><p>例子1： 创建一个CheckButton组件，包含一个checkBox类型的输入框，复选框在选中和未选中两种状态下会显示不同的文字，即根据状态渲染。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> CheckButton = React.createClass(&#123;</span><br><span class="line">   <span class="comment">// 定义初始状态</span></span><br><span class="line">    getInitialState: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            isCheck: <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 定义事件绑定的方法</span></span><br><span class="line">    handleChange: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 修改状态值，通过this.state读取设置的状态</span></span><br><span class="line">        <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">           isCheck: !<span class="keyword">this</span>.state.isCheck</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">    render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 根据状态值，设置显示的文字</span></span><br><span class="line">        <span class="comment">// 在JSX语法中，不能直接使用if，使用三目运算符</span></span><br><span class="line">        <span class="keyword">var</span> text = <span class="keyword">this</span>.state.isCheck ? <span class="string">'已选中'</span> : <span class="string">'未选中'</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">              &lt;div&gt;</span><br><span class="line">                  &lt;input type=<span class="string">"checkbox"</span> onChange=&#123;<span class="keyword">this</span>.handleChange&#125; /&gt;</span><br><span class="line">                  &#123;text&#125;</span><br><span class="line">              &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">        );</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">ReactDOM.render(</span></span><br><span class="line"><span class="regexp">    &lt;CheckButton/</span>&gt;,</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>例子2：定义一个组件，将用户在输入框内输入的内容实时显示</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Input = React.createClass(&#123;</span><br><span class="line">      getInitialState: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> &#123;</span><br><span class="line">             value: <span class="string">'请输入'</span></span><br><span class="line">         &#125;;</span><br><span class="line">      &#125;,</span><br><span class="line">      handleChange:<span class="function"><span class="keyword">function</span> (<span class="params">event</span>) </span>&#123;</span><br><span class="line">          <span class="comment">// 通过event.target.value读取用户输入的内容</span></span><br><span class="line">          <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">              value: event.target.value</span><br><span class="line">          &#125;);</span><br><span class="line">      &#125;,</span><br><span class="line">      render: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">          <span class="keyword">var</span> value = <span class="keyword">this</span>.state.value;</span><br><span class="line">          <span class="keyword">return</span> (</span><br><span class="line">              &lt;div&gt;</span><br><span class="line">                  &lt;input type=<span class="string">"text"</span> value=&#123;value&#125; onChange=&#123;<span class="keyword">this</span>.handleChange&#125;/&gt;</span><br><span class="line">                  &lt;p&gt;&#123;value&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">              &lt;/</span>div&gt;</span><br><span class="line">          );</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  ReactDOM.render(</span><br><span class="line">      &lt;Input/&gt;,</span><br><span class="line">      <span class="built_in">document</span>.getElementById(<span class="string">'example'</span>)</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本章了解了JSX语法，学习了如何定义组件、设置组就按样式、创建符合组件，给组件设置属性等等，为之后学习ReactNative打基础。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/ReactNative/">ReactNative</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RN/">RN</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/03/18/Learn-ReactNative-2/" data-title="学习ReactNative基础（二） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2017/03/26/Learn-ReactNative-3/" title="学习ReactNative基础（三）">
+  <strong>上一篇：</strong><br>
+  <span>
+  学习ReactNative基础（三）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/05/Learn-ReactNative-1/" title="学习ReactNative基础（一）">
+ <strong>下一篇：</strong><br> 
+ <span>学习ReactNative基础（一）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

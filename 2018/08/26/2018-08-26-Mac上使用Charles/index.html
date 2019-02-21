@@ -1,0 +1,619 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Mac 上使用 Charles | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="Mac 上使用 Charles前言开发网站的时候可以通过Debug模式查看网络请求状况，在做移动开发的时候通常用到 Charles，本文对我日常使用的功能进行总结。 介绍Charles 是一个 HTTP 代理服务器，HTTP 监视器,反转代理服务器，当程序连接 Charles 的代理访问互联网时，Charles 可以监控这个程序发送和接收的所有数据。它允许一个开发者查看所有连接互联网的HTTP通信">
+<meta name="keywords" content="Charles">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mac 上使用 Charles">
+<meta property="og:url" content="http://piglikeyoung.com/2018/08/26/2018-08-26-Mac上使用Charles/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="Mac 上使用 Charles前言开发网站的时候可以通过Debug模式查看网络请求状况，在做移动开发的时候通常用到 Charles，本文对我日常使用的功能进行总结。 介绍Charles 是一个 HTTP 代理服务器，HTTP 监视器,反转代理服务器，当程序连接 Charles 的代理访问互联网时，Charles 可以监控这个程序发送和接收的所有数据。它允许一个开发者查看所有连接互联网的HTTP通信">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-122021@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-122336@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-123105@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-123314@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-123400@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-124049@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-124124@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-124230@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-124506@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-130356@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-131039@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-131444@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-131549@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-131926@2x.png">
+<meta property="og:updated_time" content="2018-09-02T05:46:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mac 上使用 Charles">
+<meta name="twitter:description" content="Mac 上使用 Charles前言开发网站的时候可以通过Debug模式查看网络请求状况，在做移动开发的时候通常用到 Charles，本文对我日常使用的功能进行总结。 介绍Charles 是一个 HTTP 代理服务器，HTTP 监视器,反转代理服务器，当程序连接 Charles 的代理访问互联网时，Charles 可以监控这个程序发送和接收的所有数据。它允许一个开发者查看所有连接互联网的HTTP通信">
+<meta name="twitter:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180902-122021@2x.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/08/26/2018-08-26-Mac上使用Charles/" title="Mac 上使用 Charles" itemprop="url">Mac 上使用 Charles</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2018-08-26T08:50:51.000Z" itemprop="datePublished"> 发表于 2018-08-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mac-上使用-Charles"><span class="toc-number">1.</span> <span class="toc-text">Mac 上使用 Charles</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用功能"><span class="toc-number">3.1.</span> <span class="toc-text">常用功能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#将Charles设置成系统代理"><span class="toc-number">3.1.1.</span> <span class="toc-text">将Charles设置成系统代理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#截取移动设备上的网络请求包"><span class="toc-number">3.1.2.</span> <span class="toc-text">截取移动设备上的网络请求包</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#手动重复请求（Repeat，Repeat-Advanced）"><span class="toc-number">3.1.2.1.</span> <span class="toc-text">手动重复请求（Repeat，Repeat Advanced）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#手动模拟请求（Compose）"><span class="toc-number">3.1.2.2.</span> <span class="toc-text">手动模拟请求（Compose）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#修改网络请求内容（Backpoints，Compose）"><span class="toc-number">3.1.2.3.</span> <span class="toc-text">修改网络请求内容（Backpoints，Compose）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#过滤网络请求"><span class="toc-number">3.1.3.</span> <span class="toc-text">过滤网络请求</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关链接"><span class="toc-number">4.</span> <span class="toc-text">相关链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="Mac-上使用-Charles"><a href="#Mac-上使用-Charles" class="headerlink" title="Mac 上使用 Charles"></a>Mac 上使用 Charles</h2><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>开发网站的时候可以通过Debug模式查看网络请求状况，在做移动开发的时候通常用到 <strong>Charles</strong>，本文对我日常使用的功能进行总结。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><strong>Charles</strong> 是一个 HTTP 代理服务器，HTTP 监视器,反转代理服务器，当程序连接 Charles 的代理访问互联网时，Charles 可以监控这个程序发送和接收的所有数据。它允许一个开发者查看所有连接互联网的HTTP通信，这些包括 request、 response 和 HTTP headers（包含 cookies 与 cache 信息）。</p>
+<ol>
+<li><p>支持SSL代理。可以截取分析SSL的请求。</p>
+</li>
+<li><p>支持流量控制。可以模拟慢速网络以及等待时间（latency）较长的请求。</p>
+</li>
+<li><p>支持AJAX调试。可以自动将json或xml数据格式化，方便查看。</p>
+</li>
+<li><p>支持AMF调试。可以将Flash Remoting 或 Flex Remoting信息格式化，方便查看。</p>
+</li>
+<li><p>支持重发网络请求，方便后端调试。</p>
+</li>
+<li><p>支持修改网络请求参数。</p>
+</li>
+<li><p>支持网络请求的截获并动态修改。</p>
+</li>
+<li><p>检查HTML，CSS和RSS内容是否符合W3C标准。</p>
+</li>
+</ol>
+<h3 id="常用功能"><a href="#常用功能" class="headerlink" title="常用功能"></a>常用功能</h3><h4 id="将Charles设置成系统代理"><a href="#将Charles设置成系统代理" class="headerlink" title="将Charles设置成系统代理"></a>将Charles设置成系统代理</h4><p>Charles 提供了两种查看请求的视图：</p>
+<ol>
+<li><p>Structure 将网络请求按访问的域名分类</p>
+</li>
+<li><p>Sequence 将网络请求按访问的时间排序</p>
+</li>
+</ol>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-122021@2x.png" alt="WX20180902-122021@2x"></p>
+<p>Charles 是通过将自己设置成代理服务器来完成抓包的，勾选系统代理后，系统本地发出去的请求都能被截取下来。如果只抓取APP的包的话，可关闭此配置，这样不会出现太多的数据。</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-122336@2x.png" alt="WX20180902-122336@2x"></p>
+<blockquote>
+<p>需要注意的是，Chrome 和 Firefox 浏览器默认并不使用系统的代理服务器设置，而 Charles 是通过将自己设置成代理服务器来完成封包截取的，所以在默认情况下无法截取 Chrome 和 Firefox 浏览器的网络通讯内容。如果你需要截取的话，在 Chrome 中设置成使用系统的代理服务器设置即可，或者直接将代理服务器设置成 127.0.0.1:8888 也可达到相同效果。</p>
+</blockquote>
+<p>如果使用了 <strong>Shadowsocks</strong> 代理，你需要做以下几步操作：</p>
+<ul>
+<li><strong>Chrome</strong> 安装插件 <code>proxy-switchyomega</code>，配置如图</li>
+</ul>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-123105@2x.png" alt="WX20180902-123105@2x"></p>
+<ul>
+<li><strong>Charles</strong> 的 <strong>Proxy</strong> 菜单下勾选 <code>External Proxy Settings</code>，将 Charles 的代理设置为 Shadowsocks 的 HTTP 监听代理地址和端口。</li>
+</ul>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-123314@2x.png" alt="WX20180902-123314@2x"></p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-123400@2x.png" alt="WX20180902-123400@2x"></p>
+<h4 id="截取移动设备上的网络请求包"><a href="#截取移动设备上的网络请求包" class="headerlink" title="截取移动设备上的网络请求包"></a>截取移动设备上的网络请求包</h4><p>我们在调试移动APP时，需要抓取APP发送的数据包，首先进行设置，Proxy -&gt; Proxy Settings默认端口是8888，根据实际情况可修改。</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-124049@2x.png" alt="WX20180902-124049@2x"></p>
+<p>查看本机IP地址：Help -&gt; Local IP Addresses</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-124124@2x.png" alt="WX20180902-124124@2x"></p>
+<p>然后配置手机代理</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-124230@2x.png" alt="WX20180902-124230@2x"></p>
+<p>打开要调试的APP，请求就会先发送到Charles，然后验证是否允许访问。<br>当点击允许后，可以在Proxy -&gt; Access Control Settings里看到可以访问此代理服务器列表</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-124506@2x.png" alt="WX20180902-124506@2x"></p>
+<blockquote>
+<p>如果不小心点击了拒绝，可以手动添加手机IP/Mac地址到允许访问列表，或者重启Charles，手机再次访问，会再次提示选择。 如果不想每换一个手机都要进行验证，可以配置允许所有手机访问，加入 0.0.0.0/0（IPv4）或 ::/0（IPv6）</p>
+</blockquote>
+<h5 id="手动重复请求（Repeat，Repeat-Advanced）"><a href="#手动重复请求（Repeat，Repeat-Advanced）" class="headerlink" title="手动重复请求（Repeat，Repeat Advanced）"></a>手动重复请求（Repeat，Repeat Advanced）</h5><p>当我们需要对一个请求重复请求的时候，可以对某个请求右击弹出这么这个框，点击重复请求</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-130356@2x.png" alt="WX20180902-130356@2x"></p>
+<h5 id="手动模拟请求（Compose）"><a href="#手动模拟请求（Compose）" class="headerlink" title="手动模拟请求（Compose）"></a>手动模拟请求（Compose）</h5><p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-131039@2x.png" alt="WX20180902-131039@2x"></p>
+<h5 id="修改网络请求内容（Backpoints，Compose）"><a href="#修改网络请求内容（Backpoints，Compose）" class="headerlink" title="修改网络请求内容（Backpoints，Compose）"></a>修改网络请求内容（Backpoints，Compose）</h5><p>通常我们需要对请求动态修改参数，我们可以通过打断点的方式来修改参数：</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-131444@2x.png" alt="WX20180902-131444@2x"></p>
+<h4 id="过滤网络请求"><a href="#过滤网络请求" class="headerlink" title="过滤网络请求"></a>过滤网络请求</h4><p>从几十个请求里找到我们需要的观察的某个请求比较费时，那么我们就需要对网络请求进行过滤，只监控向指定目录服务器上发送的请求。</p>
+<p>有两种方式：</p>
+<ul>
+<li>在 Sequence 界面的中部的 Filter 栏中填入需要过滤出来的关键字。例如我们的服务器的地址是：*.zayouth.com，那么只需要在 Filter 栏中填入 zayouth 即可。（一般用于临时过滤）</li>
+</ul>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-131549@2x.png" alt="WX20180902-131549@2x"></p>
+<ul>
+<li>在 Charles 的菜单栏选择 “Proxy”-&gt;”Recording Settings”，然后选择 Include 栏，选择添加一个项目，然后填入需要监控的协议，主机地址，端口号。这样就可以只截取目标网站的封包了。如下图所示：（固定过滤地址）</li>
+</ul>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180902-131926@2x.png" alt="WX20180902-131926@2x"></p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><a href="https://blog.devtang.com/2015/11/14/charles-introduction/#%E6%88%AA%E5%8F%96-iPhone-%E4%B8%8A%E7%9A%84%E7%BD%91%E7%BB%9C%E5%B0%81%E5%8C%85" target="_blank" rel="noopener">Charles 从入门到精通</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Charles/">Charles</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2018/08/26/2018-08-26-Mac上使用Charles/" data-title="Mac 上使用 Charles | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2019/01/01/2019-01-01-2018年个人总结/" title="2018年个人总结">
+  <strong>上一篇：</strong><br>
+  <span>
+  2018年个人总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/09/2018-06-09-MacOS10.13.5-cocoapods-solution/" title="MacOS 10.13.5 Cocoapods 无法使用解决方案">
+ <strong>下一篇：</strong><br> 
+ <span>MacOS 10.13.5 Cocoapods 无法使用解决方案
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

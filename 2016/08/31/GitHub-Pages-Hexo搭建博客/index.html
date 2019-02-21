@@ -1,0 +1,623 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>GitHub Pages + Hexo搭建博客 | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="这篇博客是使用Github Pages + Hexo 搭建本博客的总结。 作为一个有多年开发经验的人来说，没有搭建自己的博客，记录自己的开发点点滴滴，实在有点遗憾，以前总以为搭建博客得买服务器，域名等复杂的步骤，然后选择了国内老牌的博客CSDN或博客园来写博客，但可拓展性太低，千篇一律。 最近经过朋友的介绍使用GitHub Pages + Hexo搭建免费的独立博客，痛下决心来做一次。 前言搭建博">
+<meta name="keywords" content="Hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitHub Pages + Hexo搭建博客">
+<meta property="og:url" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="这篇博客是使用Github Pages + Hexo 搭建本博客的总结。 作为一个有多年开发经验的人来说，没有搭建自己的博客，记录自己的开发点点滴滴，实在有点遗憾，以前总以为搭建博客得买服务器，域名等复杂的步骤，然后选择了国内老牌的博客CSDN或博客园来写博客，但可拓展性太低，千篇一律。 最近经过朋友的介绍使用GitHub Pages + Hexo搭建免费的独立博客，痛下决心来做一次。 前言搭建博">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160831_1.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160831_2.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160901_2.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160902_4.png">
+<meta property="og:updated_time" content="2016-09-11T05:41:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GitHub Pages + Hexo搭建博客">
+<meta name="twitter:description" content="这篇博客是使用Github Pages + Hexo 搭建本博客的总结。 作为一个有多年开发经验的人来说，没有搭建自己的博客，记录自己的开发点点滴滴，实在有点遗憾，以前总以为搭建博客得买服务器，域名等复杂的步骤，然后选择了国内老牌的博客CSDN或博客园来写博客，但可拓展性太低，千篇一律。 最近经过朋友的介绍使用GitHub Pages + Hexo搭建免费的独立博客，痛下决心来做一次。 前言搭建博">
+<meta name="twitter:image" content="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160831_1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/31/GitHub-Pages-Hexo搭建博客/" title="GitHub Pages + Hexo搭建博客" itemprop="url">GitHub Pages + Hexo搭建博客</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-08-31T14:24:25.000Z" itemprop="datePublished"> 发表于 2016-08-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">2.</span> <span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Hexo"><span class="toc-number">2.1.</span> <span class="toc-text">安装Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化博客"><span class="toc-number">2.2.</span> <span class="toc-text">初始化博客</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联Github"><span class="toc-number">3.</span> <span class="toc-text">关联Github</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建仓库"><span class="toc-number">3.1.</span> <span class="toc-text">创建仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加SSH-Key到Github"><span class="toc-number">4.</span> <span class="toc-text">添加SSH Key到Github</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断是否已经生成了SSH-Key"><span class="toc-number">4.1.</span> <span class="toc-text">判断是否已经生成了SSH Key</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布文章"><span class="toc-number">5.</span> <span class="toc-text">发布文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主题安装"><span class="toc-number">6.</span> <span class="toc-text">主题安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绑定个人域名"><span class="toc-number">7.</span> <span class="toc-text">绑定个人域名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#主题添加域名"><span class="toc-number">7.1.</span> <span class="toc-text">主题添加域名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#域名解析"><span class="toc-number">7.2.</span> <span class="toc-text">域名解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化部署和管理"><span class="toc-number">8.</span> <span class="toc-text">优化部署和管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建步骤"><span class="toc-number">8.1.</span> <span class="toc-text">创建步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日常维护"><span class="toc-number">8.2.</span> <span class="toc-text">日常维护</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-number">9.</span> <span class="toc-text">后记</span></a></li></ol>
+		
+		</div>
+		
+		<p>这篇博客是使用<strong>Github Pages + Hexo</strong> 搭建本博客的总结。</p>
+<p>作为一个有多年开发经验的人来说，没有搭建自己的博客，记录自己的开发点点滴滴，实在有点遗憾，以前总以为搭建博客得买服务器，域名等复杂的步骤，然后选择了国内老牌的博客CSDN或博客园来写博客，但可拓展性太低，千篇一律。</p>
+<p>最近经过朋友的介绍使用GitHub Pages + Hexo搭建免费的独立博客，痛下决心来做一次。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>搭建博客需要先了解几个知识点</p>
+<ul>
+<li><a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git</a></li>
+<li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
+<li><a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></li>
+<li><a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">Hexo</a></li>
+<li><a href="http://www.appinn.com/markdown/#overview" target="_blank" rel="noopener">Markdown</a></li>
+</ul>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h3><p>由于安装Hexo需要Node.js和Git，所以在<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">Hexo</a>官网上有安装的详细说明（中文版），不再赘述（Mac电脑有自带Git的）。</p>
+<p>当Node.js和Git都安装完成后，开始正式安装Hexo，在终端上执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g hexo</span><br></pre></td></tr></table></figure></p>
+<p>需要输入管理员密码（Mac登录密码）。(<code>sudo</code>：Linux管理员指令，<code>-g</code>：全局安装)</p>
+<blockquote>
+<p>坑一：<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">Hexo官网</a>上的安装命令是<code>$ npm install -g hexo-cli</code>，安装时不要忘记前面加上<code>sudo</code>，否则会因为权限问题报错。</p>
+</blockquote>
+<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><p>终端cd到你想创建博客的文件夹，然后中执行终端命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init blog</span><br></pre></td></tr></table></figure></p>
+<p>blog是你新建的博客文件夹，cd到这个文件夹，然后执行命令安装npm</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>最后执行命令，开启Hexo本地服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo s // 全称：hexo server</span><br></pre></td></tr></table></figure>
+<p>终端中会提示在浏览器打开 <a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 这个网址就可以看到（<strong>因为我配置了主题内容，请忽略图片上的文字，之后将会讲到主题</strong>）<br><img src="/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160831_1.png" title="hexo init image"></p>
+<h2 id="关联Github"><a href="#关联Github" class="headerlink" title="关联Github"></a>关联Github</h2><h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>在前言的<a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a>中介绍了Pages仓库，所以要创建一个名为<code>用户名.github.io</code>固定写法的参考，例如<code>piglikeyoung.github.io</code>，如下图所示<br><img src="/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160831_2.png" title="github Pages image"></p>
+<p>本地的blog目录结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
+<p>用文本编辑器打开<code>_config.yml</code><br>修改下列代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: https://github.com/piglikeYoung/piglikeyoung.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<p>你需要把<code>repository</code>替换成你自己的github地址</p>
+<blockquote>
+<p>坑二：在配置所有的<code>_config.yml</code>文件时（包括theme中的），在所有的<code>冒号:</code>后边都要加一个<code>空格</code>，否则执行hexo命令会报错，切记 切记</p>
+</blockquote>
+<p>在 blog文件夹目录下执行下面命令生成静态页面<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g        //全称：hexo generate</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果出现如下报错：</span><br><span class="line">ERROR Local hexo not found in ~/blog</span><br><span class="line">ERROR Try runing: &apos;npm install hexo --save&apos;</span><br><span class="line">则执行命令：</span><br><span class="line">npm install hexo --save</span><br><span class="line">若无报错，自行忽略此步骤。</span><br></pre></td></tr></table></figure>
+<p>再执行命令部署静态网页<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo d            //全称：hexo deploy</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>坑三：执行<code>hexo d</code>报错无法连接git或找不到git，执行这个命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>再次执行<code>hexo g</code>和<code>hexo d</code>命令。</p>
+<p>如果你的电脑没有管理Github，执行<code>hexo d</code>时终端会提示你输入Github的用户名和密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username <span class="keyword">for</span> <span class="string">'https://github.com'</span>:</span><br><span class="line">Password <span class="keyword">for</span> <span class="string">'https://github.com'</span>:</span><br></pre></td></tr></table></figure>
+<p>当<code>hexo d</code>执行成功，在浏览器上输入 <a href="http://piglikeyoung.github.io" target="_blank" rel="noopener">http://piglikeyoung.github.io</a> 就会显示 <a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 一样的页面。</p>
+<p><strong>为了避免每次都输入Github用户名和密码，可以参考下一章来配置SSH Keys</strong></p>
+<h2 id="添加SSH-Key到Github"><a href="#添加SSH-Key到Github" class="headerlink" title="添加SSH Key到Github"></a>添加SSH Key到Github</h2><h3 id="判断是否已经生成了SSH-Key"><a href="#判断是否已经生成了SSH-Key" class="headerlink" title="判断是否已经生成了SSH Key"></a>判断是否已经生成了SSH Key</h3><p>如果已经生成了SSH Key会在<code>~/.ssh/id_rsa.pub</code>目录下面找到<code>id_rsa</code>和<code>id_rsa.pub</code>这两个文件。<br>如果没有生成执行下面命令生成<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">"your_email@example.com"</span></span><br></pre></td></tr></table></figure></p>
+<p>其中<a href="mailto:`your_email@example.com" target="_blank" rel="noopener">`your_email@example.com</a>`是你的Github邮箱。<br>在Github上有这个<a href="https://help.github.com/articles/generating-an-ssh-key/" target="_blank" rel="noopener">Help文档</a>指导你如何生成SSH Key，按照步骤一步步来。</p>
+<p>最后在Github网页上个人设置找到SSH Key填写界面，把<code>id_rsa.pub</code>里面的内容复制粘贴进去就完成了。<br><img src="/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160901_2.png" title="github SSH key"></p>
+<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><p>终端cd到<code>blog</code>目录下执行新建文件的指令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new <span class="string">"postName"</span></span><br></pre></td></tr></table></figure>
+<p><code>postName</code>是新建的md文件的名称，会在<code>/blog/source/_posts</code>目录下生成一个名为<code>postName.md</code>的文件。可以使用<code>MWeb</code>编辑器修改文章，支持预览，由于MWeb是收费的，可以使用免费的Mou编辑器。</p>
+<p>当文章编辑完成，在blog目录下，执行下面命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g //生成静态页面</span><br><span class="line">hexo d //将文章部署到Github</span><br></pre></td></tr></table></figure>
+<p><strong>浏览器打开<code>http://piglikeyoung.github.io</code>已经能够访问到基于Github的Hexo的博客了。</strong></p>
+<blockquote>
+<p>Tips：Hexo支持热更新，所以不用每次修改了一点文章内容都部署到Github上查看变化，你可以本地开启Hexo，一边本地修改，一边在浏览器上刷新 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> ，就可以看到刚才的修改。</p>
+</blockquote>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p>Hexo支持很多主题，它有个<a href="https://hexo.io/themes/" target="_blank" rel="noopener">主题网址</a>，在上面能够找到很多主题。</p>
+<p>我使用的是<a href="https://github.com/wuchong/jacman" target="_blank" rel="noopener">jacman</a>这个主题。打开jacman网址有个中文说明教程来指导你如何安装主题，在blog目录下执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/wuchong/jacman.git themes/jacman</span><br></pre></td></tr></table></figure>
+<p>修改博客根目录下的配置文件 <code>_config.yml</code>，把<code>theme</code>的值修改为 <code>jacman</code>。<br>执行命令重新部署Hexo</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean //清除缓存文件 (db.json) 和已生成的静态文件 (public)</span><br><span class="line">hexo g //生成静态页面</span><br><span class="line">hexo d //将文章部署到Github</span><br></pre></td></tr></table></figure>
+<p><strong>如果要详细配置主题请参考<a href="https://github.com/wuchong/jacman" target="_blank" rel="noopener">jacman</a>上的中文文档，相当详细。</strong></p>
+<p>我个人fork了一份原版的主题，做了些许修改，如果你要做修改可以参考我的fork提交<a href="https://github.com/piglikeYoung/jacman" target="_blank" rel="noopener">myJacman</a></p>
+<h2 id="绑定个人域名"><a href="#绑定个人域名" class="headerlink" title="绑定个人域名"></a>绑定个人域名</h2><p>有的朋友不太喜欢那个访问域名，因为那个Github提供的二级域名，喜欢个性化的朋友可以购买自己的域名。购买域名有很多途径，比如<a href="https://sg.godaddy.com/zh/" target="_blank" rel="noopener">GoDaddy</a>，<a href="http://wanwang.aliyun.com/" target="_blank" rel="noopener">阿里万网</a>。在国内买域名，好处是网站是中文的方便后期维护，坏处是解析域名大部分要实名认证，上传身份证复印件，国外就没这个要求。</p>
+<h3 id="主题添加域名"><a href="#主题添加域名" class="headerlink" title="主题添加域名"></a>主题添加域名</h3><p>在<strong>/blog/themes/jacman/source</strong>目录下新建一个名为<code>CNAME</code>的文件，不带后缀，直接把自己购买的域名<code>piglikeyoung.com</code>写入。<br>重新部署Hexo，就可以实现域名跳转（如果域名已经解析完成）。</p>
+<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>域名购买完成，必须经过解析才能实现跳转，如果在阿里万网上购买，可以直接点击添加解析，如果在国外购买可以使用<a href="https://www.dnspod.cn/" target="_blank" rel="noopener">DNSPOD</a>来解析域名。<br>参考下图来添加解析<br><img src="/2016/08/31/GitHub-Pages-Hexo搭建博客/Snip20160902_4.png" title="DNS"></p>
+<p>记录类型：CNAME<br>主机记录：example.com（不要www），填写@或者不填<br>记录值：piglikeyoung.github.io. (不要忘记最后的.，piglikeyoung改为你自己的用户名)，点击保存即可</p>
+<p>此时，点击 <a href="http://piglikeyoung.com/">http://piglikeyoung.com/</a> 已经可以实现跳转，<a href="http://piglikeyoung.com/">http://piglikeyoung.com/</a> 和 <a href="http://piglikeyoung.github.io" target="_blank" rel="noopener">http://piglikeyoung.github.io</a>. 会显示一样内容。</p>
+<h2 id="优化部署和管理"><a href="#优化部署和管理" class="headerlink" title="优化部署和管理"></a>优化部署和管理</h2><p>通过上面的内容，相信你已经能够顺利的完成Hexo部署，将你的md文件转化为静态网页了。此时也许你会问：</p>
+<ul>
+<li>当我在自己电脑写博客，到了公司也想用公司的电脑写博客</li>
+<li>重装电脑了博客文章怎么办</li>
+</ul>
+<p>这样你得做好备份了，使用百度云或者U盘等等，但是，你不觉得这不够优雅吗？放着一个Github不用，去用别的备份工具。为此我搜索了很多解决方案。<br>最简单的就是利用<code>分支</code>。</p>
+<p><strong>一个Github Pages仓库，至少创建2个分支，一个是<code>master</code>用于部署网站，一个是<code>hexo</code>用来存放你的博客文件。</strong></p>
+<h3 id="创建步骤"><a href="#创建步骤" class="headerlink" title="创建步骤"></a>创建步骤</h3><ul>
+<li>创建仓库<code>piglikeyoung.github.io</code></li>
+<li>创建两个分支：<code>master</code>（默认就存在）和<code>hexo</code></li>
+<li>切换到<code>hexo</code>分支，clone到本地</li>
+<li>在<code>hexo</code>分支下，执行<code>hexo init blog</code>，<code>npm install</code>等初始化博客命令，并且执行git版本控制命令，提交到github</li>
+<li>修改<code>_config.yml</code>里面的deploy参数，设置部署分支为<code>master</code></li>
+<li>最后执行<code>hexo g -d</code>生成静态网页并部署到github上</li>
+</ul>
+<p><strong>总之，在piglikeyoung.github.io仓库就有了两个分支，master用于部署生成的网页，hexo用于管理博客文件。</strong></p>
+<h3 id="日常维护"><a href="#日常维护" class="headerlink" title="日常维护"></a>日常维护</h3><p>你只需要在hexo的分支下完成博客的增删改查，通过Hexo指令部署到master分支。</p>
+<p>当你使用另一台电脑修改博客，你只需这么做：</p>
+<ul>
+<li>把piglikeyoung.github.io仓库clone到本地，切换到<code>hexo</code>分支</li>
+<li>在clone的本地仓库文件夹下依次执行：<code>npm install hexo</code>、<code>npm install</code>、<code>npm install hexo-deployer-git</code>（切记，不需要执行hexo init这条指令，它会重新创建一个新的博客）。</li>
+</ul>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本博客的第一篇文章总算写完了，其中参考很多网上优秀博文才能顺利搭建完成，非常感谢他们的无私贡献。</p>
+<ul>
+<li><a href="http://gonghonglou.com/2016/02/03/firstblog/" target="_blank" rel="noopener">Mac上搭建基于GitHub的Hexo博客</a></li>
+<li><a href="http://blog.devtang.com/2016/02/16/from-octopress-to-hexo/" target="_blank" rel="noopener">从 Octopress 迁移到 Hexo</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hexo/">Hexo</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/08/31/GitHub-Pages-Hexo搭建博客/" data-title="GitHub Pages + Hexo搭建博客 | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/09/04/block-tips/" title="block使用小建议">
+  <strong>上一篇：</strong><br>
+  <span>
+  block使用小建议</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,580 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>AFNetworking 概述（一） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言先借用大神的话  我花费了大量的时间阅读和学习各种开源的代码、研究其中的实现原理、尝试自己实现相关技术、尝试在工作中使用，这使得我在 iOS 开发技术上进步很快。 – ibireme  我准备开启一个系列文章，会对 AFNetworking 的源码进行分析，了解它是如何构建，平时我们是如何使用它发送HTTP请求。 本系列的AFNetworking版本为：3.1.0 概述AFNetworking">
+<meta name="keywords" content="AFNetworking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFNetworking 概述（一）">
+<meta property="og:url" content="http://piglikeyoung.com/2016/12/03/AFNetworking-Summary-1/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言先借用大神的话  我花费了大量的时间阅读和学习各种开源的代码、研究其中的实现原理、尝试自己实现相关技术、尝试在工作中使用，这使得我在 iOS 开发技术上进步很快。 – ibireme  我准备开启一个系列文章，会对 AFNetworking 的源码进行分析，了解它是如何构建，平时我们是如何使用它发送HTTP请求。 本系列的AFNetworking版本为：3.1.0 概述AFNetworking">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2016/12/03/AFNetworking-Summary-1/Snip20170107_1.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/12/03/AFNetworking-Summary-1/Snip20170107_3.png">
+<meta property="og:updated_time" content="2017-01-07T12:06:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFNetworking 概述（一）">
+<meta name="twitter:description" content="前言先借用大神的话  我花费了大量的时间阅读和学习各种开源的代码、研究其中的实现原理、尝试自己实现相关技术、尝试在工作中使用，这使得我在 iOS 开发技术上进步很快。 – ibireme  我准备开启一个系列文章，会对 AFNetworking 的源码进行分析，了解它是如何构建，平时我们是如何使用它发送HTTP请求。 本系列的AFNetworking版本为：3.1.0 概述AFNetworking">
+<meta name="twitter:image" content="http://piglikeyoung.com/2016/12/03/AFNetworking-Summary-1/Snip20170107_1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/12/03/AFNetworking-Summary-1/" title="AFNetworking 概述（一）" itemprop="url">AFNetworking 概述（一）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-12-03T09:33:15.000Z" itemprop="datePublished"> 发表于 2016-12-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSURLSession"><span class="toc-number">3.</span> <span class="toc-text">NSURLSession</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking"><span class="toc-number">4.</span> <span class="toc-text">AFNetworking</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>先借用大神的话</p>
+<blockquote>
+<p>我花费了大量的时间阅读和学习各种开源的代码、研究其中的实现原理、尝试自己实现相关技术、尝试在工作中使用，这使得我在 iOS 开发技术上进步很快。 – ibireme</p>
+</blockquote>
+<p>我准备开启一个系列文章，会对 <strong>AFNetworking</strong> 的源码进行分析，了解它是如何构建，平时我们是如何使用它发送HTTP请求。</p>
+<p><code>本系列的AFNetworking版本为：3.1.0</code></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><a href="https://github.com/AFNetworking/AFNetworking" target="_blank" rel="noopener">AFNetworking</a> 是 iOS 和 MacOS 开发中不可或缺的网络请求库，是由无数开源爱好者共同贡献的code形成的开源库。</p>
+<p>这是我对 AFNetworking 工程目录架构的归纳，之后会一一展开。</p>
+<img src="/2016/12/03/AFNetworking-Summary-1/Snip20170107_1.png" title="AFN-arh">
+<p>这篇文章，先介绍<strong>AFNetworking</strong> 的使用。</p>
+<h2 id="NSURLSession"><a href="#NSURLSession" class="headerlink" title="NSURLSession"></a>NSURLSession</h2><p>NSURLSession 是 iOS 7之后苹果推出提供网络请求，下载内容的类，提供了丰富的API，并且支持后台下载。</p>
+<p>简单的使用：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURLRequest</span> *request = [[<span class="built_in">NSURLRequest</span> alloc] initWithURL:[[<span class="built_in">NSURL</span> alloc] initWithString:<span class="string">@"https://github.com"</span>]];</span><br><span class="line"><span class="built_in">NSURLSession</span> *session = [<span class="built_in">NSURLSession</span> sharedSession];</span><br><span class="line"><span class="built_in">NSURLSessionDataTask</span> *task = [session dataTaskWithRequest:request</span><br><span class="line">                                       completionHandler:^(<span class="built_in">NSData</span> * _Nullable data, <span class="built_in">NSURLResponse</span> * _Nullable response, <span class="built_in">NSError</span> * _Nullable error) &#123;</span><br><span class="line">                                           <span class="built_in">NSString</span> *dataString = [[<span class="built_in">NSString</span> alloc] initWithData:data encoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">                                           <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, dataString);</span><br><span class="line">                                       &#125;];</span><br><span class="line">[task resume];</span><br></pre></td></tr></table></figure>
+<ol>
+<li>实例化一个 <strong>NSURLRequest/NSMutableURLRequest</strong>，赋值 URL</li>
+<li>通过 <strong>- sharedSession</strong> 获取 NSURLSession 单例</li>
+<li>然后调用 <strong>- dataTaskWithRequest:completionHandler:</strong> 方法，会返回一个 <strong>NSURLSessionDataTask</strong> 对象</li>
+<li>data task 调用 <strong>- resume</strong> 开始执行任务</li>
+<li>请求结束后 <strong>completionHandler</strong> 中会返回请求结果 NSData</li>
+</ol>
+<h2 id="AFNetworking"><a href="#AFNetworking" class="headerlink" title="AFNetworking"></a>AFNetworking</h2><p>AFNetworking 是对 NSURLSession 的封装，让请求更加简单好用：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[[<span class="built_in">NSURL</span> alloc] initWithString:<span class="string">@"hostname"</span>]];</span><br><span class="line">[manager GET:<span class="string">@"relative_url"</span> parameters:<span class="literal">nil</span> progress:<span class="literal">nil</span></span><br><span class="line">    success:^(<span class="built_in">NSURLSessionDataTask</span> * _Nonnull task, <span class="keyword">id</span>  _Nullable responseObject) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span> ,responseObject);</span><br><span class="line">    &#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> * _Nullable task, <span class="built_in">NSError</span> * _Nonnull error) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, error);</span><br><span class="line">    &#125;];</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>iOS 9之后，苹果默认支持 https，如果请求的链接是 http 的，需要在 info.plist 中加入兼容的键值对，才能发出请求<br><img src="/2016/12/03/AFNetworking-Summary-1/Snip20170107_3.png" title="https"></p>
+</blockquote>
+<p>AFHTTPSessionManager 的 初始化方法 <strong>- initWithBaseURL:</strong>，观察它的调用栈：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- [AFHTTPSessionManager initWithBaseURL:]</span><br><span class="line">    - [AFHTTPSessionManager initWithBaseURL:sessionConfiguration:]</span><br><span class="line">        - [AFURLSessionManager initWithSessionConfiguration:]</span><br><span class="line">            - [<span class="built_in">NSURLSession</span> sessionWithConfiguration:delegate:delegateQueue:]</span><br><span class="line">            - [AFJSONResponseSerializer serializer] <span class="comment">// 负责序列化响应</span></span><br><span class="line">            - [AFSecurityPolicy defaultPolicy] <span class="comment">// 负责身份认证</span></span><br><span class="line">            - [AFNetworkReachabilityManager sharedManager] <span class="comment">// 查看网络连接情况</span></span><br><span class="line">        - [AFHTTPRequestSerializer serializer] <span class="comment">// 负责序列化请求</span></span><br><span class="line">        - [AFJSONResponseSerializer serializer] <span class="comment">// 负责序列化响应</span></span><br></pre></td></tr></table></figure>
+<p>观察调用栈可以看出：</p>
+<ul>
+<li>AFHTTPSessionManager 是 AFURLSessionManager 的子类（它在父类的基础上封装 http 的常用请求：GET，POST，PUT，PATCH，HEAD，DELETE等等）。</li>
+<li>AFURLSessionManager 初始化 <strong>NSURLSession</strong> 实例，同时创建了 <strong>AFJSONResponseSerializer</strong> 来系列化响应，还有 <strong>AFSecurityPolicy</strong> 和 <strong>AFNetworkReachabilityManager</strong> 来保证请求安全和监控网络连接状态</li>
+<li>AFHTTPSessionManager 还有自己的 <strong>AFHTTPRequestSerializer</strong> 和 <strong>AFJSONResponseSerializer</strong> 来序列化请求和响应</li>
+</ul>
+<p>接下来观察<strong>GET:parameters:process:success:failure:</strong>的调用栈：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- [AFHTTPSessionManager GET:parameters:process:success:failure:]</span><br><span class="line">    - [AFHTTPSessionManager dataTaskWithHTTPMethod:parameters:uploadProgress:downloadProgress:success:failure:] <span class="comment">// 返回 NSURLSessionDataTask #1</span></span><br><span class="line">        - [AFHTTPRequestSerializer requestWithMethod:URLString:parameters:error:] <span class="comment">// 返回 NSMutableURLRequest</span></span><br><span class="line">        - [AFURLSessionManager dataTaskWithRequest:uploadProgress:downloadProgress:completionHandler:] <span class="comment">// 返回 NSURLSessionDataTask #2</span></span><br><span class="line">            - [<span class="built_in">NSURLSession</span> dataTaskWithRequest:] <span class="comment">// 返回 NSURLSessionDataTask #3</span></span><br><span class="line">            - [AFURLSessionManager addDelegateForDataTask:uploadProgress:downloadProgress:completionHandler:]</span><br><span class="line">                - [AFURLSessionManagerTaskDelegate init]</span><br><span class="line">                - [AFURLSessionManager setDelegate:forTask:]</span><br><span class="line">    - [<span class="built_in">NSURLSessionDataTask</span> resume]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>#1，#2，#3 都是通过 NSURLSession 生成的 data task，返回的 data task 调用 <strong>- resume</strong> 方法执行请求。</li>
+<li>在<strong>addDelegateForDataTask:uploadProgress:downloadProgress:completionHandler:</strong> 方法中，将某些执行的block回调告诉<strong>AFURLSessionManagerTaskDelegate</strong>，比如上传的<strong>uploadProgress</strong>，下载的<strong>downloadProgress</strong>，所有的请求完成的<strong>completionHandler</strong></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>AFNetworking 其实就是对 NSURLSession 的高度封装提供简单易用的API给开发者使用。</p>
+<p>本章只是简单的对 NSURLSession -&gt; AFURLSessionManager -&gt; AFHTTPSessionManager 的简单概述，下一章将会深入了解。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://github.com/AFNetworking/AFNetworking" target="_blank" rel="noopener">AFNetworking</a></li>
+<li><a href="https://github.com/Draveness/iOS-Source-Code-Analyze/blob/master/contents/AFNetworking/AFNetworking%20%E6%A6%82%E8%BF%B0%EF%BC%88%E4%B8%80%EF%BC%89.md" target="_blank" rel="noopener">AFNetworking 概述（一）</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Source-Code-Analyze/">Source Code Analyze</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/AFNetworking/">AFNetworking</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/12/03/AFNetworking-Summary-1/" data-title="AFNetworking 概述（一） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/12/24/AFNetworking-AFURLSessionManager-2/" title="AFNetworking 核心 AFURLSessionManager（二）">
+  <strong>上一篇：</strong><br>
+  <span>
+  AFNetworking 核心 AFURLSessionManager（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/27/NSTimer-2/" title="NSTimer（二）">
+ <strong>下一篇：</strong><br> 
+ <span>NSTimer（二）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,556 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>MJRefresh 源码分析 | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言下拉刷新，上拉加载更多是现在 APP 中非常常见的功能，本文就来看看 MJRefresh 是的源码，分析它如何实现的 下拉刷新的基本原理一般的下拉刷新都是用 ScrollView 的 contentInset 来实现的，我们常用在 TableView 的顶部， TableView 在导航栏下方，它的 contentInset.top 就是 64，contentOffset.y 就是 -64。">
+<meta name="keywords" content="MJRefresh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MJRefresh 源码分析">
+<meta property="og:url" content="http://piglikeyoung.com/2017/12/16/2017-12-16-mjrefresh-analysis/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言下拉刷新，上拉加载更多是现在 APP 中非常常见的功能，本文就来看看 MJRefresh 是的源码，分析它如何实现的 下拉刷新的基本原理一般的下拉刷新都是用 ScrollView 的 contentInset 来实现的，我们常用在 TableView 的顶部， TableView 在导航栏下方，它的 contentInset.top 就是 64，contentOffset.y 就是 -64。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-09-02T03:33:37.379Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MJRefresh 源码分析">
+<meta name="twitter:description" content="前言下拉刷新，上拉加载更多是现在 APP 中非常常见的功能，本文就来看看 MJRefresh 是的源码，分析它如何实现的 下拉刷新的基本原理一般的下拉刷新都是用 ScrollView 的 contentInset 来实现的，我们常用在 TableView 的顶部， TableView 在导航栏下方，它的 contentInset.top 就是 64，contentOffset.y 就是 -64。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/12/16/2017-12-16-mjrefresh-analysis/" title="MJRefresh 源码分析" itemprop="url">MJRefresh 源码分析</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2017-12-16T02:50:51.000Z" itemprop="datePublished"> 发表于 2017-12-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下拉刷新的基本原理"><span class="toc-number">2.</span> <span class="toc-text">下拉刷新的基本原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关键代码分析"><span class="toc-number">3.</span> <span class="toc-text">关键代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>下拉刷新，上拉加载更多是现在 APP 中非常常见的功能，本文就来看看 <strong>MJRefresh</strong> 是的源码，分析它如何实现的</p>
+<h2 id="下拉刷新的基本原理"><a href="#下拉刷新的基本原理" class="headerlink" title="下拉刷新的基本原理"></a>下拉刷新的基本原理</h2><p>一般的下拉刷新都是用 <strong>ScrollView</strong> 的 <code>contentInset</code> 来实现的，我们常用在 TableView 的顶部， TableView 在导航栏下方，它的 <strong>contentInset.top</strong> 就是 <code>64</code>，<strong>contentOffset.y</strong> 就是 <code>-64</code>。</p>
+<p>在下面的代码中打印可以看出：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshComponent.m</span></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(<span class="keyword">void</span> *)context</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"contentInset ---&gt; %f"</span>, _scrollView.contentInset.top);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"contentOffset ---&gt; %f"</span>, _scrollView.contentOffset.y);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>继续下拉 <strong>contentInset.top</strong> 不变，<strong>contentOffset.y</strong> 变小，上拉 <strong>contentOffset.y</strong> 变大，直到 ScrollView 达到屏幕的左上角变为0。</p>
+<p>默认情况下，下拉 TableView ，松手后会弹回初始位置，而下拉刷新控件就是放在 TableView 的的上方，初始 y 设置为负数，所以平时不会显示出来，只有下拉的时候才会出现。在 Loading 的时候，临时把 <strong>contentInset.top</strong> 变大，就把 TableView 往下挤，这样刷新控件就停留在上面，刷新完成后，再把 <strong>contentInset.top</strong> 改回原来的值，实现回弹的效果。</p>
+<h2 id="关键代码分析"><a href="#关键代码分析" class="headerlink" title="关键代码分析"></a>关键代码分析</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下拉刷新</span></span><br><span class="line">tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^&#123;</span><br><span class="line">    <span class="comment">// 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）</span></span><br><span class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">2.0</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        <span class="comment">// 结束刷新</span></span><br><span class="line">        [tableView.mj_header endRefreshing];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>上面的代码是将刷新控件添加到 <code>mj_header</code> 属性中，实际上控件并不是添加到 <strong>TableView</strong> 上，而是是添加到 <strong>ScrollView</strong> 上：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UIScrollView+MJRefresh.m</span></span><br><span class="line">- (<span class="keyword">void</span>)setMj_header:(MJRefreshHeader *)mj_header &#123;</span><br><span class="line">    <span class="keyword">if</span> (mj_header != <span class="keyword">self</span>.mj_header) &#123;</span><br><span class="line">        <span class="comment">// 删除旧的，添加新的</span></span><br><span class="line">        [<span class="keyword">self</span>.mj_header removeFromSuperview];</span><br><span class="line">        [<span class="keyword">self</span> insertSubview:mj_header atIndex:<span class="number">0</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 存储新的</span></span><br><span class="line">        objc_setAssociatedObject(<span class="keyword">self</span>, &amp;MJRefreshHeaderKey,</span><br><span class="line">                                 mj_header, OBJC_ASSOCIATION_ASSIGN);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码是在 <strong>ScrollView</strong> 的 category 中，给 <strong>UIScrollView</strong> 添加了属性 header 和 footer。通常 category 是不能直接添加实例变量的，所以用到了 <code>objc_setAssociatedObject</code> 关联对象，所以刷新控件是添加到了 <strong>UIScrollView</strong> 的 subView 中，并保留了引用。</p>
+<p>在 MJRefresh 中，所有的刷新控件都是继承自一个公共的父类 <strong>MJRefreshComponent</strong>，如果要实现自定义的控件，可以通过继承它，重写它的代码。<strong>MJRefreshComponent</strong> 还重写 UIView 的方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)willMoveToSuperview:(<span class="built_in">UIView</span> *)newSuperview &#123;</span><br><span class="line">    [<span class="keyword">super</span> willMoveToSuperview:newSuperview];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果不是UIScrollView，不做任何事情</span></span><br><span class="line">    <span class="keyword">if</span> (newSuperview &amp;&amp; ![newSuperview isKindOfClass:[<span class="built_in">UIScrollView</span> <span class="keyword">class</span>]]) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 旧的父控件移除监听</span></span><br><span class="line">    [<span class="keyword">self</span> removeObservers];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (newSuperview) &#123; <span class="comment">// 新的父控件</span></span><br><span class="line">        <span class="comment">// 设置宽度</span></span><br><span class="line">        <span class="keyword">self</span>.mj_w = newSuperview.mj_w;</span><br><span class="line">        <span class="comment">// 设置位置</span></span><br><span class="line">        <span class="keyword">self</span>.mj_x = -_scrollView.mj_insetL;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 记录UIScrollView</span></span><br><span class="line">        _scrollView = (<span class="built_in">UIScrollView</span> *)newSuperview;</span><br><span class="line">        <span class="comment">// 设置永远支持垂直弹簧效果</span></span><br><span class="line">        _scrollView.alwaysBounceVertical = <span class="literal">YES</span>;</span><br><span class="line">        <span class="comment">// 记录UIScrollView最开始的contentInset</span></span><br><span class="line">        _scrollViewOriginalInset = _scrollView.mj_inset;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 添加监听</span></span><br><span class="line">        [<span class="keyword">self</span> addObservers];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当刷新控件添加到 ScrollView 上时，即 <strong>setMj_header</strong> 的 <strong>[self insertSubview:mj_header atIndex:0];</strong> 将会触发 <strong>willMoveToSuperview</strong> ，然后还会触发：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)layoutSubviews &#123;</span><br><span class="line">    [<span class="keyword">self</span> placeSubviews];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">super</span> layoutSubviews];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>子控件通过重写 <strong>placeSubviews</strong> 来布局子控件：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshNormalHeader.m</span></span><br><span class="line">- (<span class="keyword">void</span>)placeSubviews &#123;</span><br><span class="line">    [<span class="keyword">super</span> placeSubviews];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 箭头的中心点</span></span><br><span class="line">    <span class="built_in">CGFloat</span> arrowCenterX = <span class="keyword">self</span>.mj_w * <span class="number">0.5</span>;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.stateLabel.hidden) &#123;</span><br><span class="line">        <span class="built_in">CGFloat</span> stateWidth = <span class="keyword">self</span>.stateLabel.mj_textWith;</span><br><span class="line">        <span class="built_in">CGFloat</span> timeWidth = <span class="number">0.0</span>;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">self</span>.lastUpdatedTimeLabel.hidden) &#123;</span><br><span class="line">            timeWidth = <span class="keyword">self</span>.lastUpdatedTimeLabel.mj_textWith;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">CGFloat</span> textWidth = MAX(stateWidth, timeWidth);</span><br><span class="line">        arrowCenterX -= textWidth / <span class="number">2</span> + <span class="keyword">self</span>.labelLeftInset;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">CGFloat</span> arrowCenterY = <span class="keyword">self</span>.mj_h * <span class="number">0.5</span>;</span><br><span class="line">    <span class="built_in">CGPoint</span> arrowCenter = <span class="built_in">CGPointMake</span>(arrowCenterX, arrowCenterY);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 箭头</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.arrowView.constraints.count == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.arrowView.mj_size = <span class="keyword">self</span>.arrowView.image.size;</span><br><span class="line">        <span class="keyword">self</span>.arrowView.center = arrowCenter;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 圈圈</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.loadingView.constraints.count == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.loadingView.center = arrowCenter;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.arrowView.tintColor = <span class="keyword">self</span>.stateLabel.textColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>willMoveToSuperview</strong> 方法中还添加了监听，监听 <strong>UIScrollView</strong> 的 <strong>contentInset</strong> 和 <strong>contentOffset</strong>：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshComponent.m</span></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(<span class="keyword">void</span> *)context &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 遇到这些情况就直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.userInteractionEnabled) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这个就算看不见也需要处理</span></span><br><span class="line">    <span class="keyword">if</span> ([keyPath isEqualToString:MJRefreshKeyPathContentSize]) &#123;</span><br><span class="line">        [<span class="keyword">self</span> scrollViewContentSizeDidChange:change];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 看不见</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.hidden) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">if</span> ([keyPath isEqualToString:MJRefreshKeyPathContentOffset]) &#123;</span><br><span class="line">        [<span class="keyword">self</span> scrollViewContentOffsetDidChange:change];</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> ([keyPath isEqualToString:MJRefreshKeyPathPanState]) &#123;</span><br><span class="line">        [<span class="keyword">self</span> scrollViewPanStateDidChange:change];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshHeader.m</span></span><br><span class="line">- (<span class="keyword">void</span>)scrollViewContentOffsetDidChange:(<span class="built_in">NSDictionary</span> *)change &#123;</span><br><span class="line">    [<span class="keyword">super</span> scrollViewContentOffsetDidChange:change];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 在刷新的refreshing状态</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.state == MJRefreshStateRefreshing) &#123;</span><br><span class="line">        <span class="comment">// 暂时保留</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.window == <span class="literal">nil</span>) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// sectionheader停留解决</span></span><br><span class="line">        <span class="built_in">CGFloat</span> insetT = - <span class="keyword">self</span>.scrollView.mj_offsetY &gt; _scrollViewOriginalInset.top ? - <span class="keyword">self</span>.scrollView.mj_offsetY : _scrollViewOriginalInset.top;</span><br><span class="line">        insetT = insetT &gt; <span class="keyword">self</span>.mj_h + _scrollViewOriginalInset.top ? <span class="keyword">self</span>.mj_h + _scrollViewOriginalInset.top : insetT;</span><br><span class="line">        <span class="keyword">self</span>.scrollView.mj_insetT = insetT;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">self</span>.insetTDelta = _scrollViewOriginalInset.top - insetT;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 跳转到下一个控制器时，contentInset可能会变</span></span><br><span class="line">     _scrollViewOriginalInset = <span class="keyword">self</span>.scrollView.mj_inset;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 当前的contentOffset</span></span><br><span class="line">    <span class="built_in">CGFloat</span> offsetY = <span class="keyword">self</span>.scrollView.mj_offsetY;</span><br><span class="line">    <span class="comment">// 头部控件刚好出现的offsetY</span></span><br><span class="line">    <span class="built_in">CGFloat</span> happenOffsetY = - <span class="keyword">self</span>.scrollViewOriginalInset.top;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果是向上滚动到看不见头部控件，直接返回</span></span><br><span class="line">    <span class="comment">// &gt;= -&gt; &gt;</span></span><br><span class="line">    <span class="keyword">if</span> (offsetY &gt; happenOffsetY) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 普通 和 即将刷新 的临界点</span></span><br><span class="line">    <span class="built_in">CGFloat</span> normal2pullingOffsetY = happenOffsetY - <span class="keyword">self</span>.mj_h;</span><br><span class="line">    <span class="built_in">CGFloat</span> pullingPercent = (happenOffsetY - offsetY) / <span class="keyword">self</span>.mj_h;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.scrollView.isDragging) &#123; <span class="comment">// 如果正在拖拽</span></span><br><span class="line">        <span class="keyword">self</span>.pullingPercent = pullingPercent;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.state == MJRefreshStateIdle &amp;&amp; offsetY &lt; normal2pullingOffsetY) &#123;</span><br><span class="line">            <span class="comment">// 转为即将刷新状态</span></span><br><span class="line">            <span class="keyword">self</span>.state = MJRefreshStatePulling;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">self</span>.state == MJRefreshStatePulling &amp;&amp; offsetY &gt;= normal2pullingOffsetY) &#123;</span><br><span class="line">            <span class="comment">// 转为普通状态</span></span><br><span class="line">            <span class="keyword">self</span>.state = MJRefreshStateIdle;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">self</span>.state == MJRefreshStatePulling) &#123;<span class="comment">// 即将刷新 &amp;&amp; 手松开</span></span><br><span class="line">        <span class="comment">// 开始刷新</span></span><br><span class="line">        [<span class="keyword">self</span> beginRefreshing];</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pullingPercent &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.pullingPercent = pullingPercent;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>👆方法中根据 <strong>contentOffset</strong> 的位置计算刷新控件的状态更新控件的UI：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshComponent.m</span></span><br><span class="line">- (<span class="keyword">void</span>)setState:(MJRefreshState)state &#123;</span><br><span class="line">    _state = state;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 加入主队列的目的是等setState:方法调用完毕、设置完文字后再去布局子控件</span></span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        [<span class="keyword">self</span> setNeedsLayout];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MJRefreshHeader.m</span></span><br><span class="line">- (<span class="keyword">void</span>)setState:(MJRefreshState)state &#123;</span><br><span class="line">    MJRefreshCheckState</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 根据状态做事情</span></span><br><span class="line">    <span class="keyword">if</span> (state == MJRefreshStateIdle) &#123;</span><br><span class="line">        <span class="keyword">if</span> (oldState != MJRefreshStateRefreshing) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 保存刷新时间</span></span><br><span class="line">        [[<span class="built_in">NSUserDefaults</span> standardUserDefaults] setObject:[<span class="built_in">NSDate</span> date] forKey:<span class="keyword">self</span>.lastUpdatedTimeKey];</span><br><span class="line">        [[<span class="built_in">NSUserDefaults</span> standardUserDefaults] synchronize];</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 恢复inset和offset</span></span><br><span class="line">        [<span class="built_in">UIView</span> animateWithDuration:MJRefreshSlowAnimationDuration animations:^&#123;</span><br><span class="line">            <span class="keyword">self</span>.scrollView.mj_insetT += <span class="keyword">self</span>.insetTDelta;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 自动调整透明度</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">self</span>.isAutomaticallyChangeAlpha) <span class="keyword">self</span>.alpha = <span class="number">0.0</span>;</span><br><span class="line">        &#125; completion:^(<span class="built_in">BOOL</span> finished) &#123;</span><br><span class="line">            <span class="keyword">self</span>.pullingPercent = <span class="number">0.0</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">self</span>.endRefreshingCompletionBlock) &#123;</span><br><span class="line">                <span class="keyword">self</span>.endRefreshingCompletionBlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (state == MJRefreshStateRefreshing) &#123;</span><br><span class="line">         <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            [<span class="built_in">UIView</span> animateWithDuration:MJRefreshFastAnimationDuration animations:^&#123;</span><br><span class="line">                <span class="built_in">CGFloat</span> top = <span class="keyword">self</span>.scrollViewOriginalInset.top + <span class="keyword">self</span>.mj_h;</span><br><span class="line">                <span class="comment">// 增加滚动区域top</span></span><br><span class="line">                <span class="keyword">self</span>.scrollView.mj_insetT = top;</span><br><span class="line">                <span class="comment">// 设置滚动位置</span></span><br><span class="line">                <span class="built_in">CGPoint</span> offset = <span class="keyword">self</span>.scrollView.contentOffset;</span><br><span class="line">                offset.y = -top;</span><br><span class="line">                [<span class="keyword">self</span>.scrollView setContentOffset:offset animated:<span class="literal">NO</span>];</span><br><span class="line">            &#125; completion:^(<span class="built_in">BOOL</span> finished) &#123;</span><br><span class="line">                [<span class="keyword">self</span> executeRefreshingCallback];</span><br><span class="line">            &#125;];</span><br><span class="line">         &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果正在刷新，增大 contentInset ，让 Header 保留在屏幕上，执行 Callback 结束后恢复原来位置。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上面可以得出结论，可以看出来下拉刷新的过程大致是：<br>初始化下拉刷新控件 -&gt; 设置Frame，布局子控件 -&gt; 控件添加监听 -&gt; 监控contentOffset -&gt; 判断contentOffset并做出相应回调。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Source-Code-Analyze/">Source Code Analyze</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/MJRefresh/">MJRefresh</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2017/12/16/2017-12-16-mjrefresh-analysis/" data-title="MJRefresh 源码分析 | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/01/20/2018-01-20-masonry-analysis/" title="Masonry 源码分析">
+  <strong>上一篇：</strong><br>
+  <span>
+  Masonry 源码分析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/11/12/2017-11-26-swifter-tips-summary-2/" title="《Swifter - Swift 必备 Tips》总结（二）">
+ <strong>下一篇：</strong><br> 
+ <span>《Swifter - Swift 必备 Tips》总结（二）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

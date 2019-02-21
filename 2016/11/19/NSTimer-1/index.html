@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>NSTimer（一） | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="前言NSTimer iOS中使用的计时器，定时去完成任务的东西。但是其中的坑点相当多：  NSTimer 会 retain 你添加调用方法的对象，比如 self（最近被它坑到了） NSTimer 要添加到 runloop 才会执行 NSTimer 并不是精确的按照指定的时间触发 NSTimer 添加到 runloop 后，也不一定按照你想象的那样执行  什么是NSTimerNSTimer 就是一个">
+<meta name="keywords" content="NSTimer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSTimer（一）">
+<meta property="og:url" content="http://piglikeyoung.com/2016/11/19/NSTimer-1/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="前言NSTimer iOS中使用的计时器，定时去完成任务的东西。但是其中的坑点相当多：  NSTimer 会 retain 你添加调用方法的对象，比如 self（最近被它坑到了） NSTimer 要添加到 runloop 才会执行 NSTimer 并不是精确的按照指定的时间触发 NSTimer 添加到 runloop 后，也不一定按照你想象的那样执行  什么是NSTimerNSTimer 就是一个">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://piglikeyoung.com/2016/11/19/NSTimer-1/Snip20161126_2.png">
+<meta property="og:image" content="http://piglikeyoung.com/2016/11/19/NSTimer-1/Snip20161126_3.png">
+<meta property="og:updated_time" content="2016-11-27T06:55:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSTimer（一）">
+<meta name="twitter:description" content="前言NSTimer iOS中使用的计时器，定时去完成任务的东西。但是其中的坑点相当多：  NSTimer 会 retain 你添加调用方法的对象，比如 self（最近被它坑到了） NSTimer 要添加到 runloop 才会执行 NSTimer 并不是精确的按照指定的时间触发 NSTimer 添加到 runloop 后，也不一定按照你想象的那样执行  什么是NSTimerNSTimer 就是一个">
+<meta name="twitter:image" content="http://piglikeyoung.com/2016/11/19/NSTimer-1/Snip20161126_2.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/19/NSTimer-1/" title="NSTimer（一）" itemprop="url">NSTimer（一）</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2016-11-19T04:42:49.000Z" itemprop="datePublished"> 发表于 2016-11-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是NSTimer"><span class="toc-number">2.</span> <span class="toc-text">什么是NSTimer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSTimer-与-Target"><span class="toc-number">3.</span> <span class="toc-text">NSTimer 与 Target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">4.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">5.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#强引用引发的”血案“"><span class="toc-number">6.</span> <span class="toc-text">强引用引发的”血案“</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结2"><span class="toc-number">7.</span> <span class="toc-text">小结2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方法1"><span class="toc-number">8.</span> <span class="toc-text">解决方法1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方法2"><span class="toc-number">9.</span> <span class="toc-text">解决方法2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">11.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>NSTimer iOS中使用的计时器，定时去完成任务的东西。但是其中的坑点相当多：</p>
+<ol>
+<li>NSTimer 会 retain 你添加调用方法的对象，比如 self（最近被它坑到了）</li>
+<li>NSTimer 要添加到 runloop 才会执行</li>
+<li>NSTimer 并不是精确的按照指定的时间触发</li>
+<li>NSTimer 添加到 runloop 后，也不一定按照你想象的那样执行</li>
+</ol>
+<h2 id="什么是NSTimer"><a href="#什么是NSTimer" class="headerlink" title="什么是NSTimer"></a>什么是NSTimer</h2><p>NSTimer 就是一个能在从现在开始的后面的某一个时刻或者周期性的执行我们指定的方法的对象。</p>
+<h2 id="NSTimer-与-Target"><a href="#NSTimer-与-Target" class="headerlink" title="NSTimer 与 Target"></a>NSTimer 与 Target</h2><p>从上面的解释来看，NSTimer 会在未来某个时刻执行一次或者多次我们指定的方法，那么它是怎么知道该方法那个时候是否还是有效的，如果该方法不存在了，消息分发会引发异常的。</p>
+<p>解决方法很简单，<code>就是把要指定给timer的“selector”的“target” retain 一份就搞定了，实际上系统也是这样做的</code>，不管是重复性的timer还是一次性的timer都会对它的方法的接收者进行retain，这两种timer的区别在于“<strong>一次性的timer在完成调用以后会自动将自己invalidate，而重复的timer则将永生，直到你显示的invalidate它为止</strong>”。</p>
+<p>举个例子：</p>
+<p><strong>JHTestTimerObject.h</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">JHTestTimerObject</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 公开方法，timer响应函数，用来做测试</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)timerAction:(<span class="built_in">NSTimer</span>*)timer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>JHTestTimerObject.m</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">JHTestTimerObject</span></span></span><br><span class="line">- (<span class="keyword">id</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"instance %@ has been created!"</span>, <span class="keyword">self</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"instance %@ has been dealloced!"</span>, <span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)timerAction:(<span class="built_in">NSTimer</span>*)timer &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Hi, Timer Action for instance %@"</span>, <span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>调用</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> testNonRepeatTimer];</span><br><span class="line">    <span class="comment">//[self testRepeatTimer];</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)testNonRepeatTimer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Test retatin target for non-repeat timer!"</span>);</span><br><span class="line">    JHTestTimerObject *testObject = [[JHTestTimerObject alloc] init];</span><br><span class="line">    [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">3</span> target:testObject selector:<span class="keyword">@selector</span>(timerAction:) userInfo:<span class="literal">nil</span> repeats:<span class="literal">NO</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Invoke release to testObject!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)testRepeatTimer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Test retain target for repeat Timer"</span>);</span><br><span class="line">    JHTestTimerObject *testObject2 = [[JHTestTimerObject alloc] init];</span><br><span class="line">    [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">3</span> target:testObject2 selector:<span class="keyword">@selector</span>(timerAction:) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"Invoke release to testObject2!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>上面这个例子，创建了一个测试对象 JHTestTimerObject ，在它的init，dealloc 和 timerAction 三个方法中分别打印了信息，并且在 ViewController 中 分别测试 单次执行timer 和 重复执行timer，由于在 ARC 环境下，testObject 超出<strong>{}</strong>的作用域范围就会被释放，<code>通过这点可以确认timer是否对“target”做了 retain 操作</code>。</p>
+<p>调用 <strong>NonRepeatTimer</strong> 打印结果：<br><img src="/2016/11/19/NSTimer-1/Snip20161126_2.png" title="CALayer image"><br>根据打印结果，可以看出在<strong>14:24:38</strong>时，testObject 才执行了 dealloc 方法，系统等待 timer 执行结束后才释放 testObject 对象。这就证明了<code>单次执行timer也会 retain 它的“target”，直到它自己失效为止</code>。</p>
+<p>调用 <strong>RepeatTimer</strong> 打印结果：<br><img src="/2016/11/19/NSTimer-1/Snip20161126_3.png" title="CALayer image"><br>据观察，timer一直在周期性的调用指定的方法，而且 testObject2 一直也没被释放。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过上面的例子，我们可以发现在timer对它的接收者进行retain，从而保证了timer调用时的正确性，但是又引入了接收者的内存管理问题。特别是对于重复性的timer，它所引用的对象将一直存在，将会造成内存泄露。</p>
+<p>解决办法， NSTimer 方法提供了一个销毁的方法 invalidate，我们可以用来解决这个问题。不管是一次性的还是重复性的timer，在执行完invalidate以后都会变成无效，因此对于重复性的timer我们一定要有对应的invalidate。</p>
+<h2 id="强引用引发的”血案“"><a href="#强引用引发的”血案“" class="headerlink" title="强引用引发的”血案“"></a>强引用引发的”血案“</h2><p>相信不少人说我有调用 invalidate 销毁方法啊，但是并没有释放相关的对象，因为他们十有八九是在 dealloc 中调用的，犯了自欺欺人的错误。</p>
+<p>举个例子：</p>
+<p><strong>ViewController.m</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    _button = [<span class="built_in">UIButton</span> buttonWithType:<span class="built_in">UIButtonTypeSystem</span>];</span><br><span class="line">    _button.frame = <span class="built_in">CGRectMake</span>(<span class="number">100</span>, <span class="number">200</span>, <span class="number">50</span>, <span class="number">50</span>);</span><br><span class="line">    [_button setTitle:<span class="string">@"点一下"</span> forState:<span class="built_in">UIControlStateNormal</span>];</span><br><span class="line">    [_button addTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(pushNextVC:) forControlEvents:<span class="built_in">UIControlEventTouchUpInside</span>];</span><br><span class="line">    [<span class="keyword">self</span>.view addSubview:_button];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushNextVC:(<span class="built_in">UIButton</span> *)button &#123;</span><br><span class="line">    JHTestTimerViewController *vc = [JHTestTimerViewController new];</span><br><span class="line">    [<span class="keyword">self</span>.navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>JHTestTimerViewController.m</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    </span><br><span class="line">    _textLabel = [[<span class="built_in">UILabel</span> alloc] initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">100</span>, <span class="number">200</span>, <span class="number">40</span>, <span class="number">60</span>)];</span><br><span class="line">    _textLabel.text = <span class="string">@"这是第二个VC"</span>;</span><br><span class="line">    [<span class="keyword">self</span>.view addSubview:_textLabel];</span><br><span class="line">    </span><br><span class="line">    _timer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">1.0</span>f target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(testTimer:) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    <span class="comment">// 自欺欺人的写法，永远都不会执行到，除非你在外部手动invalidate这个timer</span></span><br><span class="line">    [_timer invalidate];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)testTimer:(<span class="built_in">NSTimer</span>*)timer &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"haha!"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>按照常理 JHTestTimerViewController 会在点击导航栏的返回按钮后被销毁，然后触发 dealloc 方法，在 dealloc 方法中会销毁定时器，然而实际上并没有。</p>
+<p>原因是 _timer 会对“target”进行 retain ，只要强引用在，JHTestTimerViewController 就不会被销毁，就不会走 dealloc 方法，也就不会销毁 _timer ，_timer 不销毁就一直强引用 JHTestTimerViewController，这就造成了内存泄漏。</p>
+<h2 id="小结2"><a href="#小结2" class="headerlink" title="小结2"></a>小结2</h2><p>timer 都会对它的 target 进行 retain，我们需要小心对待这个 target 的生命周期问题，尤其是重复性的timer。（NSTimer 初始化后，self 的 retainCount 加 1。 那么，我们需要在释放这个类之前，执行[timer invalidate];否则，不会执行该类的 dealloc 方法。）</p>
+<h2 id="解决方法1"><a href="#解决方法1" class="headerlink" title="解决方法1"></a>解决方法1</h2><p>既然知道了是强引用造成的原因，那么肯定有解决办法的。👇使用了一个简洁的方法来解决：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  NSTimer+EZ_Helper.m</span></span><br><span class="line"><span class="comment">//  EZToolKit</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Created by yangjun zhu on 15/5/20.</span></span><br><span class="line"><span class="comment">//  Copyright (c) 2015年 Cactus. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">"NSTimer+EZ_Helper.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NSTimer</span> (<span class="title">EZ_Helper</span>)</span></span><br><span class="line">+ (<span class="built_in">NSTimer</span> *)ez_scheduledTimerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)inTimeInterval block:(<span class="keyword">void</span> (^)())inBlock repeats:(<span class="built_in">BOOL</span>)inRepeats</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">void</span> (^block)() = [inBlock <span class="keyword">copy</span>];</span><br><span class="line">    <span class="built_in">NSTimer</span> * timer = [<span class="keyword">self</span> scheduledTimerWithTimeInterval:inTimeInterval target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(__executeTimerBlock:) userInfo:block repeats:inRepeats];</span><br><span class="line">    <span class="keyword">return</span> timer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">NSTimer</span> *)ez_timerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)inTimeInterval block:(<span class="keyword">void</span> (^)())inBlock repeats:(<span class="built_in">BOOL</span>)inRepeats</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">void</span> (^block)() = [inBlock <span class="keyword">copy</span>];</span><br><span class="line">    <span class="built_in">NSTimer</span> * timer = [<span class="keyword">self</span> timerWithTimeInterval:inTimeInterval target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(__executeTimerBlock:) userInfo:block repeats:inRepeats];</span><br><span class="line">    <span class="keyword">return</span> timer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)__executeTimerBlock:(<span class="built_in">NSTimer</span> *)inTimer;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>([inTimer userInfo])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">void</span> (^block)() = (<span class="keyword">void</span> (^)())[inTimer userInfo];</span><br><span class="line">        block();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>给 NSTimer 写的一个category，在 category 中把一个”伪造“的 ”self“ 赋值给了 ”target“，这个 ”self“ 类似于一个中间的代理人，作用是接受 NSTimer 的强引用，这样 NSTimer 就不会持有原始的对象，原始对象就能正常调用 dealloc 方法，在 dealloc 中的 invalidate 方法就会销毁定 timer。（通过打断点可以看出 self 实际上是 NSTimer）</p>
+<h2 id="解决方法2"><a href="#解决方法2" class="headerlink" title="解决方法2"></a>解决方法2</h2><p>在 iOS10 中，我们发现 NSTimer 多了几个API：</p>
+<pre><code class="objc">+ (<span class="built_in">NSTimer</span> *)timerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)interval repeats:
+(<span class="built_in">BOOL</span>)repeats block:(<span class="keyword">void</span> (^)(<span class="built_in">NSTimer</span> *timer))block
+API_AVAILABLE(macosx(<span class="number">10.12</span>), ios(<span class="number">10.0</span>), watchos(<span class="number">3.0</span>), tvos(<span class="number">10.0</span>));
+
++ (<span class="built_in">NSTimer</span> *)scheduledTimerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)interval repeats:
+(<span class="built_in">BOOL</span>)repeats block:(<span class="keyword">void</span> (^)(<span class="built_in">NSTimer</span> *timer))block
+API_AVAILABLE(macosx(<span class="number">10.12</span>), ios(<span class="number">10.0</span>), watchos(<span class="number">3.0</span>), tvos(<span class="number">10.0</span>));
+</code></pre>
+<p>这两个 API 是 iOS10 新添加的，前两个参数很好理解：<strong>触发间隔</strong> 和 <strong>是否重复触发</strong>。第三个参数是个 block ，有没有发觉和<strong>解决方法1</strong>非常相似，只是参数顺序不一样。</p>
+<p>看看第三个参数的注释：</p>
+<blockquote>
+<p>block  The execution body of the timer; the timer itself is passed as the parameter to this block when executed to aid in avoiding cyclical references</p>
+</blockquote>
+<p>翻译过来是：block 是 timer 需要执行的内容；当 block 被执行时，timer 自己本身会被当做参数传递给 block ，避免循环引用。</p>
+<p>从注释就可以看出，新的API解决方式和<strong>解决方法1</strong>是一样的，避免持有相应的对象，这就是苹果给出了终极解决方案，但是缺点是要 iOS10 以上才能调用。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本章主要讨论了 NSTimer 与 它的target 的关系，强引用 target 引发的问题，以及解决办法。下一章继续讨论其他坑点。</p>
+<blockquote>
+<p><strong>注意：</strong>无论是解决方法1还是解决方法2，在 block 中，一定要使用弱引用 weakself，否则还是会造成循环引用，内存泄漏。</p>
+</blockquote>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="http://justsee.iteye.com/blog/1774722" target="_blank" rel="noopener">NSTimer</a></li>
+<li><a href="http://blog.callmewhy.com/2015/07/06/weak-timer-in-ios/" target="_blank" rel="noopener">iOS 中的 NSTimer</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/NSTimer/">NSTimer</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2016/11/19/NSTimer-1/" data-title="NSTimer（一） | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2016/11/27/NSTimer-2/" title="NSTimer（二）">
+  <strong>上一篇：</strong><br>
+  <span>
+  NSTimer（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/13/null-and-nil/" title="nil / Nil / NULL / NSNull">
+ <strong>下一篇：</strong><br> 
+ <span>nil / Nil / NULL / NSNull
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

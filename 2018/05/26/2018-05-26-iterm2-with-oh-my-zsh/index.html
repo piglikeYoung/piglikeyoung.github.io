@@ -1,0 +1,565 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>iTerm2 + Oh My Zsh 打造舒适终端体验 | Pixar&#39;Filed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Pixar">
+    
+
+    
+    <meta name="description" content="iTerm2 + Oh My Zsh 打造舒适终端体验最近尝试用终端来代替图形界面，更能了解本质，使用了 iTerm2 来打造了一个相对友好的终端使用，看一下最终效果：  下载iTerm2直接去官网下载 iTerm2 安装完成后，在/bin目录下会多出一个zsh的文件。 Mac系统默认使用dash作为终端，可以使用命令修改默认使用zsh： 1chsh -s /bin/zsh 如果想修改回默认das">
+<meta name="keywords" content="iTerm2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iTerm2 + Oh My Zsh 打造舒适终端体验">
+<meta property="og:url" content="http://piglikeyoung.com/2018/05/26/2018-05-26-iterm2-with-oh-my-zsh/index.html">
+<meta property="og:site_name" content="Pixar&#39;Filed">
+<meta property="og:description" content="iTerm2 + Oh My Zsh 打造舒适终端体验最近尝试用终端来代替图形界面，更能了解本质，使用了 iTerm2 来打造了一个相对友好的终端使用，看一下最终效果：  下载iTerm2直接去官网下载 iTerm2 安装完成后，在/bin目录下会多出一个zsh的文件。 Mac系统默认使用dash作为终端，可以使用命令修改默认使用zsh： 1chsh -s /bin/zsh 如果想修改回默认das">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180609-151847@2x.png">
+<meta property="og:image" content="http://p44bkxib3.bkt.clouddn.com/fonts.png">
+<meta property="og:updated_time" content="2018-09-02T03:38:21.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iTerm2 + Oh My Zsh 打造舒适终端体验">
+<meta name="twitter:description" content="iTerm2 + Oh My Zsh 打造舒适终端体验最近尝试用终端来代替图形界面，更能了解本质，使用了 iTerm2 来打造了一个相对友好的终端使用，看一下最终效果：  下载iTerm2直接去官网下载 iTerm2 安装完成后，在/bin目录下会多出一个zsh的文件。 Mac系统默认使用dash作为终端，可以使用命令修改默认使用zsh： 1chsh -s /bin/zsh 如果想修改回默认das">
+<meta name="twitter:image" content="http://p44bkxib3.bkt.clouddn.com/WX20180609-151847@2x.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Pixar&#39;Filed" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Pixar&#39;Filed">Pixar&#39;Filed</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索">
+						<input type="hidden" name="q" value="site:piglikeyoung.com">
+					</form>
+					
+					</li>
+				</ul>
+			</ul></nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/05/26/2018-05-26-iterm2-with-oh-my-zsh/" title="iTerm2 + Oh My Zsh 打造舒适终端体验" itemprop="url">iTerm2 + Oh My Zsh 打造舒适终端体验</a>
+  </h1>
+  <p class="article-time">
+    <time datetime="2018-05-26T06:50:51.000Z" itemprop="datePublished"> 发表于 2018-05-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#iTerm2-Oh-My-Zsh-打造舒适终端体验"><span class="toc-number">1.</span> <span class="toc-text">iTerm2 + Oh My Zsh 打造舒适终端体验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载iTerm2"><span class="toc-number">1.1.</span> <span class="toc-text">下载iTerm2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Oh-my-zsh"><span class="toc-number">1.2.</span> <span class="toc-text">安装Oh my zsh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装PowerLine"><span class="toc-number">1.3.</span> <span class="toc-text">安装PowerLine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装PowerFonts"><span class="toc-number">1.4.</span> <span class="toc-text">安装PowerFonts</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配色"><span class="toc-number">2.</span> <span class="toc-text">配色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="iTerm2-Oh-My-Zsh-打造舒适终端体验"><a href="#iTerm2-Oh-My-Zsh-打造舒适终端体验" class="headerlink" title="iTerm2 + Oh My Zsh 打造舒适终端体验"></a>iTerm2 + Oh My Zsh 打造舒适终端体验</h2><p>最近尝试用终端来代替图形界面，更能了解本质，使用了 <strong>iTerm2</strong> 来打造了一个相对友好的终端使用，看一下最终效果：</p>
+<p><img src="http://p44bkxib3.bkt.clouddn.com/WX20180609-151847@2x.png" alt="WX20180609-151847@2x"></p>
+<h3 id="下载iTerm2"><a href="#下载iTerm2" class="headerlink" title="下载iTerm2"></a>下载iTerm2</h3><p>直接去官网下载 <a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2</a></p>
+<p>安装完成后，在/bin目录下会多出一个zsh的文件。</p>
+<p>Mac系统默认使用dash作为终端，可以使用命令修改默认使用zsh：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+<p>如果想修改回默认dash，同样使用chsh命令即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s /bin/bash</span><br></pre></td></tr></table></figure>
+<p>更多命令查询参考链接</p>
+<h3 id="安装Oh-my-zsh"><a href="#安装Oh-my-zsh" class="headerlink" title="安装Oh my zsh"></a>安装Oh my zsh</h3><p>安装方法有两种，可以使用curl或wget，看自己环境或喜好：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> curl 安装方式</span><br><span class="line">sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> wget 安装方式</span><br><span class="line">sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"</span><br></pre></td></tr></table></figure>
+<p>oh-my-zsh开源地址：<a href="https://github.com/robbyrussell/oh-my-zsh" target="_blank" rel="noopener">https://github.com/robbyrussell/oh-my-zsh</a></p>
+<p>安转好oh-my-zsh后，主题文件夹在 <strong>~/.oh-my-zsh/themes</strong></p>
+<p>修改 <strong>~/.zshrc</strong> 配置文件 <strong>ZSH_THEME=”agnoster”</strong></p>
+<p>这个主题比较好看，看个人喜好了。</p>
+<h3 id="安装PowerLine"><a href="#安装PowerLine" class="headerlink" title="安装PowerLine"></a>安装PowerLine</h3><p>powerline官网：<a href="http://powerline.readthedocs.io/en/latest/installation.html" target="_blank" rel="noopener">http://powerline.readthedocs.io/en/latest/installation.html</a></p>
+<p>安装powerline的方式依然简单，也只需要一条命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install powerline-status --user</span><br></pre></td></tr></table></figure>
+<p>没有安装pip的同学可能会碰到zsh: command not found: pip。</p>
+<p>使用命令安装pip即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo easy_install pip</span><br></pre></td></tr></table></figure>
+<h3 id="安装PowerFonts"><a href="#安装PowerFonts" class="headerlink" title="安装PowerFonts"></a>安装PowerFonts</h3><p>安装字体库需要首先将项目git clone至本地，然后执行源码中的install.sh。</p>
+<p>下载地址 <a href="https://github.com/powerline/fonts" target="_blank" rel="noopener">https://github.com/powerline/fonts</a></p>
+<p>进入文件夹执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+<p>安装好字体库之后，我们来设置iTerm2的字体，具体的操作是iTerm2 -&gt; Preferences -&gt; Profiles -&gt; Text，在Font区域选中Change Font，然后找到Meslo LG字体。有L、M、S可选，看个人喜好：<br><img src="http://p44bkxib3.bkt.clouddn.com/fonts.png" alt="fonts"></p>
+<p>我这里设置的字体是：<strong>14pt Meslo LG S DZ Regular for Powerline</strong></p>
+<h2 id="配色"><a href="#配色" class="headerlink" title="配色"></a>配色</h2><p>最终配色还是需要自己喜好去配置，详细配置步骤可以去参考链接。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="http://man.linuxde.net/chsh" target="_blank" rel="noopener">chsh命令</a><br><a href="https://www.jianshu.com/p/7de00c73a2bb" target="_blank" rel="noopener">iTerm 2 &amp;&amp; Oh My Zsh【DIY教程——亲身体验过程】</a><br><a href="https://github.com/sirius1024/iterm2-with-oh-my-zsh" target="_blank" rel="noopener">iterm2-with-oh-my-zsh</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/能工巧匠/">能工巧匠</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/iTerm2/">iTerm2</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://piglikeyoung.com/2018/05/26/2018-05-26-iterm2-with-oh-my-zsh/" data-title="iTerm2 + Oh My Zsh 打造舒适终端体验 | Pixar&#39;Filed" data-tsina class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/06/09/2018-06-09-MacOS10.13.5-cocoapods-solution/" title="MacOS 10.13.5 Cocoapods 无法使用解决方案">
+  <strong>上一篇：</strong><br>
+  <span>
+  MacOS 10.13.5 Cocoapods 无法使用解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/02/24/2018-02-24-YYCache-analysis/" title="YYCache 源码分析">
+ <strong>下一篇：</strong><br> 
+ <span>YYCache 源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="piglikeyoung" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/ARTS/" title="ARTS">ARTS</a></li>
+		  
+		
+		  
+			<li><a href="/categories/ReactNative/" title="ReactNative">ReactNative</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Source-Code-Analyze/" title="Source Code Analyze">Source Code Analyze</a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tips/" title="Tips">Tips</a></li>
+		  
+		
+		  
+			<li><a href="/categories/个人总结/" title="个人总结">个人总结</a></li>
+		  
+		
+		  
+			<li><a href="/categories/拿来主义/" title="拿来主义">拿来主义</a></li>
+		  
+		
+		  
+			<li><a href="/categories/能工巧匠/" title="能工巧匠">能工巧匠</a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RN/" title="RN">RN<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AFNetworking/" title="AFNetworking">AFNetworking<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GCD/" title="GCD">GCD<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Moya/" title="Moya">Moya<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CALayer/" title="CALayer">CALayer<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Block/" title="Block">Block<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/基础数据类型/" title="基础数据类型">基础数据类型<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NSTimer/" title="NSTimer">NSTimer<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Objective-C-锁/" title="Objective-C 锁">Objective-C 锁<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Debug/" title="Debug">Debug<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Swift/" title="Swift">Swift<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/iTerm2/" title="iTerm2">iTerm2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Cocoapods/" title="Cocoapods">Cocoapods<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Charles/" title="Charles">Charles<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/个人总结/" title="个人总结">个人总结<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ARTS/" title="ARTS">ARTS<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/正则表达式/" title="正则表达式">正则表达式<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/效率/" title="效率">效率<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bug/" title="Bug">Bug<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/本地化/" title="本地化">本地化<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	
+	<div class="social-font">
+		
+		
+		<a href="https://github.com/piglikeyoung" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+		<p class="copyright" style="margin-top: 10px;">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019
+		
+		<a href="/about" target="_blank" title="Pixar">Pixar</a>
+		
+
+		</p>
+
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'http-piglikeyoung-com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-83614750-2', 'piglikeyoung.com');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e0d12b30d56e338d16108aaf07bafde8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

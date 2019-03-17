@@ -69,5 +69,5 @@ theme: jacman
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
     type: git
-    repository: https://github.com/piglikeYoung/piglikeyoung.github.io.git
+    repository: https://github.com/piglikeYoung/piglikeyoung.github.io
     branch: master
